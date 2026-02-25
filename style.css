@@ -1,0 +1,108 @@
+/* Basic Reset */
+* {
+    margin: 0;
+    padding: 0;
+    box-sizing: border-box;
+}
+
+body {
+	
+    font-family: 'times', sans-serif;
+    line-height: 1.6;
+    background-color: #f4f4f4;purple
+} <style=font-size:"10px">
+
+.container {
+    width: 80%;
+    margin: auto;
+    overflow: hidden;
+}
+
+/*Navigation bar style */
+.navbar{
+	backgroung-color:#f9f9f9;
+	padding:10px;
+	display:flex;
+gap:20pxborder-bottom:2px solid #333;
+}
+/*Dropdown container*/
+.dropdown {
+	position:relative;
+display:inline-block;
+}
+/*the clickable Menu Button*/
+.dropbtn {
+	color:#333;
+	padding:10px;
+	font-size:16px;
+	border:none;
+	cursor:pointer;
+	font-weight:bold;
+backgroung:none;
+}
+/*Dropdown Content(Hidden by Default)*/
+.dropdown-content {
+	display:none;
+	position:absolute;
+	background-color:#ffffff;
+	min-width:180px;
+box-shadow:0px 8px 16px 0px rgba(0,0,0,0.2);
+z-index:1;
+border:1px solid #ddd
+}
+/*links inside the dropdown*/
+.dropdown-content a{
+	color:black:
+	padding:12px 16px;
+	text-decoration:none;
+}
+/*change color of dropdown links on hover*/
+.dropdown-content a:hover{
+	background-color:#f1f1f1;
+}
+/*change butto color when dropdown is shown*/
+.dropdown:hover .dropbtn{
+	color:#0000EE;
+}
+
+
+header h1 {
+	
+	color: #ff00ff;
+    float: centre;
+}
+
+nav {
+    float: right;
+    margin-top: 10px;
+}
+
+nav ul li {
+    display: inline;
+    padding: 0 20px;
+}
+
+nav a {
+    color: #ffffff;
+    text-decoration: none;
+    font-weight: bold;
+}
+
+/* Hero Section */
+.hero {
+    padding: 60px 0;
+    text-align: center;
+    background: #ffffff;
+}
+
+.hero h2 {
+	color: #green;
+transition:0.3s;}
+ h2:hover {
+	color:#ff00ff;
+	cursor:pointer;
+	transform:scale(1.05);
+    font-size: 40px;
+    color: #800080;
+}
+
