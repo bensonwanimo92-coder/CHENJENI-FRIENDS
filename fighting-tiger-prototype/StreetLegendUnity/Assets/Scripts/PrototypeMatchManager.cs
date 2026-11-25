@@ -69,6 +69,8 @@ public class PrototypeMatchManager : MonoBehaviour
             : "DEFEAT\nYou were knocked out\nUse RESTART or press R to retry";
     }
 
+    public void RequestPauseToggle() { TogglePause(); }
+
     void TogglePause()
     {
         if (finished) return;
