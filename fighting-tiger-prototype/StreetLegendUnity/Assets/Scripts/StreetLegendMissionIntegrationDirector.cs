@@ -10,7 +10,7 @@ public class StreetLegendMissionIntegrationDirector : MonoBehaviour
  public StreetLegendDrivingHUD drivingHud;
  public Transform vehicleEntryPoint;
  public PrototypeFighterController hotelPlayer;
- public PrototypeMatchManager hotelMatchManager;
+ public PrototypeMatchManager hotelMatchManager;\n public PrototypeMobileHUD hotelCombatHud;
  bool sequenceStarted;
  void Update()
  {
@@ -24,7 +24,7 @@ public class StreetLegendMissionIntegrationDirector : MonoBehaviour
   // Disable it for the campaign transition and explicitly restore time scale.
   if(hotelMatchManager)hotelMatchManager.gameObject.SetActive(false);
   Time.timeScale=1f;
-  if(hotelPlayer)hotelPlayer.enabled=false;
+  if(hotelPlayer)hotelPlayer.enabled=false;\n  if(hotelCombatHud)hotelCombatHud.enabled=false;
   if(vehicleEntryPoint){vehicle.transform.position=vehicleEntryPoint.position;vehicle.transform.rotation=vehicleEntryPoint.rotation;}
   vehicle.gameObject.SetActive(true);
   yield return new WaitForSecondsRealtime(1.6f);
