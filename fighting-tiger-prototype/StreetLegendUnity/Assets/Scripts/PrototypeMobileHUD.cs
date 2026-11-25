@@ -232,5 +232,6 @@ public class PrototypeMobileHUD : MonoBehaviour
     void OnDisable()
     {
         if (player) player.SetMobileMoveInput(Vector2.zero);
+        if (canvas && canvas.gameObject.activeSelf) canvas.gameObject.SetActive(false);
     }
 }
