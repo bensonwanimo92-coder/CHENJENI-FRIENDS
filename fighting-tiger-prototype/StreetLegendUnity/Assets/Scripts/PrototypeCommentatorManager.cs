@@ -104,8 +104,8 @@ public class PrototypeCommentatorManager : MonoBehaviour
                 using (var us = locale.CallStatic<AndroidJavaObject>("forLanguageTag", "en-US"))
                 {
                     androidTts.Call<int>("setLanguage", us);
-                    androidTts.Call<float>("setSpeechRate", speechRate);
-                    androidTts.Call<float>("setPitch", speechPitch);
+                    androidTts.Call("setSpeechRate", speechRate);
+                    androidTts.Call("setPitch", speechPitch);
                 }
                 ttsConfigured = true;
             }
