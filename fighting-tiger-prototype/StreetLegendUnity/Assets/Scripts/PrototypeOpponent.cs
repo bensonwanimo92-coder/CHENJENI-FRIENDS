@@ -108,11 +108,23 @@ public class PrototypeOpponent : MonoBehaviour
         if (distance > attackRange || distance < 0.01f ||
             Vector3.Angle(transform.forward, flat.normalized) > attackHalfAngle) yield break;
 
-        if (Physics.Raycast(origin, toTarget.normalized, out RaycastHit hit, distance + 0.08f, obstructionMask, QueryTriggerInteraction.Ignore) &&
-            hit.collider.transform != targetAtStart && !hit.collider.transform.IsChildOf(targetAtStart)) yield break;
+        if (!HasClearAttackLine(origin, toTarget.normalized, distance + 0.08f, targetAtStart)) yield break;
 
         var player = targetAtStart.GetComponent<PrototypeFighterController>();
         if (player) player.ReceiveHit(attackDamage, transform.forward, false);
+    }
+
+    bool HasClearAttackLine(Vector3 origin, Vector3 direction, float distance, Transform targetTransform)
+    {
+        RaycastHit[] hits = Physics.RaycastAll(origin, direction, distance, obstructionMask, QueryTriggerInteraction.Ignore);
+        System.Array.Sort(hits, (a, b) => a.distance.CompareTo(b.distance));
+        foreach (RaycastHit hit in hits)
+        {
+            Transform hitTransform = hit.collider.transform;
+            if (hitTransform == transform || hitTransform.IsChildOf(transform)) continue;
+            return hitTransform == targetTransform || hitTransform.IsChildOf(targetTransform);
+        }
+        return false;
     }
 
     public void TakeHit(float damage, Vector3 direction, bool heavy)
