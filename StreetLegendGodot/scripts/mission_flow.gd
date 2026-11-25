@@ -41,7 +41,7 @@ func reach_roadblock() -> void:
 	if is_instance_valid(vehicle):
 		vehicle.stop_vehicle()
 		vehicle.visible = true
-	await get_tree().create_timer(1.0).timeout
+	await get_tree().create_timer(1.6).timeout
 	if is_instance_valid(player):
 		if is_instance_valid(safe_exit_point):
 			player.global_transform = safe_exit_point.global_transform
