@@ -93,7 +93,8 @@ jobs:
       - name: Export debug APK
         run: |
           mkdir -p StreetLegendGodot/build
-          godot --headless --path StreetLegendGodot --export-debug "Android" StreetLegendGodot/build/StreetLegend-debug.apk
+          set -o pipefail
+godot --headless --verbose --path StreetLegendGodot --export-debug "Android" StreetLegendGodot/build/StreetLegend-debug.apk 2>&1 | tee "$RUNNER_TEMP/godot-android-export.log"
           test -s StreetLegendGodot/build/StreetLegend-debug.apk
           file StreetLegendGodot/build/StreetLegend-debug.apk
           ls -lh StreetLegendGodot/build/StreetLegend-debug.apk
