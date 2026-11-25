@@ -146,7 +146,7 @@ def build_character(prefix, xoff, skin_color, shirt_color, pants_color, accent_c
     print("Exported rigged base:", os.path.join(OUT, prefix+".fbx"))
 
 clear_scene()
-build_character("Wanimoo_Player", -1.8, (0.48,0.29,0.20), (0.035,0.16,0.31), (0.075,0.085,0.10), (0.035,0.045,0.055), broad=False)
+build_character("Wanimoo_Player", 0.0, (0.48,0.29,0.20), (0.035,0.16,0.31), (0.075,0.085,0.10), (0.035,0.045,0.055), broad=False)
 clear_scene()
-build_character("Hotel_Enforcer", 1.8, (0.30,0.17,0.11), (0.24,0.045,0.035), (0.10,0.075,0.055), (0.035,0.03,0.025), broad=True)
+build_character("Hotel_Enforcer", 0.0, (0.30,0.17,0.11), (0.24,0.045,0.035), (0.10,0.075,0.055), (0.035,0.03,0.025), broad=True)
 print("Street Legend fighter base exports complete. These are rigged greybox-art bases; production realism requires detailed sculpting, textures and authored animation.")
