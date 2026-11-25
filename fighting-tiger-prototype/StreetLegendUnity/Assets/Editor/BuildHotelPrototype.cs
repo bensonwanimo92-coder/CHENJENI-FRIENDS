@@ -44,13 +44,14 @@ public static class BuildHotelPrototype
     {
         string prefabPath = "Assets/Characters/Prefabs/" + assetName + ".prefab";
         GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath);
-        GameObject fighter = prefab
+        bool usingGeneratedPrefab = prefab != null;
+        GameObject fighter = usingGeneratedPrefab
             ? PrefabUtility.InstantiatePrefab(prefab) as GameObject
             : Capsule(displayName + " Placeholder", position + Vector3.up, fallbackColor, assetName == "Wanimoo_Player");
 
         if (!fighter) throw new System.InvalidOperationException("Could not create fighter: " + displayName);
         fighter.name = displayName;
-        fighter.transform.position = position;
+        if (usingGeneratedPrefab) fighter.transform.position = position;
         if (!fighter.GetComponent<CharacterController>())
         {
             var controller = fighter.AddComponent<CharacterController>();
