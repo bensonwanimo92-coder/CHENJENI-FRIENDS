@@ -241,9 +241,7 @@ public class PrototypeMobileHUD : MonoBehaviour
         text.raycastTarget = false;
     }
 
-    void OnDisable()
-    {
-        if (player) player.SetMobileMoveInput(Vector2.zero);
-        if (canvas && canvas.gameObject.activeSelf) canvas.gameObject.SetActive(false);
-    }
+    public void SetHUDVisible(bool visible) { touchEnabled = visible; if (canvas) canvas.gameObject.SetActive(visible); if (!visible && player) player.SetMobileMoveInput(Vector2.zero); }
+
+    void OnDisable() { if (player) player.SetMobileMoveInput(Vector2.zero); }
 }
