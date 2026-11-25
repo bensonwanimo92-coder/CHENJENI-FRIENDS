@@ -84,3 +84,4 @@ func take_damage(amount: float, direction: Vector3 = Vector3.ZERO, heavy: bool =
 
 func set_target(value: CharacterBody3D) -> void:
 	target = value
+	opponent = value
