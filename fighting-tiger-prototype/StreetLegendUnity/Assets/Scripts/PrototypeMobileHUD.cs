@@ -37,6 +37,13 @@ public class PrototypeMobileHUD : MonoBehaviour
     void Start()
     {
         commentator = FindObjectOfType<PrototypeCommentatorManager>();
+        if (commentator)
+        {
+            commentator.SetCommentaryEnabled(PlayerPrefs.GetInt("SL_VOICE", 1) != 0);
+            commentator.SetSubtitlesEnabled(PlayerPrefs.GetInt("SL_SUBS", 0) != 0);
+            if (voiceButtonText) voiceButtonText.text = PlayerPrefs.GetInt("SL_VOICE", 1) != 0 ? "VOICE ON" : "VOICE OFF";
+            if (subtitleButtonText) subtitleButtonText.text = PlayerPrefs.GetInt("SL_SUBS", 0) != 0 ? "SUBS ON" : "SUBS OFF";
+        }
     }
 
     void Update()
