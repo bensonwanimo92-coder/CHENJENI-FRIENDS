@@ -46,22 +46,30 @@ public class PrototypeOpponent : MonoBehaviour
     void TryAttack()
     {
         nextAttack = Time.time + attackInterval;
-        StreetLegendGameplayEvents.Raise(StreetLegendEventType.OpponentStartedAttacking, gameObject, target ? target.gameObject : null);
+        Transform targetAtStart = target;
+        StreetLegendGameplayEvents.Raise(StreetLegendEventType.OpponentStartedAttacking, gameObject, targetAtStart ? targetAtStart.gameObject : null);
+        StartCoroutine(ResolveAttackAfterWindup(targetAtStart));
+    }
 
-        Collider targetCollider = target.GetComponent<Collider>();
+    System.Collections.IEnumerator ResolveAttackAfterWindup(Transform targetAtStart)
+    {
+        yield return new WaitForSeconds(0.2f);
+        if (health <= 0f || !targetAtStart || !targetAtStart.gameObject.activeInHierarchy) yield break;
+
+        Collider targetCollider = targetAtStart.GetComponent<Collider>();
         Vector3 origin = transform.position + Vector3.up * 1.05f;
-        Vector3 targetPoint = targetCollider ? targetCollider.ClosestPoint(origin) : target.position + Vector3.up;
+        Vector3 targetPoint = targetCollider ? targetCollider.ClosestPoint(origin) : targetAtStart.position + Vector3.up;
         Vector3 toTarget = targetPoint - origin;
         float distance = toTarget.magnitude;
         Vector3 flat = toTarget;
         flat.y = 0f;
         if (distance > attackRange || distance < 0.01f ||
-            Vector3.Angle(transform.forward, flat.normalized) > attackHalfAngle) return;
+            Vector3.Angle(transform.forward, flat.normalized) > attackHalfAngle) yield break;
 
-        if (Physics.Raycast(origin, toTarget.normalized, out RaycastHit hit, distance + 0.08f, obstructionMask, QueryTriggerInteraction.Ignore))
-            if (hit.collider.transform != target && !hit.collider.transform.IsChildOf(target)) return;
+        if (Physics.Raycast(origin, toTarget.normalized, out RaycastHit hit, distance + 0.08f, obstructionMask, QueryTriggerInteraction.Ignore) &&
+            hit.collider.transform != targetAtStart && !hit.collider.transform.IsChildOf(targetAtStart)) yield break;
 
-        var player = target.GetComponent<PrototypeFighterController>();
+        var player = targetAtStart.GetComponent<PrototypeFighterController>();
         if (player) player.ReceiveHit(attackDamage, transform.forward, false);
     }
 
