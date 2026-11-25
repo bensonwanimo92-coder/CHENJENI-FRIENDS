@@ -108,6 +108,7 @@ def build_character(prefix, xoff, skin_color, shirt_color, pants_color, accent_c
     # Jaw/chin and ears give the silhouette more human definition.
     uv_part(prefix+"_Jaw", (xoff, -0.045, 1.75), (0.092, 0.085, 0.075), skin, "Head", arm, parts)
     for s, side in ((-1,"L"),(1,"R")):
+        prefix_side = "Left" if side == "L" else "Right"
         uv_part(prefix+"_Ear_"+side, (xoff+s*0.124, 0, 1.82), (0.027,0.035,0.052), skin, "Head", arm, parts, 16, 12)
         uv_part(prefix+"_Eye_"+side, (xoff+s*0.047, -0.108, 1.855), (0.018,0.012,0.012), eye, "Head", arm, parts, 16, 12)
         # Upper/lower arms, deltoids, forearms and wrapped fists.
