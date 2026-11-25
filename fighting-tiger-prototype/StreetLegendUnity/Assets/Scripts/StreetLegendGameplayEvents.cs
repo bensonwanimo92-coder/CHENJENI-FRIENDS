@@ -5,6 +5,8 @@ public enum StreetLegendEventType
 {
     PlayerStartedMoving,
     PlayerStoppedMoving,
+    OpponentStartedMoving,
+    OpponentStoppedMoving,
     PlayerAttackStarted,
     PlayerAttackMissed,
     PlayerHitConfirmed,
