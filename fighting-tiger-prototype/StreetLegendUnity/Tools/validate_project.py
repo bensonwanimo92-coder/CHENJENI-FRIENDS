@@ -3,7 +3,7 @@
 from pathlib import Path
 import ast,json,sys
 ROOT=Path(__file__).resolve().parents[1]
-required=["ProjectSettings/ProjectVersion.txt","Packages/manifest.json","Assets/Editor/BuildHotelPrototype.cs","Assets/Editor/StreetLegendMenuSceneBuilder.cs","Assets/Scripts/StreetLegendMainMenu.cs","Assets/Editor/StreetLegendFighterAssetPipeline.cs","Assets/Editor/StreetLegendBuildTools.cs","Assets/Scripts/PrototypeFighterController.cs","Assets/Scripts/PrototypeOpponent.cs","Assets/Scripts/PrototypeMobileHUD.cs","Assets/Scripts/PrototypeMatchManager.cs","Assets/Scripts/PrototypeCommentatorManager.cs","Assets/Scripts/PrototypeHumanoidAnimationDriver.cs","Assets/Scripts/StreetLegendGameplayEvents.cs","Assets/Scripts/PrototypeCameraFollow.cs","Assets/Scripts/PrototypeFallRecovery.cs","Tools/Blender/generate_fighter_pair.py"]
+required=["ProjectSettings/ProjectVersion.txt","Packages/manifest.json","Assets/Editor/BuildHotelPrototype.cs","Assets/Editor/StreetLegendMenuSceneBuilder.cs",\n    "Assets/Editor/StreetLegendBootstrap.cs","Assets/Scripts/StreetLegendMainMenu.cs","Assets/Editor/StreetLegendFighterAssetPipeline.cs","Assets/Editor/StreetLegendBuildTools.cs","Assets/Scripts/PrototypeFighterController.cs","Assets/Scripts/PrototypeOpponent.cs","Assets/Scripts/PrototypeMobileHUD.cs","Assets/Scripts/PrototypeMatchManager.cs","Assets/Scripts/PrototypeCommentatorManager.cs","Assets/Scripts/PrototypeHumanoidAnimationDriver.cs","Assets/Scripts/StreetLegendGameplayEvents.cs","Assets/Scripts/PrototypeCameraFollow.cs","Assets/Scripts/PrototypeFallRecovery.cs","Tools/Blender/generate_fighter_pair.py"]
 errors=[f"Missing required file: {f}" for f in required if not (ROOT/f).is_file()]
 p=ROOT/"Packages/manifest.json"
 if p.exists():
