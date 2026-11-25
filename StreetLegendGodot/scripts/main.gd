@@ -1,6 +1,7 @@
 extends Node3D
 const FighterScript = preload("res://scripts/fighter.gd")
 const EnemyScript = preload("res://scripts/enemy_ai.gd")
+const MobileControlsScript = preload("res://scripts/mobile_controls.gd")
 var player: CharacterBody3D
 var enemy: CharacterBody3D
 var status_label: Label
@@ -12,6 +13,10 @@ func _ready() -> void:
 	enemy.set("target", player)
 	player.connect("health_changed", Callable(self, "_on_player_health_changed"))
 	player.set("opponent", enemy)
+	var controls := CanvasLayer.new()
+	controls.set_script(MobileControlsScript)
+	controls.set("fighter", player)
+	add_child(controls)
 	_update_status("HOTEL EXIT — FIRST ENCOUNTER")
 func _build_world() -> void:
 	var environment := WorldEnvironment.new()
