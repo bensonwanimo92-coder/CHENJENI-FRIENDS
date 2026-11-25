@@ -17,6 +17,10 @@ public class PrototypeOpponent : MonoBehaviour
     [SerializeField] float retreatDistance = 1.05f;
     [SerializeField] float tacticalSwitchInterval = 2.4f;
     [SerializeField] float dodgeChance = 0.22f;
+    [SerializeField, Range(0f, 1f)] float guardChance = 0.18f;
+    [SerializeField] float guardDamageMultiplier = 0.35f;
+    [SerializeField] float guardCooldown = 1.8f;
+    float nextGuardAt;
     float tacticalSwitchAt;
     int circleSide = 1;
     bool retreating;
@@ -158,7 +162,14 @@ public class PrototypeOpponent : MonoBehaviour
     public void TakeHit(float damage, Vector3 direction, bool heavy)
     {
         if (health <= 0f) return;
-        float applied = Mathf.Min(health, Mathf.Max(0f, damage));
+        float incoming = Mathf.Max(0f, damage);
+        bool guarded = Time.time >= nextGuardAt && Random.value < guardChance;
+        if (guarded)
+        {
+            incoming *= Mathf.Clamp01(guardDamageMultiplier);
+            nextGuardAt = Time.time + guardCooldown;
+        }
+        float applied = Mathf.Min(health, incoming);
         health = Mathf.Max(0f, health - applied);
         StreetLegendGameplayEvents.Raise(StreetLegendEventType.OpponentDamaged, gameObject, null, applied, heavy);
         stunUntil = Time.time + (heavy ? 0.75f : 0.28f);
