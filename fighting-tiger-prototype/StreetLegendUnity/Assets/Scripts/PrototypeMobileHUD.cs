@@ -241,7 +241,7 @@ public class PrototypeMobileHUD : MonoBehaviour
         text.raycastTarget = false;
     }
 
-    public void SetHUDVisible(bool visible) { touchEnabled = visible; if (canvas) canvas.gameObject.SetActive(visible); if (!visible && player) player.SetMobileMoveInput(Vector2.zero); }
+    public void RefreshOpponent() { opponent = player ? player.Opponent : null; if (opponentFill) opponentFill.fillAmount = opponent ? Mathf.Clamp01(opponent.Health / 100f) : 0f; }\n\n    public void SetHUDVisible(bool visible) { touchEnabled = visible; if (canvas) canvas.gameObject.SetActive(visible); if (!visible && player) player.SetMobileMoveInput(Vector2.zero); }
 
     void OnDisable() { if (player) player.SetMobileMoveInput(Vector2.zero); }
 }
