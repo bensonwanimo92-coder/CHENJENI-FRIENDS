@@ -37,7 +37,7 @@ public class PrototypeMatchManager : MonoBehaviour
 
         if (finished)
         {
-            if (Input.GetKeyDown(KeyCode.R) || AnyTouchBegan()) RestartRound();
+            if (Input.GetKeyDown(KeyCode.R)) RestartRound();
             return;
         }
 
@@ -47,7 +47,7 @@ public class PrototypeMatchManager : MonoBehaviour
             return;
         }
 
-        if (paused && AnyTouchBegan())
+        if (paused && Input.GetKeyDown(KeyCode.P))
             TogglePause();
     }
 
@@ -142,6 +142,22 @@ public class PrototypeMatchManager : MonoBehaviour
         message.color = Color.white;
         message.text = "PAUSED";
         overlay.gameObject.SetActive(false);
+        MakeOverlayButton(panel.transform, "RESUME", new Vector2(0.5f, 0.20f), () => { if (paused) TogglePause(); });
+        MakeOverlayButton(panel.transform, "RESTART", new Vector2(0.5f, 0.10f), RestartRound);
+    }
+
+    void MakeOverlayButton(Transform parent, string title, Vector2 anchor, UnityEngine.Events.UnityAction action)
+    {
+        var go = new GameObject(title + " Button", typeof(RectTransform), typeof(Image), typeof(Button));
+        go.transform.SetParent(parent, false);
+        var rect = go.GetComponent<RectTransform>();
+        rect.anchorMin = anchor; rect.anchorMax = anchor; rect.sizeDelta = new Vector2(280, 72);
+        var image = go.GetComponent<Image>(); image.color = new Color(0.08f, 0.55f, 0.78f, 0.95f);
+        go.GetComponent<Button>().onClick.AddListener(action);
+        var label = new GameObject("Label", typeof(RectTransform), typeof(Text));
+        label.transform.SetParent(go.transform, false);
+        var lr = label.GetComponent<RectTransform>(); lr.anchorMin = Vector2.zero; lr.anchorMax = Vector2.one; lr.offsetMin = Vector2.zero; lr.offsetMax = Vector2.zero;
+        var t = label.GetComponent<Text>(); t.font = Resources.GetBuiltinResource<Font>("Arial.ttf"); t.text = title; t.fontSize = 26; t.fontStyle = FontStyle.Bold; t.alignment = TextAnchor.MiddleCenter; t.color = Color.white; t.raycastTarget = false;
     }
 
     void OnDisable() { Time.timeScale = 1f; }
