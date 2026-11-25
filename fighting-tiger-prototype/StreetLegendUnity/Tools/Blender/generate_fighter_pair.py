@@ -138,6 +138,19 @@ def add_combat_actions(arm, prefix):
         (12, {"Chest": (0.025, 0.0, 0.0), "Head": (-0.015, 0.0, 0.0)}),
         (24, {}),
     ])
+    walk_a = {
+        "LeftUpperLeg": (0.42, 0.0, 0.0), "RightUpperLeg": (-0.42, 0.0, 0.0),
+        "LeftLowerLeg": (-0.28, 0.0, 0.0), "RightLowerLeg": (0.28, 0.0, 0.0),
+        "LeftUpperArm": (0.0, 0.0, 0.28), "RightUpperArm": (0.0, 0.0, -0.28),
+        "Chest": (0.0, 0.0, 0.025),
+    }
+    walk_b = {
+        "LeftUpperLeg": (-0.42, 0.0, 0.0), "RightUpperLeg": (0.42, 0.0, 0.0),
+        "LeftLowerLeg": (0.28, 0.0, 0.0), "RightLowerLeg": (-0.28, 0.0, 0.0),
+        "LeftUpperArm": (0.0, 0.0, -0.28), "RightUpperArm": (0.0, 0.0, 0.28),
+        "Chest": (0.0, 0.0, -0.025),
+    }
+    key_pose("SL_Walk", [(1, walk_a), (7, walk_b), (13, walk_a), (19, walk_b), (25, walk_a)])
     guard = {
         "LeftUpperArm": (0.0, 0.0, -0.48), "RightUpperArm": (0.0, 0.0, 0.48),
         "LeftLowerArm": (0.0, 0.0, -0.72), "RightLowerArm": (0.0, 0.0, 0.72),
