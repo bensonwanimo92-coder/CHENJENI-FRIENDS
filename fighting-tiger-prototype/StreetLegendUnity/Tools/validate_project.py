@@ -47,7 +47,7 @@ checks = {
     ],
     "Assets/Scripts/PrototypeFighterController.cs": [
         "ResolveAttackAfterWindup", "PlayerHitConfirmed", "PlayerAttackMissed",
-        "SetMobileMoveInput", "HasClearAttackLine"
+        "SetMobileMoveInput", "HasClearAttackLine", "tacticalSwitchInterval", "circleSide", "retreatDistance"
     ],
     "Assets/Scripts/PrototypeOpponent.cs": [
         "ChooseApproachDirection", "ResolveAttackAfterWindup", "ChooseApproachDirection", "OpponentStartedMoving", "OpponentDefeated", "HasClearAttackLine"
