@@ -22,7 +22,6 @@ public class PrototypeMobileHUD : MonoBehaviour
     Image joystickKnob;
     Vector2 joystickOrigin;
     int joystickFinger = -1;
-    int attackFinger = -1;
     bool touchEnabled = true;
     PrototypeCommentatorManager commentator;
     Text voiceButtonText;
@@ -62,9 +61,11 @@ public class PrototypeMobileHUD : MonoBehaviour
                     joystickOrigin = pos;
                     UpdateJoystick(pos);
                 }
-                else if (pos.x >= Screen.width * 0.52f && pos.y < Screen.height * 0.62f && attackFinger < 0)
+                else if (pos.y < Screen.height * 0.58f && pos.x >= Screen.width * 0.68f)
                 {
-                    attackFinger = touch.fingerId;
+                    // Trigger on touch-down so short taps are reliable.
+                    bool heavy = pos.x >= Screen.width * 0.86f && pos.y >= Screen.height * 0.18f;
+                    player.TryAttack(heavy);
                 }
             }
             else if (touch.fingerId == joystickFinger &&
@@ -78,13 +79,6 @@ public class PrototypeMobileHUD : MonoBehaviour
                 joystickFinger = -1;
                 player.SetMobileMoveInput(Vector2.zero);
                 if (joystickKnob) joystickKnob.rectTransform.anchoredPosition = Vector2.zero;
-            }
-            else if (touch.fingerId == attackFinger &&
-                     (touch.phase == TouchPhase.Ended || touch.phase == TouchPhase.Canceled))
-            {
-                if (touch.phase == TouchPhase.Ended)
-                    player.TryAttack(pos.x >= Screen.width * 0.82f);
-                attackFinger = -1;
             }
         }
     }
@@ -115,8 +109,8 @@ public class PrototypeMobileHUD : MonoBehaviour
         MakePanel(root.transform, "Virtual Joystick Base", new Vector2(0.12f, 0.18f), new Vector2(0.12f, 0.18f), new Vector2(190, 190), new Color(0.08f, 0.13f, 0.2f, 0.42f));
         var knob = MakePanel(root.transform, "Virtual Joystick Knob", new Vector2(0.12f, 0.18f), new Vector2(0.12f, 0.18f), new Vector2(78, 78), new Color(0.2f, 0.72f, 0.92f, 0.82f));
         joystickKnob = knob.GetComponent<Image>();
-        MakePanel(root.transform, "Light Attack Button", new Vector2(0.78f, 0.19f), new Vector2(0.78f, 0.19f), new Vector2(132, 132), new Color(0.08f, 0.55f, 0.78f, 0.82f));
-        MakeLabel(root.transform, "LIGHT", new Vector2(0.78f, 0.19f), 26);
+        MakePanel(root.transform, "Light Attack Button", new Vector2(0.76f, 0.19f), new Vector2(0.76f, 0.19f), new Vector2(132, 132), new Color(0.08f, 0.55f, 0.78f, 0.82f));
+        MakeLabel(root.transform, "LIGHT", new Vector2(0.76f, 0.19f), 26);
         MakePanel(root.transform, "Heavy Attack Button", new Vector2(0.91f, 0.29f), new Vector2(0.91f, 0.29f), new Vector2(148, 148), new Color(0.72f, 0.2f, 0.16f, 0.86f));
         MakeLabel(root.transform, "HEAVY", new Vector2(0.91f, 0.29f), 25);
 
