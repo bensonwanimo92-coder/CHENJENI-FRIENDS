@@ -30,5 +30,19 @@ The first scene is a greybox: primitive capsules, lobby walls and placeholder ge
 - No APK has been built or device-tested.
 - The project uses original placeholder geometry and does not include proprietary Leonida/GTA assets.
 
+## Fighter character asset pipeline
+
+A first procedural, rigged human-base generator is included at `Tools/Blender/generate_fighter_pair.py`.
+
+1. Install Blender 4.x with FBX export enabled.
+2. Run the script in Blender (or use `blender --background --python Tools/Blender/generate_fighter_pair.py`).
+3. Copy the two exports from the script's `Assets/Characters/Generated` output folder into this Unity project's `Assets/Characters/Generated/` folder:
+   - `Wanimoo_Player.fbx`
+   - `Hotel_Enforcer.fbx`
+4. Let Unity import them. The editor asset pipeline configures Humanoid import settings.
+5. In Unity choose **Street Legend > Characters > Prepare Fighter Prefabs** to create root-level CharacterController prefabs in `Assets/Characters/Prefabs/`.
+
+The generator builds two distinct, proportioned, bone-deformable human base meshes with separate body/clothing materials, head details, and a humanoid bone hierarchy. They are a useful rigged prototype starting point, **not finished photorealistic AAA characters**: detailed sculpting, high-resolution skin/clothing textures, facial rigging, hair, and authored motion-capture-quality animations are still required. Check the imported Avatar mapping and CharacterController fit before using the prefabs in a gameplay scene. Do not claim the assets are integrated until the FBX files have been generated and imported in Unity.
+
 ## Next milestone
 Open the project in Unity, resolve any editor-version/import issues, generate the hotel scene, then compile and test the camera, fall recovery and combat checks. Next assign original commentator recordings, add more traversal/interaction event coverage, then wire mobile controls and animation-timed martial-arts hitboxes before making an Android build.
