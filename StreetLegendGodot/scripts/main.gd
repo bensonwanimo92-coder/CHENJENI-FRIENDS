@@ -24,7 +24,7 @@ func _ready() -> void:
 	_build_hud()
 	player = _spawn_fighter("WANIMO", Vector3(-2.0, 0.0, 0.0), Color(0.08, 0.42, 0.82), true)
 	hotel_enemy = _spawn_fighter("HOTEL ENFORCER", Vector3(2.0, 0.0, 0.0), Color(0.72, 0.12, 0.10), false)
-	hotel_enemy.set("target", player)
+	hotel_enemy.set_target(player)
 	player.set("opponent", hotel_enemy)
 	roadblock_enemy = _spawn_fighter("ROADBLOCK ENFORCER", Vector3(2.0, 0.0, -60.0), Color(0.68, 0.16, 0.12), false)
 	roadblock_enemy.visible = false
