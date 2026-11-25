@@ -14,7 +14,7 @@ This is the first Unity project scaffold for the Street Legend hotel-combat prot
 - J: light attack.
 - K: heavy attack.
 
-The first scene is a greybox: primitive capsules, lobby walls and placeholder geometry. It is for proving the initial scene and combat loop, not final art.
+The hotel environment is still greybox geometry. The scene generator now loads the generated Wanimoo and Hotel Enforcer prefabs when they exist; until those FBX files have been generated, imported and prepared, it safely falls back to capsule placeholders.
 
 ## Important limitations
 - This scaffold has not yet been opened or compiled in Unity in this environment.
