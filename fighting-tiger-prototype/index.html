@@ -81,4 +81,18 @@ const arenaLabel=document.createElement('div');arenaLabel.textContent='DOJO DIST
  const styleTip=document.createElement('div');styleTip.textContent='POWER: harder specials · SPEED: mobility · F = special';styleTip.style.cssText='position:fixed;bottom:158px;left:50%;transform:translateX(-50%);font-size:10px;color:#ddd;background:#111b;padding:6px 8px;border-radius:8px;white-space:nowrap';document.body.appendChild(styleTip);
 })();
 </script>
+
+<script>
+// Persistent fighter profile and roster selection.
+(()=>{
+ const fighters=[{name:'KAI',style:'BALANCED',bonus:'Steady combat'},{name:'BRUTUS',style:'POWER',bonus:'Heavy strike focus'},{name:'SHADE',style:'SPEED',bonus:'Agile fighter'}];let selected=0;
+ let save={coins:0,unlocked:0,fighter:0};try{save=Object.assign(save,JSON.parse(localStorage.getItem('streetLegendSave')||'{}'))}catch(e){}
+ selected=save.fighter||0;
+ const roster=document.createElement('div');roster.style.cssText='position:fixed;top:255px;left:50%;transform:translateX(-50%);z-index:10;background:#111c20ed;border:1px solid #8aa0a0;border-radius:12px;padding:8px;color:#fff;font-size:11px;text-align:center';roster.innerHTML='<b>FIGHTER</b><br><button id="rosterprev">◀</button> <span id="fightername">'+fighters[selected].name+'</span> <button id="rosternext">▶</button><br><small id="fighterinfo">'+fighters[selected].bonus+'</small>';document.body.appendChild(roster);
+ const profile=document.createElement('div');profile.style.cssText='position:fixed;top:8px;right:50%;transform:translateX(50%);margin-top:44px;z-index:8;background:#121c20db;border:1px solid #9b8b62;border-radius:9px;padding:5px 10px;color:#f6d58a;font-size:11px';profile.textContent='STREET COINS: '+save.coins;document.body.appendChild(profile);
+ function choose(i){selected=(i+fighters.length)%fighters.length;document.querySelector('#fightername').textContent=fighters[selected].name;document.querySelector('#fighterinfo').textContent=fighters[selected].bonus;save.fighter=selected;localStorage.setItem('streetLegendSave',JSON.stringify(save));}
+ document.querySelector('#rosterprev').onclick=()=>choose(selected-1);document.querySelector('#rosternext').onclick=()=>choose(selected+1);
+ const origHud=window.hud;let awarded=false;const watch=setInterval(()=>{if(enemy.hp<=0&&!awarded){awarded=true;save.coins=(save.coins||0)+100;profile.textContent='STREET COINS: '+save.coins;localStorage.setItem('streetLegendSave',JSON.stringify(save));}if(player.hp<=0)awarded=false;if(enemy.hp>0)awarded=false;},250);
+})();
+</script>
 </body></html>
