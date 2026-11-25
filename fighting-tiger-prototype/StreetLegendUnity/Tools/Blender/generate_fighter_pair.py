@@ -55,7 +55,7 @@ def make_bone(eb, name, head, tail, parent=None, connected=False):
     return b
 
 def create_rig(prefix, xoff):
-    bpy.ops.object.armature_add(enter_editmode=True, location=(xoff, 0, 0))
+    bpy.ops.object.armature_add(enter_editmode=True, location=(0, 0, 0))
     arm = bpy.context.object
     arm.name = prefix + "_Rig"
     arm.data.name = prefix + "_Humanoid"
