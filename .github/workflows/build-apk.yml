@@ -1,5 +1,14 @@
-name: Build WordQuest APK
-on: [push, workflow_dispatch]
+name: Build WordQuest APK (legacy Android app)
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'app/**'
+      - 'build.gradle'
+      - 'settings.gradle'
+      - 'AndroidManifest.xml'
+      - 'MainActivity.java'
 jobs:
  build:
   runs-on: ubuntu-latest
