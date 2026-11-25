@@ -45,15 +45,3 @@ public static class BuildHotelPrototype
     }
     static Material Material(Color c) { var m=new Material(Shader.Find("Standard")); m.color=c; return m; }
 }
-
-public class PrototypeCameraFollow : MonoBehaviour
-{
-    public Transform target;
-    void LateUpdate()
-    {
-        if (!target) return;
-        Vector3 desired=target.position+new Vector3(0,7,-9);
-        transform.position=Vector3.Lerp(transform.position,desired,5f*Time.deltaTime);
-        transform.LookAt(target.position+Vector3.up*1.1f);
-    }
-}
