@@ -9,9 +9,9 @@ func _ready() -> void:
 	_build_hud()
 	player = _spawn_fighter("WANIMO", Vector3(-2.0, 0.0, 0.0), Color(0.08, 0.42, 0.82), true)
 	enemy = _spawn_fighter("ROADBLOCK ENFORCER", Vector3(2.0, 0.0, 0.0), Color(0.72, 0.12, 0.10), false)
-	enemy.set_script(EnemyScript)
-	enemy.target = player
-	player.health_changed.connect(_on_player_health_changed)
+	enemy.set("target", player)
+	player.connect("health_changed", Callable(self, "_on_player_health_changed"))
+	player.set("opponent", enemy)
 	_update_status("HOTEL EXIT — FIRST ENCOUNTER")
 func _build_world() -> void:
 	var environment := WorldEnvironment.new()
@@ -55,9 +55,9 @@ func _spawn_fighter(label: String, spawn: Vector3, tint: Color, is_player: bool)
 	var body := CharacterBody3D.new()
 	body.name = label.replace(" ", "")
 	body.position = spawn
-	body.set_script(FighterScript)
-	body.is_player = is_player
-	body.display_name = label
+	body.set_script(FighterScript if is_player else EnemyScript)
+	body.set("is_player", is_player)
+	body.set("display_name", label)
 	var capsule := CapsuleMesh.new()
 	capsule.radius = 0.42
 	capsule.height = 1.8
