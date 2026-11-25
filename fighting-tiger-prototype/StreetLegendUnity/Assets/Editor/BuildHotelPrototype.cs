@@ -18,6 +18,8 @@ public static class BuildHotelPrototype
         var enemy = Capsule("Hotel Enforcer Prototype", new Vector3(2,1,4), new Color(0.62f,0.16f,0.13f), false);
         var pc = player.AddComponent<PrototypeFighterController>();
         var ai = enemy.AddComponent<PrototypeOpponent>();
+        player.AddComponent<PrototypeFallRecovery>();
+        enemy.AddComponent<PrototypeFallRecovery>();
         pc.SetOpponent(enemy.transform); ai.SetTarget(player.transform);
         if (!AssetDatabase.IsValidFolder("Assets/Scenes")) AssetDatabase.CreateFolder("Assets", "Scenes");
         var cameraObject = new GameObject("Prototype Camera");
