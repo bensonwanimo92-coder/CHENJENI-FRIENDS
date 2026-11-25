@@ -34,15 +34,16 @@ The original Unity source scripts in `fighting-tiger-prototype/StreetLegendUnity
 - Voice-only commentator event queue with optional subtitle presentation; original Unity Android TTS bridge is not yet ported and no voice recordings are bundled.
 - Landscape touch input overlay supports a movement joystick, light/heavy strikes, and driving steer/gas/brake input.
 - Main greybox scene now attaches the touch combat controls.
-- GitHub Actions workflow added at `.github/workflows/godot-check.yml` to run a headless import/parse and startup smoke check.
+- GitHub Actions workflow at `.github/workflows/godot-check.yml` has passed a headless import/parse and startup smoke check on commit `a23626ac`.
 
 ## What is not yet complete
 - The main greybox scene now wires the hotel opponent knockout into a vehicle pursuit, then triggers a controlled braking stop at the roadblock, dismounts Wanimo, and activates the second enemy for the final fight. This is still an unvalidated greybox sequence; the car-entry animation and cinematic handoff are placeholders.
 - Final realistic fighter, child, vehicle, Range Rover, hotel, city and roadblock assets are not yet imported.
-- Unity Animator state machines and animation clips have not been converted into Godot AnimationTree/AnimationPlayer resources.
-- The child-rescue mission and child help-call reactions are not implemented in Godot yet.
+- A Godot animation event driver now maps walk, idle, jab, heavy kick, hit reaction and knockout events to optional AnimationPlayer clips; when clips are absent it provides simple procedural placeholder reactions. Actual Unity Animator state machines and animation clips have not yet been converted into Godot AnimationTree/AnimationPlayer resources.
+- Checkpoint-based fall recovery is now attached to the greybox fighters. The child-rescue mission and child help-call reactions are not implemented in Godot yet.
 - Combat and mission events are connected to the commentator queue. It currently displays optional screen-space subtitles and timing only; Android TextToSpeech/audio clip playback still needs a platform implementation, so spoken commentary is not yet working.
-- No Godot executable is installed in the current editing environment, so no local parser, runtime, desktop build or Android export has been run. The repository-root CI workflow has been added, but its first successful run has not yet been confirmed.
+- A match manager now handles pause/resume and the mission victory/failure overlay, with Enter restarting the current scene. Mobile pause controls still need to be added.
+- GitHub Actions headless import/parse and startup smoke check passed on commit `a23626ac`. Newer animation, fall-recovery and match-manager commits are awaiting their own CI result. No local Godot executable is available in the current editing environment, so no local runtime, desktop build or Android export has been run.
 - No APK has been built.
 
 ## Migration map
