@@ -43,7 +43,7 @@ if manifest_path.exists():
 checks = {
     "Assets/Editor/BuildHotelPrototype.cs": [
         "Level1_Hotel_Prototype.unity", "PrototypeMobileHUD", "PrototypeMatchManager",
-        "PrototypeCommentatorManager", "CharacterController"
+        "PrototypeCommentatorManager", "CharacterController", "UIOrientation.LandscapeLeft", "allowedAutorotateToLandscapeRight"
     ],
     "Assets/Scripts/PrototypeFighterController.cs": [
         "ResolveAttackAfterWindup", "PlayerHitConfirmed", "PlayerAttackMissed",
@@ -53,7 +53,7 @@ checks = {
         "ChooseApproachDirection", "ResolveAttackAfterWindup", "tacticalSwitchInterval", "circleSide", "retreatDistance", "OpponentStartedMoving", "OpponentDefeated", "HasClearAttackLine", "guardChance", "guardDamageMultiplier", "nextGuardAt", "OpponentGuarded", "guardStunDuration", "RaiseAttackMiss", "OpponentAttackMissed"
     ],
     "Assets/Scripts/PrototypeMobileHUD.cs": [
-        "ToggleVoice", "ToggleSubtitles", "SetMobileMoveInput", "fillAmount"
+        "ToggleVoice", "ToggleSubtitles", "SetMobileMoveInput", "fillAmount", "Virtual Joystick Base", "Heavy Attack Button", "Pause Control"
     ],
     "Assets/Scripts/PrototypeMatchManager.cs": [
         "FinishRound", "TogglePause", "RestartRound"
