@@ -26,7 +26,7 @@ public static class StreetLegendPreBuildGate
   foreach(var s in EditorBuildSettings.scenes){if(!s.enabled)continue;if(s.path.Contains("StreetLegend_MainMenu"))menu=true;if(s.path.Contains("Level1_Hotel"))hotel=true;}
   if(!menu) {Debug.LogWarning("Main menu scene is not registered/enabled in Build Settings.");warnings++;}
   if(!hotel){Debug.LogWarning("Hotel prototype scene is not registered/enabled in Build Settings.");warnings++;}
-  if(!File.Exists("Assets/Scenes/Level1_Driving_Test.unity")){Debug.LogWarning("Driving test scene asset not generated yet. Run Street Legend/Build Driving Chase Test Scene.");warnings++;}
+  if(!File.Exists("Assets/Scenes/Level1_Hotel_Prototype.unity")){Debug.LogWarning("Hotel scene not generated yet. Run Build Hotel Prototype Scene.");warnings++;}\n  if(!File.Exists("Assets/Scenes/Level1_Driving_Test.unity")){Debug.LogWarning("Driving test scene asset not generated yet. Run Street Legend/Build Driving Chase Test Scene.");warnings++;}
   if(errors==0)Debug.Log("Structural gate: required source-file presence checks passed. Warnings: "+warnings+". This is not a compile/build/runtime test.");
   else Debug.LogError("Structural gate failed: "+errors+" missing source item(s), "+warnings+" warning(s).");
  }
