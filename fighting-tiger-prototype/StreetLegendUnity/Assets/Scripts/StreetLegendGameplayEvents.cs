@@ -14,6 +14,7 @@ public enum StreetLegendEventType
     PlayerKnockedOut,
     OpponentStartedAttacking,
     OpponentDamaged,
+    OpponentGuarded,
     PlayerEnteredCombatRange,
     PlayerLeftCombatRange,
     OpponentDefeated
