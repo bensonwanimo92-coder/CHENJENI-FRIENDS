@@ -15,7 +15,7 @@ This is the first Unity project scaffold for the Street Legend hotel-combat prot
 - K: heavy attack.
 - Android: lower-left touch joystick to move; tap the blue LIGHT area for a light strike; tap the red HEAVY area for a heavy strike. The touch HUD shows both fighters’ health.
 - P: pause/resume.
-- R: restart after a win or defeat. On Android, tap after the round ends to restart; tap while paused to resume.
+- R: restart after a win or defeat. On Android, use the top-right PAUSE control; tap anywhere to resume while paused, and tap after the round ends to restart.
 
 The hotel environment is still greybox geometry. The scene generator now loads the generated Wanimoo and Hotel Enforcer prefabs when they exist; until those FBX files have been generated, imported and prepared, it safely falls back to capsule placeholders.
 
