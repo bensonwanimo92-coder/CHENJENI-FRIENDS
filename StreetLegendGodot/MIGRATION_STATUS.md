@@ -37,12 +37,12 @@ The original Unity source scripts in `fighting-tiger-prototype/StreetLegendUnity
 - GitHub Actions workflow added at `.github/workflows/godot-check.yml` to run a headless import/parse and startup smoke check.
 
 ## What is not yet complete
-- The mission-flow, vehicle and chase scripts exist, but are not yet fully wired into the main scene as a playable end-to-end hotel-to-roadblock sequence.
+- The main greybox scene now wires the hotel opponent knockout into a vehicle pursuit, then triggers a controlled braking stop at the roadblock, dismounts Wanimo, and activates the second enemy for the final fight. This is still an unvalidated greybox sequence; the car-entry animation and cinematic handoff are placeholders.
 - Final realistic fighter, child, vehicle, Range Rover, hotel, city and roadblock assets are not yet imported.
 - Unity Animator state machines and animation clips have not been converted into Godot AnimationTree/AnimationPlayer resources.
 - The child-rescue mission and child help-call reactions are not implemented in Godot yet.
-- Voice-only commentary currently queues subtitle text/timing; Android TextToSpeech/audio clip playback still needs a platform implementation.
-- No Godot executable is installed in the current editing environment, so no local parser, runtime, desktop build or Android export has been run. The new CI workflow must run successfully before the project can be described as validated.
+- Combat and mission events are connected to the commentator queue. It currently displays optional screen-space subtitles and timing only; Android TextToSpeech/audio clip playback still needs a platform implementation, so spoken commentary is not yet working.
+- No Godot executable is installed in the current editing environment, so no local parser, runtime, desktop build or Android export has been run. The repository-root CI workflow has been added, but its first successful run has not yet been confirmed.
 - No APK has been built.
 
 ## Migration map
