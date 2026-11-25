@@ -54,6 +54,7 @@ public class PrototypeHumanoidAnimationDriver : MonoBehaviour
 
             case StreetLegendEventType.PlayerDamaged:
             case StreetLegendEventType.OpponentDamaged:
+            case StreetLegendEventType.OpponentGuarded:
                 Play("HitReact");
                 ScheduleReturn(0.52f);
                 break;
