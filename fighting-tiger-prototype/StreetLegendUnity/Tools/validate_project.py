@@ -8,6 +8,7 @@ required = [
  "Assets/Editor/BuildHotelPrototype.cs","Assets/Editor/StreetLegendMenuSceneBuilder.cs",
  "Assets/Editor/StreetLegendBootstrap.cs","Assets/Scripts/StreetLegendMainMenu.cs",
  "Assets/Editor/StreetLegendFighterAssetPipeline.cs","Assets/Editor/StreetLegendBuildTools.cs",
+ "Assets/Editor/StreetLegendCIBuild.cs",
  "Assets/Editor/StreetLegendPreBuildGate.cs","Assets/Editor/StreetLegendDrivingSceneBuilder.cs",
  "Assets/Editor/StreetLegendDrivingValidator.cs","Assets/Scripts/PrototypeFighterController.cs",
  "Assets/Scripts/PrototypeOpponent.cs","Assets/Scripts/PrototypeMobileHUD.cs",
@@ -27,7 +28,7 @@ if manifest.exists():
   if "com.unity.ugui" not in deps: errors.append("UGUI dependency missing")
  except Exception as ex: errors.append("Manifest invalid: "+str(ex))
 checks = {
- "Assets/Scripts/StreetLegendMainMenu.cs":["StreetLegend_MainMenu","Level1_Hotel_Prototype","LoadSceneAsync","PLAY CAMPAIGN","LandscapeLeft"],
+ "Assets/Scripts/StreetLegendMainMenu.cs":["STREET LEGEND","Level1_Hotel_Prototype","LoadSceneAsync","PLAY CAMPAIGN","LandscapeLeft"],
  "Assets/Editor/StreetLegendMenuSceneBuilder.cs":["StreetLegend_MainMenu.unity","StreetLegendMainMenu"],
  "Assets/Editor/StreetLegendBuildTools.cs":["StreetLegend_MainMenu.unity","Level1_Hotel_Prototype.unity","BuildPlayerOptions"],
  "Assets/Scripts/PrototypeFighterController.cs":["ResolveAttackAfterWindup","PlayerHitConfirmed","PlayerAttackMissed","SetMobileMoveInput","HasClearAttackLine"],
@@ -38,7 +39,8 @@ checks = {
  "Assets/Scripts/StreetLegendMissionPhase.cs":["DismountHandoff","Dismounting","PostRoadblockCombat","BuildOutcomeOverlay"],
  "Assets/Scripts/StreetLegendMissionIntegrationDirector.cs":["LaunchPursuit","BeginPursuit"],
  "Assets/Scripts/StreetLegendMissionCameraSwitcher.cs":["Dismounting","DrivingPursuit"],
- "Assets/Editor/StreetLegendPreBuildGate.cs":["Pre-Compilation Structural Gate","Level1_Hotel_Prototype.unity","Level1_Driving_Test.unity"]
+ "Assets/Editor/StreetLegendPreBuildGate.cs":["Pre-Compilation Structural Gate","Level1_Hotel_Prototype.unity","Level1_Driving_Test.unity"],
+ "Assets/Editor/StreetLegendCIBuild.cs":["StreetLegendCIBuild","BuildHotelPrototype.Build()","StreetLegendMenuSceneBuilder.Build()","BuildPipeline.BuildPlayer","StreetLegend.apk"]
 }
 for f,markers in checks.items():
  if (ROOT/f).exists():
