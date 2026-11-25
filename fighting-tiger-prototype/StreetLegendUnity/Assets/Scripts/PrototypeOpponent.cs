@@ -12,6 +12,14 @@ public class PrototypeOpponent : MonoBehaviour
     [SerializeField] float attackDamage = 8f;
     [SerializeField] float attackInterval = 1.35f;
     [SerializeField] LayerMask obstructionMask = ~0;
+    [Header("Combat tactics")]
+    [SerializeField] float circleSpeed = 1.15f;
+    [SerializeField] float retreatDistance = 1.05f;
+    [SerializeField] float tacticalSwitchInterval = 2.4f;
+    [SerializeField] float dodgeChance = 0.22f;
+    float tacticalSwitchAt;
+    int circleSide = 1;
+    bool retreating;
 
     CharacterController motor;
     float nextAttack;
@@ -42,16 +50,35 @@ public class PrototypeOpponent : MonoBehaviour
             if (delta.sqrMagnitude > 0.01f)
                 transform.forward = Vector3.Slerp(transform.forward, delta.normalized, 8f * Time.deltaTime);
 
-            if (delta.magnitude > attackRange)
+            if (Time.time >= tacticalSwitchAt)
             {
-                Vector3 desiredDirection = ChooseApproachDirection(delta.normalized);
-                if (desiredDirection.sqrMagnitude > 0.001f)
-                {
-                    motor.Move(desiredDirection * moveSpeed * Time.deltaTime);
-                    movingNow = true;
-                }
+                tacticalSwitchAt = Time.time + tacticalSwitchInterval;
+                circleSide = Random.value < 0.5f ? -1 : 1;
+                retreating = Random.value < dodgeChance;
             }
-            else if (Time.time >= nextAttack)
+
+            float distanceToTarget = delta.magnitude;
+            Vector3 desiredDirection;
+            if (distanceToTarget > attackRange + 0.35f)
+                desiredDirection = ChooseApproachDirection(delta.normalized);
+            else if (distanceToTarget < retreatDistance && retreating)
+                desiredDirection = ChooseApproachDirection(-delta.normalized);
+            else if (distanceToTarget > 0.01f)
+            {
+                Vector3 lateral = Vector3.Cross(Vector3.up, delta.normalized) * circleSide;
+                desiredDirection = lateral * circleSpeed;
+                desiredDirection += delta.normalized * (distanceToTarget > attackRange ? 0.25f : -0.12f);
+                desiredDirection = ChooseApproachDirection(desiredDirection.normalized);
+            }
+            else desiredDirection = Vector3.zero;
+
+            if (desiredDirection.sqrMagnitude > 0.001f)
+            {
+                motor.Move(desiredDirection * moveSpeed * Time.deltaTime);
+                movingNow = true;
+            }
+
+            if (distanceToTarget <= attackRange && Time.time >= nextAttack && !retreating)
                 TryAttack();
         }
 
