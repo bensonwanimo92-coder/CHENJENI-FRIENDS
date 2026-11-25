@@ -27,8 +27,8 @@ The hotel environment is still greybox geometry. The scene generator now loads t
 - The follow camera now uses a sphere cast to reduce clipping through walls; camera behavior still needs testing in tight corridors and around corners.
 - Physics/geometry acceptance tests are documented in `PHYSICS_GEOMETRY_AND_COLLISION_CHECKLIST.md`.
 - Typed gameplay events now report player movement transitions, combat-range entry/exit, attack starts/misses, confirmed hits, player damage/knockout, opponent attacks/damage and opponent defeat. These events are the foundation for commentary and other game systems.
-- A voice-only `PrototypeCommentatorManager` is attached by the hotel scene generator. It supports clip variations, cooldowns and priority-based playback, but no voice recordings are included or assigned yet; subtitles and settings UI remain outstanding.
-- The commentator has no visible character or portrait. It is an audio-only scene component. Its playback coroutine is reset cleanly when the component is disabled and re-enabled.
+- A voice-only `PrototypeCommentatorManager` is attached by the hotel scene generator. It supports assigned voice-clip variations and, when clips are absent on Android, built-in Android TextToSpeech commentary with default lines for movement, combat range, attacks, misses, confirmed hits, damage and round outcomes. Optional subtitles can be enabled through its public settings method. The Android system voice and language availability vary by device; no custom recorded commentator performance is included.
+- The commentator has no visible character or portrait. It is an audio-only scene component; optional subtitles are plain text only. Its playback coroutine is reset cleanly when the component is disabled and re-enabled.
 - Knocked-out players continue to receive gravity and settle onto the floor; movement input is disabled and a movement-stop event is emitted.
 - No APK has been built or device-tested.
 - The project uses original placeholder geometry and does not include proprietary Leonida/GTA assets.
