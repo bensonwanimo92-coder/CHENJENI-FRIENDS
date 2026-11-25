@@ -44,3 +44,11 @@ Migration decision and initial C# systems are committed. This is **not yet a Uni
 - Performance: scalable render quality, shadow distance/softness options, effect pooling, conservative post-processing, texture compression and target frame rate options.
 - Fight flow: menu -> character selection -> stage intro -> combat -> results -> next stage. Pause and restart supported.
 - Assets: only use assets with licenses suitable for distribution or assets created for this project. Keep asset credits/licenses documented.
+
+
+## Additional gameplay scaffolding
+- `FighterMotor.cs`: camera-relative grounded movement using CharacterController, turn smoothing and Animator locomotion parameter.
+- `CombatHitbox.cs`: animation-event-driven hitbox activation with damage forwarding to FighterHealth.
+- `EnemyCombatAI.cs`: rudimentary range-based opponent approach/attack behavior and Animator hooks.
+
+These are starter systems, not fully tuned or playtested. AI movement currently uses direct transform movement; replace with collision-aware movement and behavior states during scene integration. Hitbox logic should be tested with collider configurations and multi-collider targets.
