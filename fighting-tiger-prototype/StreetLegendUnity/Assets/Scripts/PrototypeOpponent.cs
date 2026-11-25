@@ -78,6 +78,7 @@ public class PrototypeOpponent : MonoBehaviour
         if (health <= 0f) return;
         float applied = Mathf.Min(health, Mathf.Max(0f, damage));
         health = Mathf.Max(0f, health - applied);
+        StreetLegendGameplayEvents.Raise(StreetLegendEventType.OpponentDamaged, gameObject, null, applied, heavy);
         stunUntil = Time.time + (heavy ? 0.75f : 0.28f);
         if (direction.sqrMagnitude > 0.001f)
             motor.Move(direction.normalized * (heavy ? 0.42f : 0.14f));
