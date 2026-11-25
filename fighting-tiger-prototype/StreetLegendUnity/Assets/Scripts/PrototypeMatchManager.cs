@@ -65,8 +65,8 @@ public class PrototypeMatchManager : MonoBehaviour
         Time.timeScale = 0f;
         overlay.gameObject.SetActive(true);
         message.text = won
-            ? "VICTORY\nHotel lobby cleared\nTap anywhere or press R to fight again"
-            : "DEFEAT\nYou were knocked out\nTap anywhere or press R to retry";
+            ? "VICTORY\nHotel lobby cleared\nUse RESTART or press R to fight again"
+            : "DEFEAT\nYou were knocked out\nUse RESTART or press R to retry";
     }
 
     void TogglePause()
@@ -75,7 +75,7 @@ public class PrototypeMatchManager : MonoBehaviour
         paused = !paused;
         Time.timeScale = paused ? 0f : 1f;
         overlay.gameObject.SetActive(paused);
-        message.text = "PAUSED\nTap anywhere or press P to resume";
+        message.text = "PAUSED\nUse RESUME or press P to resume";
     }
 
     bool TouchPauseRequested()
