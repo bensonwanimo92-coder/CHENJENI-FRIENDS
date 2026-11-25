@@ -1,4 +1,6 @@
-# WordQuest Android
-WordQuest English and Kiswahili word puzzle game, packaged as an offline Android WebView app.
-
-GitHub Actions builds a debug APK on push and manual dispatch, and uploads it as an artifact. Android SDK 35 and Java 17 are configured through CI.
+# WordQuest
+An offline English and Kiswahili word puzzle game for Android.
+## Build
+GitHub Actions builds debug and unsigned release APKs. Debug APK is intended for installation/testing.
+## Gameplay
+Word clues, letter selection, coins, hints, daily challenge, difficulty selection, local progress persistence, and sound effects.
