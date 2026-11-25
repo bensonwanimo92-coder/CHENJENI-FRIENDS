@@ -14,7 +14,7 @@ public static class StreetLegendPreBuildGate
    "Assets/Scripts/PrototypeMatchManager.cs","Assets/Scripts/PrototypeMobileHUD.cs",
    "Assets/Scripts/PrototypeCommentatorManager.cs","Assets/Scripts/StreetLegendVehicleController.cs",
    "Assets/Scripts/StreetLegendChaseTarget.cs","Assets/Scripts/StreetLegendDrivingHUD.cs",
-   "Assets/Scripts/StreetLegendMissionPhase.cs","Assets/Scripts/StreetLegendRoadblockTrigger.cs",
+   "Assets/Scripts/StreetLegendMissionPhase.cs","Assets/Scripts/StreetLegendRoadblockTrigger.cs","Assets/Scripts/StreetLegendMissionIntegrationDirector.cs",\n   "Assets/Scripts/StreetLegendMissionCameraSwitcher.cs",
    "Assets/Editor/BuildHotelPrototype.cs","Assets/Editor/StreetLegendDrivingSceneBuilder.cs",
    "Assets/Editor/StreetLegendDrivingValidator.cs"
   };
