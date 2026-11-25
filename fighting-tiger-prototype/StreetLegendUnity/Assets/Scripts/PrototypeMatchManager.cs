@@ -40,9 +40,12 @@ public class PrototypeMatchManager : MonoBehaviour
         }
 
         if (Input.GetKeyDown(KeyCode.P))
+        {
             TogglePause();
+            return;
+        }
 
-        if (paused && (Input.GetKeyDown(KeyCode.P) || AnyTouchBegan()))
+        if (paused && AnyTouchBegan())
             TogglePause();
     }
 
