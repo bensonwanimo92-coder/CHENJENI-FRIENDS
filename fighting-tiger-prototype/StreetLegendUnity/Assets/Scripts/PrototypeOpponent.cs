@@ -28,6 +28,12 @@ public class PrototypeOpponent : MonoBehaviour
         if (motor.isGrounded && verticalSpeed < 0f) verticalSpeed = -2f;
         verticalSpeed += gravity * Time.deltaTime;
 
+        if (target)
+        {
+            var playerTarget = target.GetComponent<PrototypeFighterController>();
+            if (playerTarget && playerTarget.Health <= 0f) target = null;
+        }
+
         bool movingNow = false;
         if (target && Time.time >= stunUntil && health > 0f)
         {
