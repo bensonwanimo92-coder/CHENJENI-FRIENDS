@@ -19,7 +19,10 @@ public static class BuildHotelPrototype
         var pc = player.AddComponent<PrototypeFighterController>();
         var ai = enemy.AddComponent<PrototypeOpponent>();
         pc.SetOpponent(enemy.transform); ai.SetTarget(player.transform);
-        var camera = new GameObject("Prototype Camera").AddComponent<PrototypeCameraFollow>();
+        if (!AssetDatabase.IsValidFolder("Assets/Scenes")) AssetDatabase.CreateFolder("Assets", "Scenes");
+        var cameraObject = new GameObject("Prototype Camera");
+        cameraObject.AddComponent<Camera>();
+        var camera = cameraObject.AddComponent<PrototypeCameraFollow>();
         camera.target = player.transform;
         camera.transform.position = new Vector3(0,8,-10);
         camera.transform.rotation = Quaternion.Euler(35,0,0);
