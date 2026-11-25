@@ -1,5 +1,6 @@
 using UnityEngine;
 using UnityEngine.UI;
+using UnityEngine.EventSystems;
 
 /// <summary>
 /// Runtime Android touch layout and lightweight combat HUD.
@@ -23,12 +24,20 @@ public class PrototypeMobileHUD : MonoBehaviour
     int joystickFinger = -1;
     int attackFinger = -1;
     bool touchEnabled = true;
+    PrototypeCommentatorManager commentator;
+    Text voiceButtonText;
+    Text subtitleButtonText;
 
     void Awake()
     {
         player = GetComponent<PrototypeFighterController>();
         opponent = player.Opponent;
         BuildInterface();
+    }
+
+    void Start()
+    {
+        commentator = FindObjectOfType<PrototypeCommentatorManager>();
     }
 
     void Update()
@@ -110,6 +119,60 @@ public class PrototypeMobileHUD : MonoBehaviour
         MakeLabel(root.transform, "LIGHT", new Vector2(0.78f, 0.19f), 26);
         MakePanel(root.transform, "Heavy Attack Button", new Vector2(0.91f, 0.29f), new Vector2(0.91f, 0.29f), new Vector2(148, 148), new Color(0.72f, 0.2f, 0.16f, 0.86f));
         MakeLabel(root.transform, "HEAVY", new Vector2(0.91f, 0.29f), 25);
+
+        if (!FindObjectOfType<EventSystem>())
+            new GameObject("Street Legend EventSystem", typeof(EventSystem), typeof(StandaloneInputModule));
+
+        voiceButtonText = MakeSettingButton(root.transform, "VOICE ON", new Vector2(0.46f, 0.88f), ToggleVoice);
+        subtitleButtonText = MakeSettingButton(root.transform, "SUBS OFF", new Vector2(0.56f, 0.88f), ToggleSubtitles);
+    }
+
+    Text MakeSettingButton(Transform parent, string value, Vector2 anchor, UnityEngine.Events.UnityAction action)
+    {
+        var go = new GameObject(value + " Button", typeof(RectTransform), typeof(Image), typeof(Button));
+        go.transform.SetParent(parent, false);
+        var rect = go.GetComponent<RectTransform>();
+        rect.anchorMin = anchor;
+        rect.anchorMax = anchor;
+        rect.sizeDelta = new Vector2(150, 58);
+        go.GetComponent<Image>().color = new Color(0.025f, 0.12f, 0.19f, 0.82f);
+        var button = go.GetComponent<Button>();
+        button.onClick.AddListener(action);
+
+        var label = new GameObject("Label", typeof(RectTransform), typeof(Text));
+        label.transform.SetParent(go.transform, false);
+        var labelRect = label.GetComponent<RectTransform>();
+        labelRect.anchorMin = Vector2.zero;
+        labelRect.anchorMax = Vector2.one;
+        labelRect.offsetMin = Vector2.zero;
+        labelRect.offsetMax = Vector2.zero;
+        var text = label.GetComponent<Text>();
+        text.font = Resources.GetBuiltinResource<Font>("Arial.ttf");
+        text.text = value;
+        text.fontSize = 20;
+        text.fontStyle = FontStyle.Bold;
+        text.alignment = TextAnchor.MiddleCenter;
+        text.color = Color.white;
+        text.raycastTarget = false;
+        return text;
+    }
+
+    void ToggleVoice()
+    {
+        if (!commentator) commentator = FindObjectOfType<PrototypeCommentatorManager>();
+        if (!commentator) return;
+        bool enabled = !voiceButtonText.text.Contains("OFF");
+        commentator.SetCommentaryEnabled(!enabled);
+        voiceButtonText.text = enabled ? "VOICE OFF" : "VOICE ON";
+    }
+
+    void ToggleSubtitles()
+    {
+        if (!commentator) commentator = FindObjectOfType<PrototypeCommentatorManager>();
+        if (!commentator) return;
+        bool enabled = !subtitleButtonText.text.Contains("ON");
+        commentator.SetSubtitlesEnabled(!enabled);
+        subtitleButtonText.text = enabled ? "SUBS OFF" : "SUBS ON";
     }
 
     Image MakeHealthBar(Transform parent, string name, Vector2 min, Vector2 max, Color fillColor)
