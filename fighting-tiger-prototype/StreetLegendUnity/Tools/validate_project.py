@@ -4,6 +4,7 @@
 This does not replace Unity Editor compilation, Play Mode testing, or Android device QA.
 """
 from pathlib import Path
+import ast
 import json
 import sys
 
@@ -69,6 +70,13 @@ for filename, needles in checks.items():
     for needle in needles:
         if needle not in source:
             errors.append(f"{filename} is missing expected feature marker: {needle}")
+
+blender_script = ROOT / "Tools/Blender/generate_fighter_pair.py"
+if blender_script.exists():
+    try:
+        ast.parse(blender_script.read_text(encoding="utf-8"))
+    except SyntaxError as exc:
+        errors.append(f"Blender generator has invalid Python syntax: {exc}")
 
 if errors:
     print("STREET LEGEND STRUCTURAL CHECKS FAILED")
