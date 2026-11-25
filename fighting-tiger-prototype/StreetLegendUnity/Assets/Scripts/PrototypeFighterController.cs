@@ -78,5 +78,6 @@ public class PrototypeFighterController : MonoBehaviour
         if (health <= 0f) Debug.Log("Player defeated. Trigger defeat/retry flow.");
     }
 
-    public void ResetVerticalMotion() { verticalVelocity = Vector3.zero; hitStunUntil = Time.time; }\n    public void SetOpponent(Transform target) { opponent = target; }
+    public void ResetVerticalMotion() { verticalVelocity = Vector3.zero; hitStunUntil = Time.time; }
+    public void SetOpponent(Transform target) { opponent = target; }
 }
