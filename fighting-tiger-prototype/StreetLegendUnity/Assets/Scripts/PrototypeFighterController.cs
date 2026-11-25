@@ -95,7 +95,7 @@ public class PrototypeFighterController : MonoBehaviour
 
     public void TryAttack(bool heavy)
     {
-        if (Time.time < nextAttack || !opponent || health <= 0f) return;
+        if (Time.time < nextAttack || !opponent || health <= 0f || Time.time < hitStunUntil) return;
         nextAttack = Time.time + attackCooldown * (heavy ? 1.5f : 1f);
         StreetLegendGameplayEvents.Raise(StreetLegendEventType.PlayerAttackStarted, gameObject, opponent.gameObject, 0f, heavy);
         StartCoroutine(ResolveAttackAfterWindup(heavy, opponent));
@@ -108,7 +108,7 @@ public class PrototypeFighterController : MonoBehaviour
         if (health <= 0f || !targetAtStart || !targetAtStart.gameObject.activeInHierarchy)
             yield break;
 
-        Collider targetCollider = targetAtStart.GetComponent<Collider>();
+        Collider targetCollider = targetAtStart.GetComponent<Collider>();\n        if (!targetCollider) targetCollider = targetAtStart.GetComponentInChildren<Collider>();
         Vector3 origin = transform.position + Vector3.up * 1.05f;
         Vector3 targetPoint = targetCollider ? targetCollider.ClosestPoint(origin) : targetAtStart.position + Vector3.up;
         Vector3 toTarget = targetPoint - origin;
