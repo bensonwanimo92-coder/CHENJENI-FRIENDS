@@ -22,8 +22,10 @@ public class PrototypeFighterController : MonoBehaviour
     float nextAttack;
     float hitStunUntil;
     bool wasMoving;
+    Vector2 mobileMoveInput;
 
     public float Health => health;
+    public PrototypeOpponent Opponent => opponent ? opponent.GetComponent<PrototypeOpponent>() : null;
     public bool IsGrounded => motor && motor.isGrounded;
 
     void Awake() { motor = GetComponent<CharacterController>(); }
@@ -43,8 +45,9 @@ public class PrototypeFighterController : MonoBehaviour
             return;
         }
 
-        Vector3 move = new Vector3(Input.GetAxisRaw("Horizontal"), 0f, Input.GetAxisRaw("Vertical"));
-        move = Vector3.ClampMagnitude(move, 1f);
+        Vector2 keyboardMove = new Vector2(Input.GetAxisRaw("Horizontal"), Input.GetAxisRaw("Vertical"));
+        Vector2 combinedMove = keyboardMove.sqrMagnitude > 0.01f ? keyboardMove : mobileMoveInput;
+        Vector3 move = Vector3.ClampMagnitude(new Vector3(combinedMove.x, 0f, combinedMove.y), 1f);
         bool moving = move.sqrMagnitude > 0.01f && Time.time >= hitStunUntil;
         if (moving)
         {
@@ -155,6 +158,7 @@ public class PrototypeFighterController : MonoBehaviour
         }
     }
 
+    public void SetMobileMoveInput(Vector2 value) { mobileMoveInput = Vector2.ClampMagnitude(value, 1f); }
     public void ResetVerticalMotion() { verticalVelocity = Vector3.zero; hitStunUntil = Time.time; }
     public void SetOpponent(Transform target) { opponent = target; }
 }
