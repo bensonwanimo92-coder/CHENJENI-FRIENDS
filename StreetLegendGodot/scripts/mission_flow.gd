@@ -51,9 +51,13 @@ func reach_roadblock() -> void:
 		if is_instance_valid(roadblock_point):
 			roadblock_enemy.global_transform = roadblock_point.global_transform
 		roadblock_enemy.visible = true
-		if roadblock_enemy.has_method("set"):
+		if roadblock_enemy.has_method("set_target"):
+			roadblock_enemy.set_target(player)
+		elif roadblock_enemy.has_method("set"):
 			roadblock_enemy.set("target", player)
-	if is_instance_valid(player) and player.has_method("set"):
+	if is_instance_valid(player) and player.has_method("set_opponent"):
+		player.set_opponent(roadblock_enemy)
+	elif is_instance_valid(player) and player.has_method("set"):
 		player.set("opponent", roadblock_enemy)
 	_set_phase(Phase.ROADBLOCK_COMBAT)
 	_handoff_running = false
