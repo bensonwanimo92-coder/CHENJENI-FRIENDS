@@ -8,15 +8,15 @@ const ChaseScript = preload("res://scripts/chase_target.gd")
 const CameraScript = preload("res://scripts/third_person_camera.gd")
 const MissionScript = preload("res://scripts/mission_flow.gd")
 
-var player: CharacterBody3D
-var hotel_enemy: CharacterBody3D
-var roadblock_enemy: CharacterBody3D
-var vehicle: CharacterBody3D
-var chase_target: Node3D
+var player: StreetLegendFighter
+var hotel_enemy: StreetLegendFighter
+var roadblock_enemy: StreetLegendFighter
+var vehicle: StreetLegendVehicleController
+var chase_target: StreetLegendChaseTarget
 var roadblock_marker: Node3D
-var mission: Node
-var controls: Control
-var camera_rig: Camera3D
+var mission: StreetLegendMissionFlow
+var controls: StreetLegendMobileControls
+var camera_rig: StreetLegendThirdPersonCamera
 var status_label: Label
 
 func _ready() -> void:
@@ -33,8 +33,7 @@ func _ready() -> void:
 	roadblock_marker = Node3D.new()
 	roadblock_marker.position = Vector3(0.0, 0.0, -56.0)
 	add_child(roadblock_marker)
-	mission = Node.new()
-	mission.set_script(MissionScript)
+	mission = MissionScript.new()
 	add_child(mission)
 	mission.set("player", player)
 	mission.set("hotel_enemy", hotel_enemy)
@@ -48,8 +47,7 @@ func _ready() -> void:
 	player.knocked_out.connect(mission.notify_player_defeated)
 	mission.phase_changed.connect(_on_mission_phase_changed)
 	mission.mission_finished.connect(_on_mission_finished)
-	controls = Control.new()
-	controls.set_script(MobileControlsScript)
+	controls = MobileControlsScript.new()
 	controls.set("fighter", player)
 	controls.set("vehicle", vehicle)
 	add_child(controls)
@@ -87,7 +85,7 @@ func _build_world() -> void:
 	var floor_shape := BoxShape3D.new()
 	floor_shape.size = Vector3(40.0, 0.2, 180.0)
 	floor_collision.shape = floor_shape
-	floor_collision.position = Vector3(0.0, -0.1, -35.0)
+	floor_collision.position = Vector3(0.0, -0.1, 0.0)
 	floor_body.position.z = -35.0
 	floor_body.add_child(floor_collision)
 	add_child(floor_body)
@@ -95,9 +93,8 @@ func _build_world() -> void:
 	sun.rotation_degrees = Vector3(-48.0, -28.0, 0.0)
 	sun.light_energy = 1.35
 	add_child(sun)
-	camera_rig = Camera3D.new()
+	camera_rig = CameraScript.new()
 	camera_rig.name = "ThirdPersonCamera"
-	camera_rig.set_script(CameraScript)
 	camera_rig.position = Vector3(0.0, 7.5, 10.5)
 	camera_rig.current = true
 	add_child(camera_rig)
@@ -113,7 +110,7 @@ func _build_world() -> void:
 	barrier.material_override = barrier_mat
 	add_child(barrier)
 
-func _spawn_fighter(label: String, spawn: Vector3, tint: Color, is_player: bool) -> CharacterBody3D:
+func _spawn_fighter(label: String, spawn: Vector3, tint: Color, is_player: bool) -> StreetLegendFighter:
 	var body := CharacterBody3D.new()
 	body.name = label.replace(" ", "")
 	body.position = spawn
@@ -141,9 +138,9 @@ func _spawn_fighter(label: String, spawn: Vector3, tint: Color, is_player: bool)
 	collision.position.y = 0.9
 	body.add_child(collision)
 	add_child(body)
-	return body
+	return body as StreetLegendFighter
 
-func _spawn_vehicle() -> CharacterBody3D:
+func _spawn_vehicle() -> StreetLegendVehicleController:
 	var car := CharacterBody3D.new()
 	car.name = "WanimoCar"
 	car.set_script(VehicleScript)
@@ -167,9 +164,9 @@ func _spawn_vehicle() -> CharacterBody3D:
 	car.add_child(collision)
 	add_child(car)
 	car.visible = false
-	return car
+	return car as StreetLegendVehicleController
 
-func _spawn_chase_target() -> Node3D:
+func _spawn_chase_target() -> StreetLegendChaseTarget:
 	var rover := Node3D.new()
 	rover.name = "EscapingRangeRover"
 	rover.set_script(ChaseScript)
@@ -191,7 +188,7 @@ func _spawn_chase_target() -> Node3D:
 	rover.set("route", [waypoint])
 	rover.set("player_vehicle", vehicle)
 	add_child(rover)
-	return rover
+	return rover as StreetLegendChaseTarget
 
 func _make_marker(position: Vector3, marker_name: String) -> Node3D:
 	var marker := Node3D.new()
