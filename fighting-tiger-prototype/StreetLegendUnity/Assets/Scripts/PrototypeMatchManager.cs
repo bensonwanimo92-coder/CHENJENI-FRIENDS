@@ -1,3 +1,4 @@
+using System.Collections;
 using UnityEngine;
 using UnityEngine.SceneManagement;
 using UnityEngine.UI;
@@ -16,6 +17,7 @@ public class PrototypeMatchManager : MonoBehaviour
     Text message;
     bool finished;
     bool paused;
+    bool ending;
 
     void Awake() { BuildOverlay(); }
 
@@ -27,10 +29,10 @@ public class PrototypeMatchManager : MonoBehaviour
 
     void Update()
     {
-        if (!finished && !paused)
+        if (!finished && !paused && !ending)
         {
-            if (player && player.Health <= 0f) FinishRound(false);
-            else if (opponent && opponent.Health <= 0f) FinishRound(true);
+            if (player && player.Health <= 0f) StartCoroutine(EndAfterKnockout(false));
+            else if (opponent && opponent.Health <= 0f) StartCoroutine(EndAfterKnockout(true));
         }
 
         if (finished)
@@ -47,6 +49,14 @@ public class PrototypeMatchManager : MonoBehaviour
 
         if (paused && AnyTouchBegan())
             TogglePause();
+    }
+
+    IEnumerator EndAfterKnockout(bool won)
+    {
+        ending = true;
+        // Leave enough unscaled time for the knockout pose and commentator callout to begin.
+        yield return new WaitForSecondsRealtime(1.1f);
+        FinishRound(won);
     }
 
     void FinishRound(bool won)
