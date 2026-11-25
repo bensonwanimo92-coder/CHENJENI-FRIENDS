@@ -26,6 +26,27 @@ def material(name, color, metallic=0.0, roughness=0.68):
     bs.inputs["Base Color"].default_value = (*color, 1.0)
     bs.inputs["Metallic"].default_value = metallic
     bs.inputs["Roughness"].default_value = roughness
+
+    # Fine procedural surface breakup prevents completely flat plastic-looking materials.
+    nodes = m.node_tree.nodes
+    links = m.node_tree.links
+    noise = nodes.new("ShaderNodeTexNoise")
+    noise.name = name + "_FineSurface"
+    noise.inputs["Scale"].default_value = 38.0 if "Skin" in name else 22.0
+    noise.inputs["Detail"].default_value = 3.0
+    noise.inputs["Roughness"].default_value = 0.72
+    bump = nodes.new("ShaderNodeBump")
+    bump.inputs["Strength"].default_value = 0.12 if "Skin" in name else 0.07
+    bump.inputs["Distance"].default_value = 0.018 if "Skin" in name else 0.012
+    links.new(noise.outputs["Fac"], bump.inputs["Height"])
+    links.new(bump.outputs["Normal"], bs.inputs["Normal"])
+    rough_map = nodes.new("ShaderNodeMapRange")
+    rough_map.inputs["From Min"].default_value = 0.0
+    rough_map.inputs["From Max"].default_value = 1.0
+    rough_map.inputs["To Min"].default_value = max(0.18, roughness - 0.12)
+    rough_map.inputs["To Max"].default_value = min(1.0, roughness + 0.12)
+    links.new(noise.outputs["Fac"], rough_map.inputs["Value"])
+    links.new(rough_map.outputs["Result"], bs.inputs["Roughness"])
     return m
 
 def uv_part(name, loc, scale, mat, bone, arm, groups, segments=24, rings=16):
@@ -96,6 +117,8 @@ def build_character(prefix, xoff, skin_color, shirt_color, pants_color, accent_c
     pants = material(prefix+"_Trousers", pants_color, roughness=0.88)
     accent = material(prefix+"_Accents", accent_color, metallic=0.08)
     eye = material(prefix+"_Eyes", (0.055, 0.035, 0.025), roughness=0.25)
+    hair = material(prefix+"_Hair", (0.025, 0.018, 0.014) if not broad else (0.055, 0.035, 0.025), roughness=0.58)
+    lip = material(prefix+"_Lips", (0.22, 0.075, 0.055), roughness=0.72)
     arm = create_rig(prefix, xoff)
     parts = []
     torso_w = 0.27 if broad else 0.235
@@ -107,6 +130,14 @@ def build_character(prefix, xoff, skin_color, shirt_color, pants_color, accent_c
     uv_part(prefix+"_Head", (xoff, -0.005, 1.82), (0.125, 0.115, 0.17), skin, "Head", arm, parts, 32, 24)
     # Jaw/chin and ears give the silhouette more human definition.
     uv_part(prefix+"_Jaw", (xoff, -0.045, 1.75), (0.092, 0.085, 0.075), skin, "Head", arm, parts)
+    # Hair cap, hairline, and mouth detail improve the facial silhouette.
+    uv_part(prefix+"_HairCap", (xoff, 0.005, 1.935), (0.132, 0.12, 0.085), hair, "Head", arm, parts, 32, 16)
+    uv_part(prefix+"_Hairline", (xoff, -0.082, 1.925), (0.105, 0.045, 0.035), hair, "Head", arm, parts, 24, 12)
+    if broad:
+        uv_part(prefix+"_ShortHairBack", (xoff, 0.075, 1.86), (0.12, 0.09, 0.12), hair, "Head", arm, parts)
+    else:
+        uv_part(prefix+"_HairSweep", (xoff-0.035, -0.055, 1.985), (0.09, 0.09, 0.045), hair, "Head", arm, parts)
+    uv_part(prefix+"_Mouth", (xoff, -0.128, 1.765), (0.038, 0.009, 0.009), lip, "Head", arm, parts, 20, 12)
     for s, side in ((-1,"L"),(1,"R")):
         prefix_side = "Left" if side == "L" else "Right"
         uv_part(prefix+"_Ear_"+side, (xoff+s*0.124, 0, 1.82), (0.027,0.035,0.052), skin, "Head", arm, parts, 16, 12)
