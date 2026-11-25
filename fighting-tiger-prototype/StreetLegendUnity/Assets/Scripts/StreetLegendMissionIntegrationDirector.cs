@@ -26,7 +26,7 @@ public class StreetLegendMissionIntegrationDirector : MonoBehaviour
   if(hotelMatchManager)hotelMatchManager.gameObject.SetActive(false);
   Time.timeScale=1f;
   if(hotelPlayer)hotelPlayer.enabled=false;
-  if(hotelCombatHud)hotelCombatHud.enabled=false;
+  if(hotelCombatHud)hotelCombatHud.SetHUDVisible(false);
   if(vehicleEntryPoint){vehicle.transform.position=vehicleEntryPoint.position;vehicle.transform.rotation=vehicleEntryPoint.rotation;}
   vehicle.gameObject.SetActive(true);
   yield return new WaitForSecondsRealtime(1.6f);
