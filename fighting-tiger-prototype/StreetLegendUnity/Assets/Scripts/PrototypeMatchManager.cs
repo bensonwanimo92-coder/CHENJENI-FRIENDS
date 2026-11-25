@@ -41,7 +41,7 @@ public class PrototypeMatchManager : MonoBehaviour
             return;
         }
 
-        if (Input.GetKeyDown(KeyCode.P))
+        if (Input.GetKeyDown(KeyCode.P) || (!paused && !ending && TouchPauseRequested()))
         {
             TogglePause();
             return;
@@ -76,6 +76,19 @@ public class PrototypeMatchManager : MonoBehaviour
         Time.timeScale = paused ? 0f : 1f;
         overlay.gameObject.SetActive(paused);
         message.text = "PAUSED\nTap anywhere or press P to resume";
+    }
+
+    bool TouchPauseRequested()
+    {
+        for (int i = 0; i < Input.touchCount; i++)
+        {
+            Touch touch = Input.GetTouch(i);
+            if (touch.phase == TouchPhase.Began &&
+                touch.position.x >= Screen.width * 0.86f &&
+                touch.position.y >= Screen.height * 0.82f)
+                return true;
+        }
+        return false;
     }
 
     bool AnyTouchBegan()
