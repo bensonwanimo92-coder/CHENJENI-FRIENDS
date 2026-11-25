@@ -88,7 +88,11 @@ public class PrototypeCommentatorManager : MonoBehaviour
     {
         while (queue.Count > 0)
         {
-            int bestIndex = 0;\n            for (int i = 1; i < queue.Count; i++)\n                if (queue[i].Priority > queue[bestIndex].Priority) bestIndex = i;\n            QueuedLine line = queue[bestIndex];\n            queue.RemoveAt(bestIndex);
+            int bestIndex = 0;
+            for (int i = 1; i < queue.Count; i++)
+                if (queue[i].Priority > queue[bestIndex].Priority) bestIndex = i;
+            QueuedLine line = queue[bestIndex];
+            queue.RemoveAt(bestIndex);
             if (!line.Clip) continue;
             voice.volume = volume;
             voice.clip = line.Clip;
