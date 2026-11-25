@@ -138,13 +138,21 @@ public class PrototypeOpponent : MonoBehaviour
         float distance = toTarget.magnitude;
         Vector3 flat = toTarget;
         flat.y = 0f;
+        // Revalidate at impact: movement, dodges and walls can invalidate the wind-up.
         if (distance > attackRange || distance < 0.01f ||
-            Vector3.Angle(transform.forward, flat.normalized) > attackHalfAngle) yield break;
-
-        if (!HasClearAttackLine(origin, toTarget.normalized, distance + 0.08f, targetAtStart)) yield break;
-
+            Vector3.Angle(transform.forward, flat.normalized) > attackHalfAngle)
+        { RaiseAttackMiss(targetAtStart); yield break; }
+        if (!HasClearAttackLine(origin, toTarget.normalized, distance + 0.08f, targetAtStart))
+        { RaiseAttackMiss(targetAtStart); yield break; }
         var player = targetAtStart.GetComponent<PrototypeFighterController>();
-        if (player) player.ReceiveHit(attackDamage, transform.forward, false);
+        if (player && player.Health > 0f) player.ReceiveHit(attackDamage, transform.forward, false);
+        else RaiseAttackMiss(targetAtStart);
+    }
+
+    void RaiseAttackMiss(Transform targetTransform)
+    {
+        StreetLegendGameplayEvents.Raise(StreetLegendEventType.OpponentAttackMissed, gameObject,
+            targetTransform ? targetTransform.gameObject : null);
     }
 
     bool HasClearAttackLine(Vector3 origin, Vector3 direction, float distance, Transform targetTransform)
