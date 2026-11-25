@@ -1,4 +1,4 @@
-extends CanvasLayer
+extends Control
 class_name StreetLegendMobileControls
 
 @export var fighter: StreetLegendFighter
@@ -13,7 +13,8 @@ var steer_value := 0.0
 var attack_flash := 0.0
 
 func _ready() -> void:
-	layer = 20
+	set_anchors_and_offsets_preset(Control.PRESET_FULL_RECT)
+	mouse_filter = Control.MOUSE_FILTER_IGNORE
 	set_process(true)
 
 func set_driving_mode(enabled: bool) -> void:
