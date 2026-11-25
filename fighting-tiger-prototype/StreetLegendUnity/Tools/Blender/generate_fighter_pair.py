@@ -70,20 +70,21 @@ def create_rig(prefix, xoff):
     neck = make_bone(eb, "Neck", (xoff, 0, 1.58), (xoff, 0, 1.72), chest)
     head = make_bone(eb, "Head", (xoff, 0, 1.72), (xoff, 0, 1.98), neck)
     for side, s in (("L", -1), ("R", 1)):
+        prefix_side = "Left" if side == "L" else "Right"
         sh = (xoff + s*0.22, 0, 1.52)
         elbow = (xoff + s*0.39, 0, 1.22)
         wrist = (xoff + s*0.43, -0.01, 0.98)
         hand = (xoff + s*0.43, -0.02, 0.86)
-        upper = make_bone(eb, "UpperArm."+side, sh, elbow, chest)
-        fore = make_bone(eb, "LowerArm."+side, elbow, wrist, upper, True)
-        make_bone(eb, "Hand."+side, wrist, hand, fore, True)
+        upper = make_bone(eb, prefix_side+"UpperArm", sh, elbow, chest)
+        fore = make_bone(eb, prefix_side+"LowerArm", elbow, wrist, upper, True)
+        make_bone(eb, prefix_side+"Hand", wrist, hand, fore, True)
         hip = (xoff + s*0.12, 0, 0.92)
         knee = (xoff + s*0.13, 0, 0.52)
         ankle = (xoff + s*0.13, 0, 0.12)
         foot = (xoff + s*0.13, -0.13, 0.06)
-        thigh = make_bone(eb, "UpperLeg."+side, hip, knee, pelvis)
-        shin = make_bone(eb, "LowerLeg."+side, knee, ankle, thigh, True)
-        make_bone(eb, "Foot."+side, ankle, foot, shin)
+        thigh = make_bone(eb, prefix_side+"UpperLeg", hip, knee, pelvis)
+        shin = make_bone(eb, prefix_side+"LowerLeg", knee, ankle, thigh, True)
+        make_bone(eb, prefix_side+"Foot", ankle, foot, shin)
     bpy.ops.object.mode_set(mode="OBJECT")
     arm.show_in_front = True
     arm.data.display_type = "OCTAHEDRAL"
@@ -110,16 +111,16 @@ def build_character(prefix, xoff, skin_color, shirt_color, pants_color, accent_c
         uv_part(prefix+"_Ear_"+side, (xoff+s*0.124, 0, 1.82), (0.027,0.035,0.052), skin, "Head", arm, parts, 16, 12)
         uv_part(prefix+"_Eye_"+side, (xoff+s*0.047, -0.108, 1.855), (0.018,0.012,0.012), eye, "Head", arm, parts, 16, 12)
         # Upper/lower arms, deltoids, forearms and wrapped fists.
-        uv_part(prefix+"_Shoulder_"+side, (xoff+s*0.245, 0, 1.51), (0.12,0.13,0.13), shirt, "UpperArm."+side, arm, parts)
-        uv_part(prefix+"_UpperArm_"+side, (xoff+s*0.315, 0, 1.36), (0.095,0.095,0.19), skin, "UpperArm."+side, arm, parts)
-        uv_part(prefix+"_Elbow_"+side, (xoff+s*0.39, 0, 1.22), (0.078,0.078,0.075), skin, "LowerArm."+side, arm, parts)
-        uv_part(prefix+"_Forearm_"+side, (xoff+s*0.41, -0.005, 1.09), (0.078,0.075,0.15), skin, "LowerArm."+side, arm, parts)
-        uv_part(prefix+"_Glove_"+side, (xoff+s*0.43, -0.025, 0.91), (0.075,0.085,0.085), accent, "Hand."+side, arm, parts)
+        uv_part(prefix+"_Shoulder_"+side, (xoff+s*0.245, 0, 1.51), (0.12,0.13,0.13), shirt, prefix_side+"UpperArm", arm, parts)
+        uv_part(prefix+"_UpperArm_"+side, (xoff+s*0.315, 0, 1.36), (0.095,0.095,0.19), skin, prefix_side+"UpperArm", arm, parts)
+        uv_part(prefix+"_Elbow_"+side, (xoff+s*0.39, 0, 1.22), (0.078,0.078,0.075), skin, prefix_side+"LowerArm", arm, parts)
+        uv_part(prefix+"_Forearm_"+side, (xoff+s*0.41, -0.005, 1.09), (0.078,0.075,0.15), skin, prefix_side+"LowerArm", arm, parts)
+        uv_part(prefix+"_Glove_"+side, (xoff+s*0.43, -0.025, 0.91), (0.075,0.085,0.085), accent, prefix_side+"Hand", arm, parts)
         # Legs with separate trouser and lower-leg volumes.
-        uv_part(prefix+"_Thigh_"+side, (xoff+s*0.12, 0, 0.73), (0.12,0.13,0.235), pants, "UpperLeg."+side, arm, parts)
-        uv_part(prefix+"_Knee_"+side, (xoff+s*0.13, -0.005, 0.51), (0.09,0.10,0.09), pants, "LowerLeg."+side, arm, parts)
-        uv_part(prefix+"_Shin_"+side, (xoff+s*0.13, 0, 0.31), (0.078,0.09,0.20), pants, "LowerLeg."+side, arm, parts)
-        uv_part(prefix+"_Boot_"+side, (xoff+s*0.13, -0.10, 0.12), (0.09,0.17,0.075), accent, "Foot."+side, arm, parts)
+        uv_part(prefix+"_Thigh_"+side, (xoff+s*0.12, 0, 0.73), (0.12,0.13,0.235), pants, prefix_side+"UpperLeg", arm, parts)
+        uv_part(prefix+"_Knee_"+side, (xoff+s*0.13, -0.005, 0.51), (0.09,0.10,0.09), pants, prefix_side+"LowerLeg", arm, parts)
+        uv_part(prefix+"_Shin_"+side, (xoff+s*0.13, 0, 0.31), (0.078,0.09,0.20), pants, prefix_side+"LowerLeg", arm, parts)
+        uv_part(prefix+"_Boot_"+side, (xoff+s*0.13, -0.10, 0.12), (0.09,0.17,0.075), accent, prefix_side+"Foot", arm, parts)
     # Subtle brow and nose volumes, attached to head bone.
     uv_part(prefix+"_Nose", (xoff, -0.125, 1.82), (0.026,0.035,0.045), skin, "Head", arm, parts, 16, 12)
     for s in (-1,1):
