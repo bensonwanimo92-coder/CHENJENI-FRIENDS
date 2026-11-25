@@ -1,0 +1,2 @@
+using UnityEngine;
+public class StreetLegendDrivingCamera:MonoBehaviour{public Transform target;public Vector3 offset=new Vector3(0,6,-11);public float smoothing=6;void LateUpdate(){if(!target)return;Vector3 desired=target.TransformPoint(offset);transform.position=Vector3.Lerp(transform.position,desired,smoothing*Time.deltaTime);transform.rotation=Quaternion.Lerp(transform.rotation,Quaternion.LookRotation(target.position+Vector3.up*1.2f-transform.position),smoothing*Time.deltaTime);}}
