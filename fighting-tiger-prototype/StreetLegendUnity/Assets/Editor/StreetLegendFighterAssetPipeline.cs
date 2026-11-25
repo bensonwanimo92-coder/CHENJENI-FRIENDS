@@ -57,12 +57,29 @@ public class StreetLegendFighterAssetPipeline : AssetPostprocessor
                 continue;
             }
 
+            Avatar humanoidAvatar = null;
+            Object[] importedAssets = AssetDatabase.LoadAllAssetsAtPath(modelPath);
+            foreach (Object importedAsset in importedAssets)
+            {
+                if (importedAsset is Avatar candidate)
+                {
+                    humanoidAvatar = candidate;
+                    break;
+                }
+            }
+            if (!humanoidAvatar || !humanoidAvatar.isValid || !humanoidAvatar.isHuman)
+            {
+                Debug.LogError("Humanoid Avatar mapping is invalid for " + modelPath +
+                    ". Open the FBX Rig tab, configure the bone mapping, and Apply.");
+                continue;
+            }
+
             var instance = PrefabUtility.InstantiatePrefab(model) as GameObject;
             if (!instance) continue;
             instance.name = name;
             var animator = instance.GetComponent<Animator>();
             if (!animator) animator = instance.AddComponent<Animator>();
-            animator.avatar = importer.GetSourceAvatar();
+            animator.avatar = humanoidAvatar;
             animator.applyRootMotion = false;
 
             // The CharacterController belongs on the fighter root, not on individual body parts.
