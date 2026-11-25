@@ -17,6 +17,7 @@ public class PrototypeOpponent : MonoBehaviour
     float nextAttack;
     float stunUntil;
     float verticalSpeed;
+    bool wasMoving;
     public float Health => health;
 
     void Awake() { motor = GetComponent<CharacterController>(); }
@@ -27,6 +28,7 @@ public class PrototypeOpponent : MonoBehaviour
         if (motor.isGrounded && verticalSpeed < 0f) verticalSpeed = -2f;
         verticalSpeed += gravity * Time.deltaTime;
 
+        bool movingNow = false;
         if (target && Time.time >= stunUntil && health > 0f)
         {
             Vector3 delta = target.position - transform.position;
@@ -37,12 +39,23 @@ public class PrototypeOpponent : MonoBehaviour
             if (delta.magnitude > attackRange)
             {
                 Vector3 desiredDirection = ChooseApproachDirection(delta.normalized);
-                motor.Move(desiredDirection * moveSpeed * Time.deltaTime);
+                if (desiredDirection.sqrMagnitude > 0.001f)
+                {
+                    motor.Move(desiredDirection * moveSpeed * Time.deltaTime);
+                    movingNow = true;
+                }
             }
             else if (Time.time >= nextAttack)
                 TryAttack();
         }
 
+        if (movingNow != wasMoving)
+        {
+            StreetLegendGameplayEvents.Raise(
+                movingNow ? StreetLegendEventType.OpponentStartedMoving : StreetLegendEventType.OpponentStoppedMoving,
+                gameObject, target ? target.gameObject : null);
+            wasMoving = movingNow;
+        }
         motor.Move(Vector3.up * verticalSpeed * Time.deltaTime);
     }
 
