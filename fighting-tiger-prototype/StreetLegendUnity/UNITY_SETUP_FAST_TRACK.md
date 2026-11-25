@@ -23,7 +23,7 @@ Android build command in the editor: **Street Legend → Build Android APK**.
 - If a compilation error exists, stop and resolve all errors first; don't attempt APK builds with red Console errors.
 - Keep the recorded Unity version unchanged until first successful editor compilation.
 - Do not install optional Cinemachine/URP upgrades during this initial compile gate unless a concrete error or task needs them.
-- Keep first APK out of scope until model, animation, geometry, controls, scene-transition, memory/performance and device checks are completed.
+- Prioritize the first APK after the minimum integration gate: Unity compilation succeeds, scenes and controls are wired, core Level 1 transitions are checked in Play Mode, and no blocking errors remain. Treat visual polish and non-blocking refinements as post-first-APK upgrades, but do not silently omit them from the backlog.
 
 ## Remaining gates
 - [ ] Unity opens project and imports without errors.
