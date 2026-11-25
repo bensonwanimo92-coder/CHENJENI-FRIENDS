@@ -1,5 +1,6 @@
 using System.IO;
 using UnityEditor;
+using UnityEditor.Animations;
 using UnityEngine;
 
 /// <summary>
@@ -10,6 +11,7 @@ public class StreetLegendFighterAssetPipeline : AssetPostprocessor
 {
     const string GeneratedFolder = "Assets/Characters/Generated";
     const string PrefabFolder = "Assets/Characters/Prefabs";
+    const string ControllerFolder = "Assets/Characters/Controllers";
 
     void OnPreprocessModel()
     {
@@ -36,6 +38,8 @@ public class StreetLegendFighterAssetPipeline : AssetPostprocessor
             AssetDatabase.CreateFolder("Assets", "Characters");
         if (!AssetDatabase.IsValidFolder(PrefabFolder))
             AssetDatabase.CreateFolder("Assets/Characters", "Prefabs");
+        if (!AssetDatabase.IsValidFolder(ControllerFolder))
+            AssetDatabase.CreateFolder("Assets/Characters", "Controllers");
 
         string[] names = { "Wanimoo_Player", "Hotel_Enforcer" };
         int created = 0;
@@ -81,6 +85,10 @@ public class StreetLegendFighterAssetPipeline : AssetPostprocessor
             if (!animator) animator = instance.AddComponent<Animator>();
             animator.avatar = humanoidAvatar;
             animator.applyRootMotion = false;
+            RuntimeAnimatorController generatedController = BuildAnimationController(name, importedAssets);
+            if (generatedController) animator.runtimeAnimatorController = generatedController;
+            var animationDriver = instance.GetComponent<PrototypeHumanoidAnimationDriver>();
+            if (!animationDriver) animationDriver = instance.AddComponent<PrototypeHumanoidAnimationDriver>();
 
             // The CharacterController belongs on the fighter root, not on individual body parts.
             var controller = instance.GetComponent<CharacterController>();
@@ -101,5 +109,49 @@ public class StreetLegendFighterAssetPipeline : AssetPostprocessor
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
         Debug.Log("Street Legend fighter pipeline: " + created + "/2 prefabs prepared. Verify the Avatar mapping in the Model Importer before animation work.");
+    }
+
+    static RuntimeAnimatorController BuildAnimationController(string fighterName, Object[] importedAssets)
+    {
+        string controllerPath = ControllerFolder + "/" + fighterName + "_Controller.controller";
+        if (AssetDatabase.LoadAssetAtPath<AnimatorController>(controllerPath))
+            AssetDatabase.DeleteAsset(controllerPath);
+
+        AnimatorController controller = AnimatorController.CreateAnimatorControllerAtPath(controllerPath);
+        AnimatorStateMachine machine = controller.layers[0].stateMachine;
+        int importedCount = 0;
+        foreach (Object asset in importedAssets)
+        {
+            AnimationClip clip = asset as AnimationClip;
+            if (!clip || clip.name.StartsWith("__preview__")) continue;
+            string lower = clip.name.ToLowerInvariant();
+            string stateName = null;
+            if (lower.Contains("sl_idle")) stateName = "Idle";
+            else if (lower.Contains("sl_guard")) stateName = "Guard";
+            else if (lower.Contains("sl_jab")) stateName = "Jab";
+            else if (lower.Contains("sl_heavykick")) stateName = "HeavyKick";
+            else if (lower.Contains("sl_hitreact")) stateName = "HitReact";
+            else if (lower.Contains("sl_knockout")) stateName = "Knockout";
+            if (stateName == null || machine.states.Length > 0 && System.Array.Exists(machine.states, s => s.state.name == stateName))
+                continue;
+
+            AnimatorState state = machine.AddState(stateName);
+            state.motion = clip;
+            if (stateName == "Idle") machine.defaultState = state;
+            importedCount++;
+        }
+
+        if (importedCount == 0)
+        {
+            AssetDatabase.DeleteAsset(controllerPath);
+            Debug.LogWarning("No Street Legend animation takes were found in " + fighterName +
+                ". The Humanoid prefab will still be created, but it will need animation clips before it can move naturally.");
+            return null;
+        }
+
+        if (machine.defaultState == null && machine.states.Length > 0)
+            machine.defaultState = machine.states[0].state;
+        Debug.Log("Created " + importedCount + " animation states for " + fighterName + ": " + controllerPath);
+        return controller;
     }
 }
