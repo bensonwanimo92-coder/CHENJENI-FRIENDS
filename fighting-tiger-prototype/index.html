@@ -42,4 +42,18 @@ hit=function(type){if(playerCooldown>0||blocking)return;playerCooldown=type==='k
 update=function(){let sp=.0048;for(let k in keys)if(keys[k]){if(k==='up')player.y-=sp;if(k==='down')player.y+=sp;if(k==='left')player.x-=sp;if(k==='right')player.x+=sp}player.x=Math.max(.08,Math.min(.92,player.x));player.y=Math.max(.46,Math.min(.84,player.y));if(enemy.hp>0&&player.hp>0){let dx=player.x-enemy.x,dy=player.y-enemy.y,dist=Math.abs(dx);if(enemyWindup>0){enemyWindup-=30;if(enemyWindup<=0&&dist<.13&&Math.abs(dy)<.13&&!dodging){player.hp=Math.max(0,player.hp-(blocking?2:9));flash=blocking?2:5;hud();enemyCooldown=850}}else if(enemyCooldown>0)enemyCooldown-=30;else if(dist<.13&&Math.abs(dy)<.13&&Math.random()<.025){enemyWindup=240;document.querySelector('#title').textContent='RIVAL ATTACK! BLOCK OR DODGE';enemy.attack=1;setTimeout(()=>enemy.attack=0,220)}else{enemy.x+=Math.sign(dx)*.0012;enemy.y+=Math.sign(dy)*.00065}}hud();setTimeout(update,30)};
 update();
 </script>
+
+<script>
+// Additional polish: match-style timer, arena boundaries, stamina, round reset and mobile sound toggle.
+let stamina=100, roundSeconds=90, roundTimer=null, soundEnabled=false;
+const extraHud=document.createElement('div');extraHud.style.cssText='position:fixed;top:110px;left:50%;transform:translateX(-50%);background:#101719cc;border:1px solid #87938a;border-radius:12px;padding:8px 14px;text-align:center;color:#fff;font-weight:800;z-index:5';extraHud.innerHTML='ROUND 1 · <span id="timer">90</span><br><small>STAMINA</small><div style="width:150px;height:8px;background:#555;border-radius:6px;overflow:hidden"><div id="staminabar" style="height:100%;width:100%;background:#53c8a1"></div></div>';document.body.appendChild(extraHud);
+const soundBtn=document.createElement('button');soundBtn.textContent='🔇';soundBtn.style.cssText='position:fixed;top:12px;left:50%;transform:translateX(-50%);z-index:8;background:#17201e;color:white;border:1px solid #aaa;border-radius:10px;padding:8px';document.body.appendChild(soundBtn);soundBtn.onclick=()=>{soundEnabled=!soundEnabled;soundBtn.textContent=soundEnabled?'🔊':'🔇'};
+function startRoundClock(){if(roundTimer)clearInterval(roundTimer);roundSeconds=90;roundTimer=setInterval(()=>{if(player.hp<=0||enemy.hp<=0){clearInterval(roundTimer);return}roundSeconds--;document.querySelector('#timer').textContent=roundSeconds;if(roundSeconds<=0){clearInterval(roundTimer);document.querySelector('#title').textContent=player.hp>enemy.hp?'TIME UP · PLAYER WINS':'TIME UP · RIVAL WINS'}},1000)}startRoundClock();
+// Stamina drains on attacks/dodge and regenerates while idle.
+const oldHit=hit;hit=function(type){if(stamina<(type==='kick'?25:12)) {document.querySelector('#title').textContent='LOW STAMINA · RECOVER';return}stamina=Math.max(0,stamina-(type==='kick'?25:12));oldHit(type)};
+const oldDodge=dodgeBtn.onclick;dodgeBtn.onclick=()=>{if(stamina<20){document.querySelector('#title').textContent='LOW STAMINA · RECOVER';return}stamina-=20;if(oldDodge)oldDodge()};
+const staminaLoop=setInterval(()=>{if(!blocking&&!keys.up&&!keys.down&&!keys.left&&!keys.right)stamina=Math.min(100,stamina+1.2);document.querySelector('#staminabar').style.width=stamina+'%'},120);
+// Keep both fighters within arena and add a small arena label.
+const arenaLabel=document.createElement('div');arenaLabel.textContent='DOJO DISTRICT · NIGHT';arenaLabel.style.cssText='position:fixed;bottom:8px;left:50%;transform:translateX(-50%);color:#cbd5d1;font-size:10px;letter-spacing:2px';document.body.appendChild(arenaLabel);
+</script>
 </body></html>
