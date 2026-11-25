@@ -126,11 +126,10 @@ public class PrototypeMobileHUD : MonoBehaviour
 
         voiceButtonText = MakeSettingButton(root.transform, "VOICE ON", new Vector2(0.46f, 0.88f), ToggleVoice);
         subtitleButtonText = MakeSettingButton(root.transform, "SUBS OFF", new Vector2(0.56f, 0.88f), ToggleSubtitles);
-        MakePanel(root.transform, "Pause Control", new Vector2(0.92f, 0.88f), new Vector2(0.92f, 0.88f), new Vector2(132, 58), new Color(0.08f, 0.12f, 0.18f, 0.86f));
-        MakeLabel(root.transform, "PAUSE", new Vector2(0.92f, 0.88f), 20);
+        MakePauseButton(root.transform, new Vector2(0.92f, 0.88f));
     }
 
-    Text MakeSettingButton(Transform parent, string value, Vector2 anchor, UnityEngine.Events.UnityAction action)
+    void MakePauseButton(Transform parent, Vector2 anchor)\n    {\n        var go = new GameObject("Pause Control", typeof(RectTransform), typeof(Image), typeof(Button));\n        go.transform.SetParent(parent, false);\n        var rect = go.GetComponent<RectTransform>(); rect.anchorMin = anchor; rect.anchorMax = anchor; rect.sizeDelta = new Vector2(132, 58);\n        go.GetComponent<Image>().color = new Color(0.08f, 0.12f, 0.18f, 0.86f);\n        var button = go.GetComponent<Button>(); button.onClick.AddListener(() => { var manager = FindObjectOfType<PrototypeMatchManager>(); if (manager) manager.RequestPauseToggle(); });\n        var label = new GameObject("PAUSE Label", typeof(RectTransform), typeof(Text)); label.transform.SetParent(go.transform, false);\n        var lr = label.GetComponent<RectTransform>(); lr.anchorMin = Vector2.zero; lr.anchorMax = Vector2.one; lr.offsetMin = Vector2.zero; lr.offsetMax = Vector2.zero;\n        var text = label.GetComponent<Text>(); text.font = Resources.GetBuiltinResource<Font>("Arial.ttf"); text.text = "PAUSE"; text.fontSize = 20; text.fontStyle = FontStyle.Bold; text.alignment = TextAnchor.MiddleCenter; text.color = Color.white; text.raycastTarget = false;\n    }\n\n    Text MakeSettingButton(Transform parent, string value, Vector2 anchor, UnityEngine.Events.UnityAction action)
     {
         var go = new GameObject(value + " Button", typeof(RectTransform), typeof(Image), typeof(Button));
         go.transform.SetParent(parent, false);
