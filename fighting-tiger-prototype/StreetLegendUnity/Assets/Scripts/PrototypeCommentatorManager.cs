@@ -23,7 +23,7 @@ public class PrototypeCommentatorManager : MonoBehaviour
     [SerializeField, Range(0f, 1f)] float volume = 0.9f;
     [SerializeField] CommentatorLineSet[] lineSets;
 
-    readonly Queue<QueuedLine> queue = new Queue<QueuedLine>();
+    readonly List<QueuedLine> queue = new List<QueuedLine>();
     readonly Dictionary<StreetLegendEventType, float> nextAllowedTime = new Dictionary<StreetLegendEventType, float>();
     AudioSource voice;
     Coroutine playback;
@@ -67,7 +67,7 @@ public class PrototypeCommentatorManager : MonoBehaviour
             AudioClip clip = PickClip(set.voiceVariations);
             if (!clip) return;
             nextAllowedTime[gameEvent.Type] = Time.time + set.cooldownSeconds;
-            queue.Enqueue(new QueuedLine(clip, set.priority));
+            queue.Add(new QueuedLine(clip, set.priority));
             if (playback == null) playback = StartCoroutine(PlayQueue());
             return;
         }
@@ -88,7 +88,7 @@ public class PrototypeCommentatorManager : MonoBehaviour
     {
         while (queue.Count > 0)
         {
-            QueuedLine line = queue.Dequeue();
+            int bestIndex = 0;\n            for (int i = 1; i < queue.Count; i++)\n                if (queue[i].Priority > queue[bestIndex].Priority) bestIndex = i;\n            QueuedLine line = queue[bestIndex];\n            queue.RemoveAt(bestIndex);
             if (!line.Clip) continue;
             voice.volume = volume;
             voice.clip = line.Clip;
