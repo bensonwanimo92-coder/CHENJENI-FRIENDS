@@ -49,7 +49,7 @@ checks = {
         "SetMobileMoveInput"
     ],
     "Assets/Scripts/PrototypeOpponent.cs": [
-        "ChooseApproachDirection", "ResolveAttackAfterWindup", "OpponentDefeated"
+        "ChooseApproachDirection", "ResolveAttackAfterWindup", "ChooseApproachDirection", "OpponentStartedMoving", "OpponentDefeated"
     ],
     "Assets/Scripts/PrototypeMobileHUD.cs": [
         "ToggleVoice", "ToggleSubtitles", "SetMobileMoveInput", "fillAmount"
