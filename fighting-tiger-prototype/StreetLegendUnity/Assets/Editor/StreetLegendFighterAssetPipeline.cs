@@ -108,7 +108,7 @@ public class StreetLegendFighterAssetPipeline : AssetPostprocessor
 
         AssetDatabase.SaveAssets();
         AssetDatabase.Refresh();
-        Debug.Log("Street Legend fighter pipeline: " + created + "/2 prefabs prepared. Verify the Avatar mapping in the Model Importer before animation work.");
+        Debug.Log("Street Legend fighter pipeline: " + created + "/2 prefabs prepared. Verify the imported Avatar and test each generated animation state in Play Mode before gameplay use.");
     }
 
     static RuntimeAnimatorController BuildAnimationController(string fighterName, Object[] importedAssets)
