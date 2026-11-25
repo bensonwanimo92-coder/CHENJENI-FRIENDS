@@ -130,7 +130,6 @@ def add_combat_actions(arm, prefix):
                     bones[bone_name].rotation_euler = angles
             for bone in bones:
                 bone.keyframe_insert(data_path="rotation_euler", frame=frame, group=bone.name)
-        action.frame_range = (frames[0][0], frames[-1][0])
         return action
 
     # Angles are intentionally restrained; final tuning should be done against the imported rig.
