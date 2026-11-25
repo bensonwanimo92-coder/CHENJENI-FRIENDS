@@ -1,0 +1,53 @@
+name: Street Legend Unity Android Build
+
+on:
+  workflow_dispatch:
+  push:
+    branches: [main]
+    paths:
+      - 'fighting-tiger-prototype/StreetLegendUnity/**'
+      - '.github/workflows/build-street-legend-unity.yml'
+
+jobs:
+  android-build:
+    name: Compile and build Street Legend APK
+    runs-on: ubuntu-latest
+    steps:
+      - name: Check out project
+        uses: actions/checkout@v4
+        with:
+          lfs: true
+
+      - name: Verify Unity project structure
+        shell: bash
+        run: |
+          test -f fighting-tiger-prototype/StreetLegendUnity/ProjectSettings/ProjectVersion.txt
+          test -f fighting-tiger-prototype/StreetLegendUnity/Packages/manifest.json
+          test -d fighting-tiger-prototype/StreetLegendUnity/Assets/Scripts
+          grep -q '6000.0.32f1' fighting-tiger-prototype/StreetLegendUnity/ProjectSettings/ProjectVersion.txt
+
+      - name: Build Android APK with Unity
+        uses: game-ci/unity-builder@v4
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+        with:
+          projectPath: fighting-tiger-prototype/StreetLegendUnity
+          unityVersion: 6000.0.32f1
+          targetPlatform: Android
+          androidAppBundle: false
+          buildName: StreetLegend
+          buildsPath: build
+
+      - name: Verify APK exists
+        shell: bash
+        run: |
+          find build -type f -name '*.apk' -size +0c -print -quit | grep -q .
+          find build -type f -name '*.apk' -size +0c -ls
+
+      - name: Upload Street Legend APK
+        uses: actions/upload-artifact@v4
+        with:
+          name: StreetLegend-Android-APK
+          path: build/**/*.apk
+          if-no-files-found: error
+          retention-days: 30
