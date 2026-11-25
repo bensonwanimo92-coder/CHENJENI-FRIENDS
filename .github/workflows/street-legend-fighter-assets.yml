@@ -37,6 +37,10 @@ jobs:
           test -s "$output/Hotel_Enforcer.fbx"
           ls -lh "$output"/*.fbx
 
+      - name: Re-import FBX and validate rigs and animation clips
+        run: |
+          blender --background --factory-startup --python fighting-tiger-prototype/StreetLegendUnity/Tools/Blender/validate_fbx_exports.py
+
       - name: Upload generated fighter assets
         uses: actions/upload-artifact@v4
         with:
