@@ -98,7 +98,7 @@ public class PrototypeOpponent : MonoBehaviour
         yield return new WaitForSeconds(0.2f);
         if (health <= 0f || !targetAtStart || !targetAtStart.gameObject.activeInHierarchy) yield break;
 
-        Collider targetCollider = targetAtStart.GetComponent<Collider>();
+        Collider targetCollider = targetAtStart.GetComponent<Collider>();\n        if (!targetCollider) targetCollider = targetAtStart.GetComponentInChildren<Collider>();
         Vector3 origin = transform.position + Vector3.up * 1.05f;
         Vector3 targetPoint = targetCollider ? targetCollider.ClosestPoint(origin) : targetAtStart.position + Vector3.up;
         Vector3 toTarget = targetPoint - origin;
