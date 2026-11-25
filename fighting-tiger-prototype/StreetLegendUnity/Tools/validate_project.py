@@ -19,6 +19,7 @@ required = [
     "Assets/Scripts/PrototypeMobileHUD.cs",
     "Assets/Scripts/PrototypeMatchManager.cs",
     "Assets/Scripts/PrototypeCommentatorManager.cs",
+    "Assets/Scripts/PrototypeHumanoidAnimationDriver.cs",
     "Assets/Scripts/StreetLegendGameplayEvents.cs",
     "Assets/Scripts/PrototypeCameraFollow.cs",
     "Assets/Scripts/PrototypeFallRecovery.cs",
