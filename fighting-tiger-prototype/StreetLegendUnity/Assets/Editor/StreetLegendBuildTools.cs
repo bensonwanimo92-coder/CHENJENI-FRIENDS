@@ -86,6 +86,7 @@ public static class StreetLegendBuildTools
         };
 
         PlayerSettings.Android.targetArchitectures = AndroidArchitecture.ARM64;
+        PlayerSettings.defaultInterfaceOrientation = UIOrientation.LandscapeLeft;
         var options = new BuildPlayerOptions
         {
             scenes = new[] { ScenePath },
