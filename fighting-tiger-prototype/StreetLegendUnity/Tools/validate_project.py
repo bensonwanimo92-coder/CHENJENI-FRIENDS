@@ -47,7 +47,7 @@ checks = {
     ],
     "Assets/Scripts/PrototypeFighterController.cs": [
         "ResolveAttackAfterWindup", "PlayerHitConfirmed", "PlayerAttackMissed",
-        "SetMobileMoveInput", "HasClearAttackLine"
+        "SetMobileMoveInput", "HasClearAttackLine", "Avoid stun-lock damage stacking"
     ],
     "Assets/Scripts/PrototypeOpponent.cs": [
         "ChooseApproachDirection", "ResolveAttackAfterWindup", "tacticalSwitchInterval", "circleSide", "retreatDistance", "OpponentStartedMoving", "OpponentDefeated", "HasClearAttackLine", "guardChance", "guardDamageMultiplier", "nextGuardAt", "OpponentGuarded", "guardStunDuration"
