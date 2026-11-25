@@ -29,6 +29,20 @@ public class StreetLegendFighterAssetPipeline : AssetPostprocessor
         importer.importBlendShapes = true;
         importer.meshCompression = ModelImporterMeshCompression.Medium;
         importer.materialImportMode = ModelImporterMaterialImportMode.ImportStandard;
+
+        // Locomotion and guard clips must loop; attacks and reactions must play once.
+        ModelImporterClipAnimation[] clips = importer.clipAnimations;
+        if (clips == null || clips.Length == 0)
+            clips = importer.defaultClipAnimations;
+        for (int i = 0; i < clips.Length; i++)
+        {
+            string clipName = clips[i].name.ToLowerInvariant();
+            bool loop = clipName.Contains("sl_idle") || clipName.Contains("sl_walk") ||
+                        clipName.Contains("sl_guard");
+            clips[i].loopTime = loop;
+            clips[i].loopPose = loop;
+        }
+        if (clips.Length > 0) importer.clipAnimations = clips;
     }
 
     [MenuItem("Street Legend/Characters/Prepare Fighter Prefabs")]
@@ -50,7 +64,7 @@ public class StreetLegendFighterAssetPipeline : AssetPostprocessor
             if (!model)
             {
                 Debug.LogError("Missing fighter FBX: " + modelPath +
-                    ". Run the Blender generator and copy its exports into Assets/Characters/Generated.");
+                    ". Run Tools/Blender/generate_fighter_pair.py with Blender 4.x; it exports directly into Assets/Characters/Generated.");
                 continue;
             }
 
