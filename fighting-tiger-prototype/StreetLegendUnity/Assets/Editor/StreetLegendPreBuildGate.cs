@@ -15,12 +15,12 @@ public static class StreetLegendPreBuildGate
    "Assets/Scripts/PrototypeCommentatorManager.cs","Assets/Scripts/StreetLegendVehicleController.cs",
    "Assets/Scripts/StreetLegendChaseTarget.cs","Assets/Scripts/StreetLegendDrivingHUD.cs",
    "Assets/Scripts/StreetLegendMissionPhase.cs","Assets/Scripts/StreetLegendRoadblockTrigger.cs","Assets/Scripts/StreetLegendMissionIntegrationDirector.cs",
-   "Assets/Scripts/StreetLegendMissionCameraSwitcher.cs",
+   "Assets/Scripts/StreetLegendMissionCameraSwitcher.cs","Assets/Scripts/StreetLegendMissionPhase.cs",\n   "Assets/Scripts/StreetLegendMissionIntegrationDirector.cs","Assets/Scripts/StreetLegendRoadblockTrigger.cs",
    "Assets/Editor/BuildHotelPrototype.cs","Assets/Editor/StreetLegendDrivingSceneBuilder.cs",
    "Assets/Editor/StreetLegendDrivingValidator.cs"
   };
   foreach(string p in required){if(!File.Exists(p)){Debug.LogError("Missing required source: "+p);errors++;}}
-  if(PlayerSettings.defaultInterfaceOrientation!=UIOrientation.LandscapeLeft){Debug.LogWarning("Default orientation is not Landscape Left.");warnings++;}
+  if(!File.Exists("Assets/Scenes/Level1_Hotel_Prototype.unity")){Debug.LogWarning("Generated hotel scene missing. Run Street Legend/Build Hotel Prototype Scene.");warnings++;}\n  if(PlayerSettings.defaultInterfaceOrientation!=UIOrientation.LandscapeLeft){Debug.LogWarning("Default orientation is not Landscape Left.");warnings++;}
   if(EditorBuildSettings.scenes.Length==0){Debug.LogWarning("No scenes registered in Build Settings. Run Setup Project Scenes (One Click).");warnings++;}
   bool menu=false,hotel=false;
   foreach(var s in EditorBuildSettings.scenes){if(!s.enabled)continue;if(s.path.Contains("StreetLegend_MainMenu"))menu=true;if(s.path.Contains("Level1_Hotel"))hotel=true;}
