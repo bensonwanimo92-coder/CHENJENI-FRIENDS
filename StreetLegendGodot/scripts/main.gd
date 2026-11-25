@@ -13,7 +13,7 @@ func _ready() -> void:
 	enemy.set("target", player)
 	player.connect("health_changed", Callable(self, "_on_player_health_changed"))
 	player.set("opponent", enemy)
-	var controls := CanvasLayer.new()
+	var controls := Control.new()
 	controls.set_script(MobileControlsScript)
 	controls.set("fighter", player)
 	add_child(controls)
