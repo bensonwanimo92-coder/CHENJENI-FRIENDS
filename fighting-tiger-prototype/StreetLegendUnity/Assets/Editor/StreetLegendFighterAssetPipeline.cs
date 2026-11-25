@@ -127,6 +127,7 @@ public class StreetLegendFighterAssetPipeline : AssetPostprocessor
             string lower = clip.name.ToLowerInvariant();
             string stateName = null;
             if (lower.Contains("sl_idle")) stateName = "Idle";
+            else if (lower.Contains("sl_walk")) stateName = "Walk";
             else if (lower.Contains("sl_guard")) stateName = "Guard";
             else if (lower.Contains("sl_jab")) stateName = "Jab";
             else if (lower.Contains("sl_heavykick")) stateName = "HeavyKick";
