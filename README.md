@@ -1,7 +1,4 @@
-# WordQuest Android wrapper
-This project packages the WordQuest HTML game as an Android WebView app. The HTML game is bundled locally and does not require network access to play.
+# WordQuest Android
+WordQuest English and Kiswahili word puzzle game, packaged as an offline Android WebView app.
 
-## Build
-Run `gradle assembleDebug` with Android SDK (platform 35) and Java 17 installed, or push this project to GitHub and run Actions workflow `Build WordQuest APK` manually. The workflow uploads a debug APK artifact.
-
-This is a debug APK configuration; signing for Play Store release is not configured.
+GitHub Actions builds a debug APK on push and manual dispatch, and uploads it as an artifact. Android SDK 35 and Java 17 are configured through CI.
