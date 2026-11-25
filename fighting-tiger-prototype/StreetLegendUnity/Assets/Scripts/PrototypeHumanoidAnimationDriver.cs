@@ -2,7 +2,7 @@ using System.Collections;
 using UnityEngine;
 
 /// <summary>
-/// Routes gameplay events to the imported Humanoid animation states.
+/// Routes gameplay events to imported Humanoid animation states.
 /// Missing clips are safely ignored so capsule fallback fighters still work.
 /// </summary>
 [RequireComponent(typeof(Animator))]
@@ -11,49 +11,59 @@ public class PrototypeHumanoidAnimationDriver : MonoBehaviour
     Animator animator;
     Coroutine returnRoutine;
     bool knockedOut;
+    bool moving;
 
     void Awake() { animator = GetComponent<Animator>(); }
+
     void OnEnable() { StreetLegendGameplayEvents.Raised += HandleEvent; }
+
     void OnDisable()
     {
         StreetLegendGameplayEvents.Raised -= HandleEvent;
         if (returnRoutine != null) StopCoroutine(returnRoutine);
+        returnRoutine = null;
     }
 
     void HandleEvent(StreetLegendGameEvent gameEvent)
     {
-        if (gameEvent.Actor != gameObject || !animator) return;
+        if (gameEvent.Actor != gameObject || !animator || knockedOut) return;
 
         switch (gameEvent.Type)
         {
             case StreetLegendEventType.PlayerStartedMoving:
             case StreetLegendEventType.OpponentStartedMoving:
+                moving = true;
                 Play("Walk");
                 break;
-            case StreetLegendEventType.OpponentStoppedMoving:
-                Play("Idle");
-                break;
+
             case StreetLegendEventType.PlayerStoppedMoving:
+            case StreetLegendEventType.OpponentStoppedMoving:
+                moving = false;
                 Play("Idle");
                 break;
+
             case StreetLegendEventType.PlayerAttackStarted:
                 Play(gameEvent.Heavy ? "HeavyKick" : "Jab");
-                ScheduleReturn(0.72f);
+                ScheduleReturn(gameEvent.Heavy ? 0.78f : 0.62f);
                 break;
+
             case StreetLegendEventType.OpponentStartedAttacking:
                 Play("Jab");
-                ScheduleReturn(0.58f);
+                ScheduleReturn(0.62f);
                 break;
+
             case StreetLegendEventType.PlayerDamaged:
             case StreetLegendEventType.OpponentDamaged:
                 Play("HitReact");
-                ScheduleReturn(0.5f);
+                ScheduleReturn(0.52f);
                 break;
+
             case StreetLegendEventType.PlayerKnockedOut:
             case StreetLegendEventType.OpponentDefeated:
                 knockedOut = true;
                 if (returnRoutine != null) StopCoroutine(returnRoutine);
-                if (!Play("Knockout")) StartCoroutine(FallbackKnockoutPose());
+                returnRoutine = null;
+                if (!Play("Knockout")) returnRoutine = StartCoroutine(FallbackKnockoutPose());
                 break;
         }
     }
@@ -70,14 +80,14 @@ public class PrototypeHumanoidAnimationDriver : MonoBehaviour
     void ScheduleReturn(float delay)
     {
         if (returnRoutine != null) StopCoroutine(returnRoutine);
-        returnRoutine = StartCoroutine(ReturnToGuard(delay));
+        returnRoutine = StartCoroutine(ReturnToLocomotion(delay));
     }
 
-    IEnumerator ReturnToGuard(float delay)
+    IEnumerator ReturnToLocomotion(float delay)
     {
         yield return new WaitForSeconds(delay);
         returnRoutine = null;
-        if (!knockedOut) Play("Guard");
+        if (!knockedOut) Play(moving ? "Walk" : "Guard");
     }
 
     IEnumerator FallbackKnockoutPose()
@@ -91,5 +101,6 @@ public class PrototypeHumanoidAnimationDriver : MonoBehaviour
             transform.rotation = Quaternion.Slerp(start, fallen, Mathf.Clamp01(elapsed / 0.45f));
             yield return null;
         }
+        returnRoutine = null;
     }
 }
