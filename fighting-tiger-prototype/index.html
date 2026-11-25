@@ -56,4 +56,15 @@ const staminaLoop=setInterval(()=>{if(!blocking&&!keys.up&&!keys.down&&!keys.lef
 // Keep both fighters within arena and add a small arena label.
 const arenaLabel=document.createElement('div');arenaLabel.textContent='DOJO DISTRICT · NIGHT';arenaLabel.style.cssText='position:fixed;bottom:8px;left:50%;transform:translateX(-50%);color:#cbd5d1;font-size:10px;letter-spacing:2px';document.body.appendChild(arenaLabel);
 </script>
+
+<script>
+// Street Legend progression layer: escalating opponents, score and a mission HUD.
+(()=>{
+ let stage=1, kos=0, score=0, stageLock=false;
+ const progress=document.createElement('div');progress.style.cssText='position:fixed;top:166px;left:50%;transform:translateX(-50%);z-index:7;background:#101719d9;border:1px solid #8a9995;border-radius:10px;padding:7px 12px;font-size:12px;font-weight:700;text-align:center';progress.textContent='MISSION 1 · KOs 0 · SCORE 0';document.body.appendChild(progress);
+ const originalHud=window.hud;
+ const observer=new MutationObserver(()=>{if(enemy.hp<=0&&!stageLock&&player.hp>0){stageLock=true;kos++;score+=100*stage;progress.textContent='MISSION '+stage+' · KOs '+kos+' · SCORE '+score;document.querySelector('#title').textContent='KO! · '+(stage<5?'NEXT CHALLENGER':'STREET CHAMPION');if(stage<5)setTimeout(()=>{stage++;enemy.hp=100+stage*8;enemy.x=player.x<.5?.78:.22;enemy.y=.58;player.hp=Math.min(100,player.hp+15);stamina=Math.min(100,stamina+30);stageLock=false;progress.textContent='MISSION '+stage+' · KOs '+kos+' · SCORE '+score;document.querySelector('#title').textContent='MISSION '+stage+' · FIGHT!';hud()},1400);else document.querySelector('#title').textContent='STREET CHAMPION · SCORE '+score;}});
+ observer.observe(document.body,{subtree:true,childList:true,attributes:true});
+})();
+</script>
 </body></html>
