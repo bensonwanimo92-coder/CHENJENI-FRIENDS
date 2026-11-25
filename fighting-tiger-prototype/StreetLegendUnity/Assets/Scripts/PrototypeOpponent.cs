@@ -109,7 +109,9 @@ public class PrototypeOpponent : MonoBehaviour
         if (health <= 0f)
         {
             StreetLegendGameplayEvents.Raise(StreetLegendEventType.OpponentDefeated, gameObject);
-            gameObject.SetActive(false);
+            // Keep the fighter visible so the knockout pose can play and the round manager can show the result.
+            motor.enabled = false;
+            enabled = false;
         }
     }
 
