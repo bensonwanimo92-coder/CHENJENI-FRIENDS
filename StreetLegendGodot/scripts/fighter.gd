@@ -124,7 +124,6 @@ func take_damage(amount: float, direction: Vector3 = Vector3.ZERO, heavy: bool =
 	if health <= 0.0:
 		knocked_out.emit()
 		attack_event.emit(&"player_knocked_out", 0.0, heavy)
-		set_physics_process(false)
 
 func reset_vertical_motion() -> void:
 	velocity.y = 0.0
