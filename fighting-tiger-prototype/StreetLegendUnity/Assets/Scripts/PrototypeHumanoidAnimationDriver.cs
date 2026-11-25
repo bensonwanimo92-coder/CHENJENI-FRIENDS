@@ -27,7 +27,11 @@ public class PrototypeHumanoidAnimationDriver : MonoBehaviour
         switch (gameEvent.Type)
         {
             case StreetLegendEventType.PlayerStartedMoving:
-                Play("Guard");
+            case StreetLegendEventType.OpponentStartedMoving:
+                Play("Walk");
+                break;
+            case StreetLegendEventType.OpponentStoppedMoving:
+                Play("Idle");
                 break;
             case StreetLegendEventType.PlayerStoppedMoving:
                 Play("Idle");
