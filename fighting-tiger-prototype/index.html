@@ -23,4 +23,23 @@ dodgeBtn.onclick=()=>{if(won||player.hp<=0)return;dodging=true;player.x=Math.max
 const baseHit=hit;
 hit=function(type){if(won||player.hp<=0)return;let dx=player.x-enemy.x,dy=player.y-enemy.y;if(Math.abs(dx)<.17&&Math.abs(dy)<.15){comboCount++;clearTimeout(comboTimer);comboTimer=setTimeout(()=>comboCount=0,1000);let damage=(type==='kick'?18:11)+(comboCount>=3?7:0);enemy.hp=Math.max(0,enemy.hp-damage);document.querySelector('#title').textContent=comboCount>=3?'COMBO STRIKE!':'STREET LEGEND · DEMO';enemy.attack=-1;flash=3;setTimeout(()=>enemy.attack=0,180)}player.attack=type==='kick'?2:1;setTimeout(()=>player.attack=0,200);hud()};
 update=function(){let sp=.005;for(let k in keys)if(keys[k]){if(k==='up')player.y-=sp;if(k==='down')player.y+=sp;if(k==='left')player.x-=sp;if(k==='right')player.x+=sp}player.x=Math.max(.08,Math.min(.92,player.x));player.y=Math.max(.45,Math.min(.85,player.y));if(enemy.hp>0&&player.hp>0){let dx=player.x-enemy.x,dy=player.y-enemy.y;enemy.x+=Math.sign(dx)*.0013;enemy.y+=Math.sign(dy)*.0007;if(Math.abs(dx)<.11&&Math.abs(dy)<.13&&Math.random()<.009&&!dodging){player.hp=Math.max(0,player.hp-(blocking?1:4));flash=blocking?1:4;hud()}}hud();setTimeout(update,30)};update();
-</script></body></html>
+</script>
+<!-- Gameplay upgrade: keyboard, smarter movement, cooldowns and effects -->
+<script>
+// Keyboard play and improved combat presentation
+const keyMap={w:'up',ArrowUp:'up',s:'down',ArrowDown:'down',a:'left',ArrowLeft:'left',d:'right',ArrowRight:'right'};
+addEventListener('keydown',e=>{if(keyMap[e.key]){keys[keyMap[e.key]]=true;e.preventDefault()} if(e.key==='j')hit('punch');if(e.key==='k')hit('kick');if(e.key==='l')blocking=true;if(e.key===' '){e.preventDefault();dodgeBtn.click()}});
+addEventListener('keyup',e=>{if(keyMap[e.key])keys[keyMap[e.key]]=false;if(e.key==='l')blocking=false});
+// Smooth pulse effect when combat is close, with an optional shake on impact
+let impactShake=0;
+const oldDraw=fighter;
+fighter=function(x,y,color,attack){oldDraw(x,y,color,attack);if(attack){ctx.save();ctx.globalAlpha=.18;ctx.fillStyle='#fff';ctx.beginPath();ctx.arc(x*innerWidth,y*innerHeight-30,48,0,Math.PI*2);ctx.fill();ctx.restore()}};
+// Prevent attacks from being spammed and make enemy strikes telegraphed
+let playerCooldown=0,enemyWindup=0,enemyCooldown=0;
+const previousHit=hit;
+hit=function(type){if(playerCooldown>0||blocking)return;playerCooldown=type==='kick'?520:300;previousHit(type);setTimeout(()=>playerCooldown=0,type==='kick'?520:300)};
+// Stronger rival behaviour: occasional wind-up attack, recover window and distance-aware pursuit.
+update=function(){let sp=.0048;for(let k in keys)if(keys[k]){if(k==='up')player.y-=sp;if(k==='down')player.y+=sp;if(k==='left')player.x-=sp;if(k==='right')player.x+=sp}player.x=Math.max(.08,Math.min(.92,player.x));player.y=Math.max(.46,Math.min(.84,player.y));if(enemy.hp>0&&player.hp>0){let dx=player.x-enemy.x,dy=player.y-enemy.y,dist=Math.abs(dx);if(enemyWindup>0){enemyWindup-=30;if(enemyWindup<=0&&dist<.13&&Math.abs(dy)<.13&&!dodging){player.hp=Math.max(0,player.hp-(blocking?2:9));flash=blocking?2:5;hud();enemyCooldown=850}}else if(enemyCooldown>0)enemyCooldown-=30;else if(dist<.13&&Math.abs(dy)<.13&&Math.random()<.025){enemyWindup=240;document.querySelector('#title').textContent='RIVAL ATTACK! BLOCK OR DODGE';enemy.attack=1;setTimeout(()=>enemy.attack=0,220)}else{enemy.x+=Math.sign(dx)*.0012;enemy.y+=Math.sign(dy)*.00065}}hud();setTimeout(update,30)};
+update();
+</script>
+</body></html>
