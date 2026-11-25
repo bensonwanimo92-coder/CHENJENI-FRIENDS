@@ -1,0 +1,88 @@
+using System.IO;
+using UnityEditor;
+using UnityEngine;
+
+/// <summary>
+/// Applies consistent Humanoid import settings and creates reusable fighter prefabs
+/// from the two Blender-generated base FBX files.
+/// </summary>
+public class StreetLegendFighterAssetPipeline : AssetPostprocessor
+{
+    const string GeneratedFolder = "Assets/Characters/Generated";
+    const string PrefabFolder = "Assets/Characters/Prefabs";
+
+    void OnPreprocessModel()
+    {
+        if (!assetPath.StartsWith(GeneratedFolder + "/") || !assetPath.EndsWith(".fbx"))
+            return;
+
+        var importer = (ModelImporter)assetImporter;
+        importer.globalScale = 1f;
+        importer.importCameras = false;
+        importer.importLights = false;
+        importer.importAnimation = true;
+        importer.animationType = ModelImporterAnimationType.Human;
+        importer.avatarSetup = ModelImporterAvatarSetup.CreateFromThisModel;
+        importer.optimizeGameObjects = false;
+        importer.importBlendShapes = true;
+        importer.meshCompression = ModelImporterMeshCompression.Medium;
+        importer.materialImportMode = ModelImporterMaterialImportMode.ImportStandard;
+    }
+
+    [MenuItem("Street Legend/Characters/Prepare Fighter Prefabs")]
+    public static void PreparePrefabs()
+    {
+        if (!AssetDatabase.IsValidFolder("Assets/Characters"))
+            AssetDatabase.CreateFolder("Assets", "Characters");
+        if (!AssetDatabase.IsValidFolder(PrefabFolder))
+            AssetDatabase.CreateFolder("Assets/Characters", "Prefabs");
+
+        string[] names = { "Wanimoo_Player", "Hotel_Enforcer" };
+        int created = 0;
+        foreach (string name in names)
+        {
+            string modelPath = GeneratedFolder + "/" + name + ".fbx";
+            var model = AssetDatabase.LoadAssetAtPath<GameObject>(modelPath);
+            if (!model)
+            {
+                Debug.LogError("Missing fighter FBX: " + modelPath +
+                    ". Run the Blender generator and copy its exports into Assets/Characters/Generated.");
+                continue;
+            }
+
+            var importer = AssetImporter.GetAtPath(modelPath) as ModelImporter;
+            if (importer == null || importer.animationType != ModelImporterAnimationType.Human)
+            {
+                Debug.LogError("Fighter is not configured as Humanoid: " + modelPath);
+                continue;
+            }
+
+            var instance = PrefabUtility.InstantiatePrefab(model) as GameObject;
+            if (!instance) continue;
+            instance.name = name;
+            var animator = instance.GetComponent<Animator>();
+            if (!animator) animator = instance.AddComponent<Animator>();
+            animator.avatar = importer.GetSourceAvatar();
+            animator.applyRootMotion = false;
+
+            // The CharacterController belongs on the fighter root, not on individual body parts.
+            var controller = instance.GetComponent<CharacterController>();
+            if (!controller) controller = instance.AddComponent<CharacterController>();
+            controller.height = 1.85f;
+            controller.radius = 0.31f;
+            controller.center = new Vector3(0f, 0.93f, 0f);
+            controller.skinWidth = 0.035f;
+            controller.minMoveDistance = 0f;
+
+            string prefabPath = PrefabFolder + "/" + name + ".prefab";
+            PrefabUtility.SaveAsPrefabAsset(instance, prefabPath);
+            Object.DestroyImmediate(instance);
+            created++;
+            Debug.Log("Prepared Humanoid fighter prefab: " + prefabPath);
+        }
+
+        AssetDatabase.SaveAssets();
+        AssetDatabase.Refresh();
+        Debug.Log("Street Legend fighter pipeline: " + created + "/2 prefabs prepared. Verify the Avatar mapping in the Model Importer before animation work.");
+    }
+}
