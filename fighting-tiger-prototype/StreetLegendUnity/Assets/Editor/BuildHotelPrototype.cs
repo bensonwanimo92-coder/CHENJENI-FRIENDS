@@ -8,6 +8,12 @@ public static class BuildHotelPrototype
     [MenuItem("Street Legend/Build Hotel Prototype Scene")]
     public static void Build()
     {
+        // Street Legend is designed as a landscape fighting game (PES-style), not portrait.
+        PlayerSettings.defaultInterfaceOrientation = UIOrientation.LandscapeLeft;
+        PlayerSettings.allowedAutorotateToLandscapeLeft = true;
+        PlayerSettings.allowedAutorotateToLandscapeRight = true;
+        PlayerSettings.allowedAutorotateToPortrait = false;
+        PlayerSettings.allowedAutorotateToPortraitUpsideDown = false;
         var scene = EditorSceneManager.NewScene(NewSceneSetup.EmptyScene, NewSceneMode.Single);
         RenderSettings.ambientLight = new Color(0.42f, 0.43f, 0.48f);
         Make("Hotel Floor", new Vector3(0,-0.25f,0), new Vector3(18,0.5f,24), new Color(0.24f,0.25f,0.28f));
