@@ -1,19 +1,14 @@
 using UnityEngine;
 public enum StreetLegendMissionStage{HotelCombat,DrivingPursuit,Roadblock,PostRoadblockCombat,Complete}
-/// <summary>Phase authority for the Level 1 hotel escape, driving pursuit and roadblock encounter.</summary>
+/// <summary>Campaign phase coordinator, with independent roadblock fight and victory handoff.</summary>
 public class StreetLegendMissionPhase:MonoBehaviour{
- public StreetLegendVehicleController vehicle; public GameObject drivingHUD,combatHUD;
- public PrototypeFighterController player,roadblockFighter; public PrototypeOpponent roadblockOpponent;
- public Transform safeExitPoint,roadblockOpponentPoint;
- public StreetLegendMissionStage phase=StreetLegendMissionStage.HotelCombat; bool triggered;
+ public StreetLegendVehicleController vehicle;public GameObject drivingHUD,combatHUD,roadblockHUD;
+ public PrototypeFighterController player,roadblockFighter;public PrototypeOpponent roadblockOpponent;
+ public Transform safeExitPoint,roadblockOpponentPoint;public StreetLegendMissionStage phase=StreetLegendMissionStage.HotelCombat;
+ bool triggered,combatStarted,won;void Update(){if(phase==StreetLegendMissionStage.PostRoadblockCombat&&!won&&roadblockOpponent&&roadblockOpponent.Health<=0){won=true;Finish();}}
  public void BeginPursuit(){if(phase!=StreetLegendMissionStage.HotelCombat)return;phase=StreetLegendMissionStage.DrivingPursuit;if(vehicle){vehicle.gameObject.SetActive(true);vehicle.SetDrivingEnabled(true);}if(drivingHUD)drivingHUD.SetActive(true);if(combatHUD)combatHUD.SetActive(false);}
- public void RoadblockReached(){if(phase!=StreetLegendMissionStage.DrivingPursuit||triggered)return;triggered=true;phase=StreetLegendMissionStage.Roadblock;if(vehicle){vehicle.StopVehicle();vehicle.SetDrivingEnabled(false);}if(drivingHUD)drivingHUD.SetActive(false);
- if(player){player.transform.position=safeExitPoint?safeExitPoint.position:player.transform.position;player.ResetVerticalMotion();player.enabled=true;}
- if(roadblockFighter){roadblockFighter.gameObject.SetActive(true);if(roadblockOpponentPoint)roadblockFighter.transform.position=roadblockOpponentPoint.position;roadblockFighter.enabled=true;}
- if(roadblockOpponent){roadblockOpponent.gameObject.SetActive(true);if(player)roadblockOpponent.SetTarget(player.transform);}
- if(player&&roadblockFighter)player.SetOpponent(roadblockFighter.transform);
- BeginRoadblockCombat();}
- public void BeginRoadblockCombat(){if(phase!=StreetLegendMissionStage.Roadblock)return;phase=StreetLegendMissionStage.PostRoadblockCombat;if(combatHUD)combatHUD.SetActive(true);}
- public void Finish(){if(phase==StreetLegendMissionStage.PostRoadblockCombat)phase=StreetLegendMissionStage.Complete;}
- public void ResetMission(){triggered=false;phase=StreetLegendMissionStage.HotelCombat;if(vehicle){vehicle.StopVehicle();vehicle.SetDrivingEnabled(false);}if(drivingHUD)drivingHUD.SetActive(false);if(combatHUD)combatHUD.SetActive(true);}
+ public void RoadblockReached(){if(phase!=StreetLegendMissionStage.DrivingPursuit||triggered)return;triggered=true;phase=StreetLegendMissionStage.Roadblock;if(vehicle){vehicle.StopVehicle();vehicle.SetDrivingEnabled(false);}if(drivingHUD)drivingHUD.SetActive(false);if(player){if(safeExitPoint)player.transform.position=safeExitPoint.position;player.ResetVerticalMotion();player.enabled=true;}if(roadblockFighter){roadblockFighter.gameObject.SetActive(true);if(roadblockOpponentPoint)roadblockFighter.transform.position=roadblockOpponentPoint.position;roadblockFighter.enabled=true;}if(roadblockOpponent){roadblockOpponent.gameObject.SetActive(true);if(player)roadblockOpponent.SetTarget(player.transform);}if(player&&roadblockFighter)player.SetOpponent(roadblockFighter.transform);BeginRoadblockCombat();}
+ public void BeginRoadblockCombat(){if(phase!=StreetLegendMissionStage.Roadblock||combatStarted)return;combatStarted=true;phase=StreetLegendMissionStage.PostRoadblockCombat;if(combatHUD)combatHUD.SetActive(true);if(roadblockHUD)roadblockHUD.SetActive(true);}
+ public void Finish(){if(phase!=StreetLegendMissionStage.PostRoadblockCombat)return;phase=StreetLegendMissionStage.Complete;if(roadblockHUD)roadblockHUD.SetActive(false);if(combatHUD)combatHUD.SetActive(false);if(player)player.enabled=false;if(roadblockOpponent)roadblockOpponent.enabled=false;Debug.Log("Level 1 roadblock encounter cleared. Campaign handoff is ready.");}
+ public void ResetMission(){triggered=combatStarted=won=false;phase=StreetLegendMissionStage.HotelCombat;if(vehicle){vehicle.StopVehicle();vehicle.SetDrivingEnabled(false);}if(drivingHUD)drivingHUD.SetActive(false);if(roadblockHUD)roadblockHUD.SetActive(false);if(combatHUD)combatHUD.SetActive(true);}
 }
