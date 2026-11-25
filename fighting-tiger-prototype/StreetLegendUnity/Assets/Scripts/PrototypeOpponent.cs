@@ -60,5 +60,6 @@ public class PrototypeOpponent : MonoBehaviour
             motor.Move(direction.normalized * (heavy ? 0.42f : 0.14f));
         if (health <= 0f) gameObject.SetActive(false);
     }
-    public void ResetVerticalMotion() { verticalSpeed = 0f; stunUntil = Time.time; }\n    public void SetTarget(Transform value) { target = value; }
+    public void ResetVerticalMotion() { verticalSpeed = 0f; stunUntil = Time.time; }
+    public void SetTarget(Transform value) { target = value; }
 }
