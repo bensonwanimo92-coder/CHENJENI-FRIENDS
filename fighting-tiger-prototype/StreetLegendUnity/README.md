@@ -18,8 +18,9 @@ The first scene is a greybox: primitive capsules, lobby walls and placeholder ge
 
 ## Important limitations
 - This scaffold has not yet been opened or compiled in Unity in this environment.
-- The opponent prototype currently approaches and receives hit/stun reactions; its attack does not yet reduce player health.
+- Player and opponent attacks now check range, facing arc and raycast line of sight; enemy hits reduce player prototype health. These checks are preliminary and still require Unity testing.
 - Keyboard input is currently wired; Android touch controls, animation rigs, audio, proper hitboxes, UI, full campaign scenes and production character/environment assets remain to be implemented.
+- Physics/geometry acceptance tests are documented in `PHYSICS_GEOMETRY_AND_COLLISION_CHECKLIST.md`.
 - No APK has been built or device-tested.
 - The project uses original placeholder geometry and does not include proprietary Leonida/GTA assets.
 
