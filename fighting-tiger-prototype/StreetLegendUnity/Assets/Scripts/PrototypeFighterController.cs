@@ -78,16 +78,25 @@ public class PrototypeFighterController : MonoBehaviour
         if (Time.time < nextAttack || !opponent || health <= 0f) return;
         nextAttack = Time.time + attackCooldown * (heavy ? 1.5f : 1f);
         StreetLegendGameplayEvents.Raise(StreetLegendEventType.PlayerAttackStarted, gameObject, opponent.gameObject, 0f, heavy);
+        StartCoroutine(ResolveAttackAfterWindup(heavy, opponent));
+    }
 
-        Collider targetCollider = opponent.GetComponent<Collider>();
+    System.Collections.IEnumerator ResolveAttackAfterWindup(bool heavy, Transform targetAtStart)
+    {
+        // Gives animation controllers a real anticipation window before impact.
+        yield return new WaitForSeconds(heavy ? 0.28f : 0.16f);
+        if (health <= 0f || !targetAtStart || !targetAtStart.gameObject.activeInHierarchy)
+            yield break;
+
+        Collider targetCollider = targetAtStart.GetComponent<Collider>();
         Vector3 origin = transform.position + Vector3.up * 1.05f;
-        Vector3 targetPoint = targetCollider ? targetCollider.ClosestPoint(origin) : opponent.position + Vector3.up;
+        Vector3 targetPoint = targetCollider ? targetCollider.ClosestPoint(origin) : targetAtStart.position + Vector3.up;
         Vector3 toTarget = targetPoint - origin;
         float distance = toTarget.magnitude;
         if (distance > attackRange || distance < 0.01f)
         {
-            StreetLegendGameplayEvents.Raise(StreetLegendEventType.PlayerAttackMissed, gameObject, opponent.gameObject, 0f, heavy);
-            return;
+            RaiseAttackMiss(targetAtStart, heavy);
+            yield break;
         }
 
         Vector3 flatDirection = toTarget;
@@ -95,30 +104,37 @@ public class PrototypeFighterController : MonoBehaviour
         if (flatDirection.sqrMagnitude > 0.001f &&
             Vector3.Angle(transform.forward, flatDirection.normalized) > attackHalfAngle)
         {
-            StreetLegendGameplayEvents.Raise(StreetLegendEventType.PlayerAttackMissed, gameObject, opponent.gameObject, 0f, heavy);
-            return;
+            RaiseAttackMiss(targetAtStart, heavy);
+            yield break;
         }
 
-        if (Physics.Raycast(origin, toTarget.normalized, out RaycastHit hit, distance + 0.08f, obstructionMask, QueryTriggerInteraction.Ignore))
+        if (Physics.Raycast(origin, toTarget.normalized, out RaycastHit hit, distance + 0.08f, obstructionMask, QueryTriggerInteraction.Ignore) &&
+            hit.collider.transform != targetAtStart && !hit.collider.transform.IsChildOf(targetAtStart))
         {
-            if (hit.collider.transform != opponent && !hit.collider.transform.IsChildOf(opponent))
-            {
-                StreetLegendGameplayEvents.Raise(StreetLegendEventType.PlayerAttackMissed, gameObject, opponent.gameObject, 0f, heavy);
-                return;
-            }
+            RaiseAttackMiss(targetAtStart, heavy);
+            yield break;
         }
 
-        var target = opponent.GetComponent<PrototypeOpponent>();
-        if (target)
+        var target = targetAtStart.GetComponent<PrototypeOpponent>();
+        if (!target)
         {
-            float before = target.Health;
-            target.TakeHit(heavy ? heavyDamage : lightDamage, transform.forward, heavy);
-            float applied = Mathf.Max(0f, before - target.Health);
-            if (applied > 0f)
-                StreetLegendGameplayEvents.Raise(StreetLegendEventType.PlayerHitConfirmed, gameObject, opponent.gameObject, applied, heavy);
-            else
-                StreetLegendGameplayEvents.Raise(StreetLegendEventType.PlayerAttackMissed, gameObject, opponent.gameObject, 0f, heavy);
+            RaiseAttackMiss(targetAtStart, heavy);
+            yield break;
         }
+
+        float before = target.Health;
+        target.TakeHit(heavy ? heavyDamage : lightDamage, transform.forward, heavy);
+        float applied = Mathf.Max(0f, before - target.Health);
+        if (applied > 0f)
+            StreetLegendGameplayEvents.Raise(StreetLegendEventType.PlayerHitConfirmed, gameObject, targetAtStart.gameObject, applied, heavy);
+        else
+            RaiseAttackMiss(targetAtStart, heavy);
+    }
+
+    void RaiseAttackMiss(Transform target, bool heavy)
+    {
+        StreetLegendGameplayEvents.Raise(StreetLegendEventType.PlayerAttackMissed, gameObject,
+            target ? target.gameObject : null, 0f, heavy);
     }
 
     public void ReceiveHit(float damage, Vector3 direction, bool heavy)
