@@ -53,10 +53,10 @@ checks = {
         "ChooseApproachDirection", "ResolveAttackAfterWindup", "tacticalSwitchInterval", "circleSide", "retreatDistance", "OpponentStartedMoving", "OpponentDefeated", "HasClearAttackLine", "guardChance", "guardDamageMultiplier", "nextGuardAt", "OpponentGuarded", "guardStunDuration", "RaiseAttackMiss", "OpponentAttackMissed"
     ],
     "Assets/Scripts/PrototypeMobileHUD.cs": [
-        "ToggleVoice", "ToggleSubtitles", "SetMobileMoveInput", "fillAmount", "Virtual Joystick Base", "Heavy Attack Button", "Pause Control"
+        "ToggleVoice", "ToggleSubtitles", "SetMobileMoveInput", "fillAmount", "Virtual Joystick Base", "Heavy Attack Button", "Pause Control", "touch-down"
     ],
     "Assets/Scripts/PrototypeMatchManager.cs": [
-        "FinishRound", "TogglePause", "RestartRound"
+        "FinishRound", "TogglePause", "RestartRound", "MakeOverlayButton", "RESUME", "RESTART"
     ],
     "Assets/Scripts/PrototypeCommentatorManager.cs": [
         "TextToSpeech", "CreateDefaultLineSets", "SetSubtitlesEnabled", "spatialBlend = 0f"
