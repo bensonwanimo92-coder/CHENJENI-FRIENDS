@@ -61,6 +61,14 @@ checks = {
     "Assets/Scripts/PrototypeCommentatorManager.cs": [
         "TextToSpeech", "CreateDefaultLineSets", "SetSubtitlesEnabled", "spatialBlend = 0f"
     ],
+    "Assets/Scripts/PrototypeHumanoidAnimationDriver.cs": [
+        "bool moving", "moving ? \"Walk\" : \"Guard\"", "FallbackKnockoutPose",
+        "StreetLegendGameplayEvents.Raised += HandleEvent"
+    ],
+    "Assets/Editor/StreetLegendFighterAssetPipeline.cs": [
+        "defaultClipAnimations", "clip.loopTime", "clip.loopPose",
+        "Prepare Fighter Prefabs", "Avatar.isHuman"
+    ],
 }
 for filename, needles in checks.items():
     path = ROOT / filename
@@ -86,4 +94,5 @@ if errors:
 
 print("STREET LEGEND STRUCTURAL CHECKS PASSED")
 print(f"Checked {len(required)} required project files and {sum(map(len, checks.values()))} feature markers.")
+print("Checked animation locomotion recovery and FBX loop import configuration.")
 print("Note: Unity compilation, scene generation, Play Mode physics and Android APK/device tests remain separate.")
