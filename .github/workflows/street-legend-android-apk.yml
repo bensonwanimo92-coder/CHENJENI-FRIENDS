@@ -46,13 +46,15 @@ jobs:
           set +o pipefail
           yes | sdkmanager --sdk_root="$HOME/android-sdk" --licenses
           set -o pipefail
-          sdkmanager --sdk_root="$HOME/android-sdk" --install "platform-tools" "platforms;android-34" "build-tools;34.0.0"
+          sdkmanager --sdk_root="$HOME/android-sdk" --install "platform-tools" "platforms;android-34" "build-tools;34.0.0" "cmake;3.10.2.4988404" "ndk;23.2.8568313"
           echo "Installed SDK packages:"
           sdkmanager --sdk_root="$HOME/android-sdk" --list_installed
           echo "SDK directory tree:"
           find "$HOME/android-sdk" -maxdepth 3 -type d | sort | head -100
           test -x "$HOME/android-sdk/platform-tools/adb"
           test -x "$HOME/android-sdk/build-tools/34.0.0/apksigner"
+          test -d "$HOME/android-sdk/cmake/3.10.2.4988404"
+          test -d "$HOME/android-sdk/ndk/23.2.8568313"
 
       - name: Install Godot 4.3 and export templates
         run: |
