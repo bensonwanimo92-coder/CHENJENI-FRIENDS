@@ -22,6 +22,7 @@ public class PrototypeFighterController : MonoBehaviour
     float nextAttack;
     float hitStunUntil;
     bool wasMoving;
+    bool wasInCombatRange;
     Vector2 mobileMoveInput;
 
     public float Health => health;
@@ -70,6 +71,15 @@ public class PrototypeFighterController : MonoBehaviour
             face.y = 0f;
             if (face.sqrMagnitude > 0.01f)
                 transform.forward = Vector3.Slerp(transform.forward, face.normalized, 8f * Time.deltaTime);
+
+            bool inRange = opponent.gameObject.activeInHierarchy && face.magnitude <= attackRange + 0.2f;
+            if (inRange != wasInCombatRange)
+            {
+                StreetLegendGameplayEvents.Raise(
+                    inRange ? StreetLegendEventType.PlayerEnteredCombatRange : StreetLegendEventType.PlayerLeftCombatRange,
+                    gameObject, opponent.gameObject);
+                wasInCombatRange = inRange;
+            }
         }
 
         if (Input.GetKeyDown(KeyCode.J)) TryAttack(false);
