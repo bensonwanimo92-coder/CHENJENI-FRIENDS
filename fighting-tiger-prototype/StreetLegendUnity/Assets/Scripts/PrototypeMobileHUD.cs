@@ -125,6 +125,8 @@ public class PrototypeMobileHUD : MonoBehaviour
 
         voiceButtonText = MakeSettingButton(root.transform, "VOICE ON", new Vector2(0.46f, 0.88f), ToggleVoice);
         subtitleButtonText = MakeSettingButton(root.transform, "SUBS OFF", new Vector2(0.56f, 0.88f), ToggleSubtitles);
+        MakePanel(root.transform, "Pause Control", new Vector2(0.92f, 0.88f), new Vector2(0.92f, 0.88f), new Vector2(132, 58), new Color(0.08f, 0.12f, 0.18f, 0.86f));
+        MakeLabel(root.transform, "PAUSE", new Vector2(0.92f, 0.88f), 20);
     }
 
     Text MakeSettingButton(Transform parent, string value, Vector2 anchor, UnityEngine.Events.UnityAction action)
