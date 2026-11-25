@@ -170,7 +170,7 @@ public class PrototypeMobileHUD : MonoBehaviour
     {
         if (!commentator) commentator = FindObjectOfType<PrototypeCommentatorManager>();
         if (!commentator) return;
-        bool enabled = !subtitleButtonText.text.Contains("ON");
+        bool enabled = subtitleButtonText.text.Contains("ON");
         commentator.SetSubtitlesEnabled(!enabled);
         subtitleButtonText.text = enabled ? "SUBS OFF" : "SUBS ON";
     }
