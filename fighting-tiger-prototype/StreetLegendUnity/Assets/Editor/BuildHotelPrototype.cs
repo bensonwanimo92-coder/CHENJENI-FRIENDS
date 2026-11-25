@@ -37,7 +37,7 @@ public static class BuildHotelPrototype
         Make("Lobby Column A", new Vector3(-6,2,6), new Vector3(0.7f,4,0.7f), new Color(0.55f,0.48f,0.38f));
         Make("Lobby Column B", new Vector3(6,2,6), new Vector3(0.7f,4,0.7f), new Color(0.55f,0.48f,0.38f));
         EditorSceneManager.SaveScene(scene, "Assets/Scenes/Level1_Hotel_Prototype.unity");
-        Debug.Log("Street Legend hotel prototype scene created. Greybox art only; replace primitives with licensed character/environment assets.");
+        Debug.Log("Street Legend hotel prototype scene created. Generated fighter prefabs are used when available; otherwise coloured capsule placeholders are used. Environment remains greybox geometry.");
     }
 
     static GameObject CreateFighter(string displayName, string assetName, Vector3 position, Color fallbackColor)
