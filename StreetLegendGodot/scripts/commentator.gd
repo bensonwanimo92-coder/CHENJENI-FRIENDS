@@ -6,6 +6,7 @@ class_name StreetLegendCommentator
 @export_range(0.0, 1.0) var voice_volume: float = 0.9
 @export var subtitle_hold_seconds: float = 3.2
 var audio_player: AudioStreamPlayer
+var subtitle_layer: CanvasLayer
 var subtitle_label: Label
 var cooldowns: Dictionary = {}
 var line_queue: Array[Dictionary] = []
@@ -22,6 +23,9 @@ var default_lines := {
 }
 
 func _ready() -> void:
+	subtitle_layer = CanvasLayer.new()
+	subtitle_layer.layer = 30
+	add_child(subtitle_layer)
 	audio_player = AudioStreamPlayer.new()
 	audio_player.volume_db = linear_to_db(voice_volume)
 	add_child(audio_player)
@@ -33,7 +37,7 @@ func _ready() -> void:
 		subtitle_label.offset_bottom = -35.0
 		subtitle_label.horizontal_alignment = HORIZONTAL_ALIGNMENT_CENTER
 		subtitle_label.add_theme_font_size_override("font_size", 24)
-		add_child(subtitle_label)
+		subtitle_layer.add_child(subtitle_label)
 
 func announce(event_type: StringName, custom_text: String = "", cooldown: float = 0.8) -> void:
 	if not commentary_enabled:
