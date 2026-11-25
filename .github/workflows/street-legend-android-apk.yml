@@ -44,7 +44,9 @@ jobs:
         run: |
           set -euo pipefail
           sdkmanager --sdk_root="$HOME/android-sdk" --install "platform-tools" "platforms;android-34" "build-tools;34.0.0"
+          set +o pipefail
           yes | sdkmanager --sdk_root="$HOME/android-sdk" --licenses
+          set -o pipefail
 
       - name: Install Godot 4.3 and export templates
         run: |
@@ -75,23 +77,14 @@ jobs:
           EOF
 
       - name: Import and validate Godot project
-        env:
-          ANDROID_HOME: ${{ env.ANDROID_HOME }}
-          ANDROID_SDK_ROOT: ${{ env.ANDROID_HOME }}
         run: |
           godot --headless --editor --path StreetLegendGodot --quit
           godot --headless --path StreetLegendGodot --quit-after 5
 
       - name: Install Android build template
-        env:
-          ANDROID_HOME: ${{ env.ANDROID_HOME }}
-          ANDROID_SDK_ROOT: ${{ env.ANDROID_HOME }}
         run: godot --headless --editor --path StreetLegendGodot --install-android-build-template --quit
 
       - name: Export debug APK
-        env:
-          ANDROID_HOME: ${{ env.ANDROID_HOME }}
-          ANDROID_SDK_ROOT: ${{ env.ANDROID_HOME }}
         run: |
           mkdir -p StreetLegendGodot/build
           godot --headless --path StreetLegendGodot --export-debug "Android" StreetLegendGodot/build/StreetLegend-debug.apk
