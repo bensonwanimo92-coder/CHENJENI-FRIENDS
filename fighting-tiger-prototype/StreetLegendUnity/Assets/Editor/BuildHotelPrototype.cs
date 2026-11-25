@@ -45,6 +45,29 @@ public static class BuildHotelPrototype
         Make("Lobby Reception", new Vector3(0,0.65f,8), new Vector3(5,1.3f,1), new Color(0.35f,0.22f,0.12f));
         Make("Lobby Column A", new Vector3(-6,2,6), new Vector3(0.7f,4,0.7f), new Color(0.55f,0.48f,0.38f));
         Make("Lobby Column B", new Vector3(6,2,6), new Vector3(0.7f,4,0.7f), new Color(0.55f,0.48f,0.38f));
+        // Mission integration scaffold: the car is staged outside and activated only after the hotel opponent is KO.
+        var vehicleRoot = new GameObject("Wanimo Pursuit Vehicle");
+        vehicleRoot.transform.position = new Vector3(0,1,-18);
+        var vehicleBody = Make("Vehicle Body Placeholder", new Vector3(0,1.5f,-18), new Vector3(2,1,4), new Color(0.12f,0.3f,0.72f));
+        vehicleBody.transform.SetParent(vehicleRoot.transform,true);
+        Object.DestroyImmediate(vehicleBody.GetComponent<BoxCollider>());
+        var vehicleCollider=vehicleRoot.AddComponent<BoxCollider>();vehicleCollider.size=new Vector3(2,1,4);vehicleCollider.center=new Vector3(0,.5f,0);
+        var vehicleRb=vehicleRoot.AddComponent<Rigidbody>();vehicleRb.mass=1300;vehicleRb.centerOfMass=new Vector3(0,-.45f,0);
+        var vehicleController=vehicleRoot.AddComponent<StreetLegendVehicleController>();
+        var chaseTarget=new GameObject("Range Rover Chase Target");chaseTarget.transform.position=new Vector3(3,1,-2);
+        var chaseBody=Make("Range Rover Placeholder",new Vector3(3,1.5f,-2),new Vector3(2,1,4),new Color(.12f,.12f,.15f));chaseBody.transform.SetParent(chaseTarget.transform,true);Object.DestroyImmediate(chaseBody.GetComponent<BoxCollider>());
+        chaseTarget.AddComponent<BoxCollider>();chaseTarget.AddComponent<Rigidbody>().isKinematic=true;var targetDrive=chaseTarget.AddComponent<StreetLegendChaseTarget>();
+        var chaseRoute=new Transform[3];for(int i=0;i<3;i++){var wp=new GameObject("Pursuit Route "+i);wp.transform.position=new Vector3(i==1?4:-3,1,25+i*22);chaseRoute[i]=wp.transform;}targetDrive.route=chaseRoute;
+        Make("Pursuit Road",new Vector3(0,-.25f,30),new Vector3(18,.5f,100),new Color(.22f,.22f,.23f));
+        Make("Roadblock Barrier",new Vector3(0,1,70),new Vector3(12,2,1),Color.yellow);
+        var rbTrigger=new GameObject("Roadblock Trigger");rbTrigger.transform.position=new Vector3(0,1,64);var rbBox=rbTrigger.AddComponent<BoxCollider>();rbBox.isTrigger=true;rbBox.size=new Vector3(18,3,8);var rbLogic=rbTrigger.AddComponent<StreetLegendRoadblockTrigger>();
+        vehicleRoot.SetActive(false);
+        var missionPhase=new GameObject("Mission Phase Coordinator").AddComponent<StreetLegendMissionPhase>();missionPhase.vehicle=vehicleController;
+        var drivingUiRoot=new GameObject("Driving HUD");var drivingHud=drivingUiRoot.AddComponent<StreetLegendDrivingHUD>();drivingHud.vehicle=vehicleController;drivingUiRoot.SetActive(false);missionPhase.drivingHUD=drivingUiRoot;rbLogic.mission=missionPhase;
+        var director=new GameObject("Hotel Pursuit Integration").AddComponent<StreetLegendMissionIntegrationDirector>();director.hotelOpponent=ai;director.mission=missionPhase;director.vehicle=vehicleController;director.drivingHud=drivingHud;director.vehicleEntryPoint=vehicleRoot.transform;director.hotelPlayer=pc;
+        var driveCamObj=new GameObject("Pursuit Camera");var driveCam=driveCamObj.AddComponent<Camera>();driveCamObj.AddComponent<StreetLegendDrivingCamera>().target=vehicleRoot.transform;driveCam.enabled=false;
+        // Camera mode switcher listens for mission phase changes and toggles the camera.
+        driveCamObj.AddComponent<StreetLegendMissionCameraSwitcher>().combatCamera=cameraObject.GetComponent<Camera>();driveCamObj.GetComponent<StreetLegendMissionCameraSwitcher>().drivingCamera=driveCam;driveCamObj.GetComponent<StreetLegendMissionCameraSwitcher>().mission=missionPhase;
         EditorSceneManager.SaveScene(scene, "Assets/Scenes/Level1_Hotel_Prototype.unity");
         Debug.Log("Street Legend hotel prototype scene created. Generated fighter prefabs are used when available; otherwise coloured capsule placeholders are used. Environment remains greybox geometry.");
     }
