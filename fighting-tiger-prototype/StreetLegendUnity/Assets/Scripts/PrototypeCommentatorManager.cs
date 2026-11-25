@@ -50,6 +50,7 @@ public class PrototypeCommentatorManager : MonoBehaviour
         StreetLegendGameplayEvents.Raised -= HandleGameplayEvent;
         queue.Clear();
         if (playback != null) StopCoroutine(playback);
+        playback = null;
         if (voice) voice.Stop();
     }
 
