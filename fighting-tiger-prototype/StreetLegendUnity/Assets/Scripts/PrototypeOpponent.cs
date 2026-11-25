@@ -20,6 +20,7 @@ public class PrototypeOpponent : MonoBehaviour
     [SerializeField, Range(0f, 1f)] float guardChance = 0.18f;
     [SerializeField] float guardDamageMultiplier = 0.35f;
     [SerializeField] float guardCooldown = 1.8f;
+    [SerializeField] float guardStunDuration = 0.12f;
     float nextGuardAt;
     float tacticalSwitchAt;
     int circleSide = 1;
@@ -171,8 +172,8 @@ public class PrototypeOpponent : MonoBehaviour
         }
         float applied = Mathf.Min(health, incoming);
         health = Mathf.Max(0f, health - applied);
-        StreetLegendGameplayEvents.Raise(StreetLegendEventType.OpponentDamaged, gameObject, null, applied, heavy);
-        stunUntil = Time.time + (heavy ? 0.75f : 0.28f);
+        StreetLegendGameplayEvents.Raise(guarded ? StreetLegendEventType.OpponentGuarded : StreetLegendEventType.OpponentDamaged, gameObject, null, applied, heavy);
+        stunUntil = Time.time + (guarded ? guardStunDuration : (heavy ? 0.75f : 0.28f));
         if (direction.sqrMagnitude > 0.001f)
             motor.Move(direction.normalized * (heavy ? 0.42f : 0.14f));
 
