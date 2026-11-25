@@ -321,6 +321,7 @@ public class PrototypeCommentatorManager : MonoBehaviour
         return new[]
         {
             MakeLine(StreetLegendEventType.PlayerStartedMoving, 1.4f, 1, "He's on the move. Keep your guard up.", "He's closing the distance. Watch the footwork."),
+            MakeLine(StreetLegendEventType.OpponentStartedMoving, 4.0f, 1, "The enforcer is advancing. Watch how he cuts the distance."),
             MakeLine(StreetLegendEventType.PlayerEnteredCombatRange, 1.8f, 2, "They're in striking range now. This is where timing matters.", "He's close enough to make this count."),
             MakeLine(StreetLegendEventType.PlayerLeftCombatRange, 2.5f, 1, "They've separated. Find the opening and step back in.", "The distance is growing. Reset and read your opponent."),
             MakeLine(StreetLegendEventType.PlayerAttackStarted, 1.1f, 2, "He's committing to the strike!", "Here comes the attack. Watch the timing."),
