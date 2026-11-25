@@ -1,0 +1,45 @@
+name: Generate Street Legend fighter FBX assets
+
+on:
+  workflow_dispatch:
+  push:
+    paths:
+      - "fighting-tiger-prototype/StreetLegendUnity/Tools/Blender/generate_fighter_pair.py"
+      - ".github/workflows/street-legend-fighter-assets.yml"
+
+permissions:
+  contents: read
+
+jobs:
+  generate-fighters:
+    runs-on: ubuntu-24.04
+    timeout-minutes: 20
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v4
+
+      - name: Install Blender
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y blender
+          blender --version
+
+      - name: Generate rigged fighter FBX files
+        run: |
+          blender --background --factory-startup --python fighting-tiger-prototype/StreetLegendUnity/Tools/Blender/generate_fighter_pair.py
+
+      - name: Verify exported assets
+        run: |
+          set -euo pipefail
+          output="fighting-tiger-prototype/StreetLegendUnity/Assets/Characters/Generated"
+          test -s "$output/Wanimoo_Player.fbx"
+          test -s "$output/Hotel_Enforcer.fbx"
+          ls -lh "$output"/*.fbx
+
+      - name: Upload generated fighter assets
+        uses: actions/upload-artifact@v4
+        with:
+          name: street-legend-fighter-fbx
+          path: fighting-tiger-prototype/StreetLegendUnity/Assets/Characters/Generated/*.fbx
+          if-no-files-found: error
+          retention-days: 14
