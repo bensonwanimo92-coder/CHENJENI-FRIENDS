@@ -96,7 +96,7 @@ public class PrototypeOpponent : MonoBehaviour
     System.Collections.IEnumerator ResolveAttackAfterWindup(Transform targetAtStart)
     {
         yield return new WaitForSeconds(0.2f);
-        if (health <= 0f || !targetAtStart || !targetAtStart.gameObject.activeInHierarchy) yield break;
+        if (health <= 0f || Time.time < stunUntil || !targetAtStart || !targetAtStart.gameObject.activeInHierarchy) yield break;
 
         Collider targetCollider = targetAtStart.GetComponent<Collider>(); 
         if (!targetCollider) targetCollider = targetAtStart.GetComponentInChildren<Collider>();
