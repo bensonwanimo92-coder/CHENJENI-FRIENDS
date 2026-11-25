@@ -14,8 +14,8 @@ public static class BuildHotelPrototype
         Make("Rear Hotel Wall", new Vector3(0,2,11.8f), new Vector3(18,4,0.4f), new Color(0.32f,0.29f,0.25f));
         Make("Left Hotel Wall", new Vector3(-8.8f,2,0), new Vector3(0.4f,4,24), new Color(0.32f,0.29f,0.25f));
         Make("Right Hotel Wall", new Vector3(8.8f,2,0), new Vector3(0.4f,4,24), new Color(0.32f,0.29f,0.25f));
-        var player = Capsule("Wanimoo Prototype", new Vector3(-2,1,0), new Color(0.12f,0.42f,0.75f), true);
-        var enemy = Capsule("Hotel Enforcer Prototype", new Vector3(2,1,4), new Color(0.62f,0.16f,0.13f), false);
+        var player = CreateFighter("Wanimoo Player", "Wanimoo_Player", new Vector3(-2,0,0), new Color(0.12f,0.42f,0.75f));
+        var enemy = CreateFighter("Hotel Enforcer", "Hotel_Enforcer", new Vector3(2,0,4), new Color(0.62f,0.16f,0.13f));
         var pc = player.AddComponent<PrototypeFighterController>();
         var ai = enemy.AddComponent<PrototypeOpponent>();
         player.AddComponent<PrototypeFallRecovery>();
@@ -39,6 +39,33 @@ public static class BuildHotelPrototype
         EditorSceneManager.SaveScene(scene, "Assets/Scenes/Level1_Hotel_Prototype.unity");
         Debug.Log("Street Legend hotel prototype scene created. Greybox art only; replace primitives with licensed character/environment assets.");
     }
+
+    static GameObject CreateFighter(string displayName, string assetName, Vector3 position, Color fallbackColor)
+    {
+        string prefabPath = "Assets/Characters/Prefabs/" + assetName + ".prefab";
+        GameObject prefab = AssetDatabase.LoadAssetAtPath<GameObject>(prefabPath);
+        GameObject fighter = prefab
+            ? PrefabUtility.InstantiatePrefab(prefab) as GameObject
+            : Capsule(displayName + " Placeholder", position + Vector3.up, fallbackColor, assetName == "Wanimoo_Player");
+
+        if (!fighter) throw new System.InvalidOperationException("Could not create fighter: " + displayName);
+        fighter.name = displayName;
+        fighter.transform.position = position;
+        if (!fighter.GetComponent<CharacterController>())
+        {
+            var controller = fighter.AddComponent<CharacterController>();
+            controller.height = 1.85f;
+            controller.radius = 0.31f;
+            controller.center = new Vector3(0f, 0.93f, 0f);
+            controller.skinWidth = 0.035f;
+        }
+        var animator = fighter.GetComponent<Animator>();
+        if (prefab && !animator)
+            animator = fighter.AddComponent<Animator>();
+        if (animator) animator.applyRootMotion = false;
+        return fighter;
+    }
+
     static GameObject Make(string name, Vector3 pos, Vector3 scale, Color color)
     {
         var go = GameObject.CreatePrimitive(PrimitiveType.Cube); go.name=name; go.transform.position=pos; go.transform.localScale=scale;
