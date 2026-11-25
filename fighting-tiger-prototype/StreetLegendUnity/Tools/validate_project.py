@@ -47,10 +47,10 @@ checks = {
     ],
     "Assets/Scripts/PrototypeFighterController.cs": [
         "ResolveAttackAfterWindup", "PlayerHitConfirmed", "PlayerAttackMissed",
-        "SetMobileMoveInput", "HasClearAttackLine", "tacticalSwitchInterval", "circleSide", "retreatDistance"
+        "SetMobileMoveInput", "HasClearAttackLine"
     ],
     "Assets/Scripts/PrototypeOpponent.cs": [
-        "ChooseApproachDirection", "ResolveAttackAfterWindup", "ChooseApproachDirection", "OpponentStartedMoving", "OpponentDefeated", "HasClearAttackLine"
+        "ChooseApproachDirection", "ResolveAttackAfterWindup", "tacticalSwitchInterval", "circleSide", "retreatDistance", "OpponentStartedMoving", "OpponentDefeated", "HasClearAttackLine"
     ],
     "Assets/Scripts/PrototypeMobileHUD.cs": [
         "ToggleVoice", "ToggleSubtitles", "SetMobileMoveInput", "fillAmount"
