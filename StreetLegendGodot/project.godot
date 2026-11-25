@@ -1,5 +1,6 @@
 ; Engine configuration file.
 ; Street Legend Godot migration - Godot 4.x
+; Android export diagnostics run: verbose export logging enabled in CI.
 config_version=5
 [application]
 config/name="Street Legend"
