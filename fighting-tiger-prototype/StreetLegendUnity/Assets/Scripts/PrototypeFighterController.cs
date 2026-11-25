@@ -128,8 +128,7 @@ public class PrototypeFighterController : MonoBehaviour
             yield break;
         }
 
-        if (Physics.Raycast(origin, toTarget.normalized, out RaycastHit hit, distance + 0.08f, obstructionMask, QueryTriggerInteraction.Ignore) &&
-            hit.collider.transform != targetAtStart && !hit.collider.transform.IsChildOf(targetAtStart))
+        if (!HasClearAttackLine(origin, toTarget.normalized, distance + 0.08f, targetAtStart))
         {
             RaiseAttackMiss(targetAtStart, heavy);
             yield break;
@@ -149,6 +148,21 @@ public class PrototypeFighterController : MonoBehaviour
             StreetLegendGameplayEvents.Raise(StreetLegendEventType.PlayerHitConfirmed, gameObject, targetAtStart.gameObject, applied, heavy);
         else
             RaiseAttackMiss(targetAtStart, heavy);
+    }
+
+    bool HasClearAttackLine(Vector3 origin, Vector3 direction, float distance, Transform target)
+    {
+        // RaycastAll lets us ignore the attacker's own colliders and evaluate the
+        // nearest real obstruction instead of accidentally blocking on our body.
+        RaycastHit[] hits = Physics.RaycastAll(origin, direction, distance, obstructionMask, QueryTriggerInteraction.Ignore);
+        System.Array.Sort(hits, (a, b) => a.distance.CompareTo(b.distance));
+        foreach (RaycastHit hit in hits)
+        {
+            Transform hitTransform = hit.collider.transform;
+            if (hitTransform == transform || hitTransform.IsChildOf(transform)) continue;
+            return hitTransform == target || hitTransform.IsChildOf(target);
+        }
+        return false;
     }
 
     void RaiseAttackMiss(Transform target, bool heavy)
