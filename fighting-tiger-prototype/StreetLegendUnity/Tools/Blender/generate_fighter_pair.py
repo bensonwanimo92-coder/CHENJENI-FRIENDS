@@ -2,9 +2,9 @@
 Street Legend procedural fighter base generator.
 Run with Blender 4.x:
   blender --background --python generate_fighter_pair.py
-Creates two distinct, proportioned, bone-deformable base characters and FBX exports.
+Creates two distinct, proportioned, bone-deformable base characters with starter idle/guard/jab/heavy-kick/hit/knockout animation takes.
 These are rigged prototype bases, not final photorealistic production characters.
-Replace/upgrade meshes and textures before release.
+Replace/upgrade meshes and textures and tune the starter animation takes before release.
 """
 import bpy
 import math
@@ -111,6 +111,65 @@ def create_rig(prefix, xoff):
     arm.data.display_type = "OCTAHEDRAL"
     return arm
 
+def add_combat_actions(arm, prefix):
+    """Create simple, editable humanoid motion takes for Unity's Humanoid importer."""
+    arm.animation_data_create()
+    bones = arm.pose.bones
+    for bone in bones:
+        bone.rotation_mode = "XYZ"
+
+    def key_pose(action_name, frames):
+        action = bpy.data.actions.new(prefix + "_" + action_name)
+        arm.animation_data.action = action
+        for frame, pose in frames:
+            bpy.context.scene.frame_set(frame)
+            for bone in bones:
+                bone.rotation_euler = (0.0, 0.0, 0.0)
+            for bone_name, angles in pose.items():
+                if bone_name in bones:
+                    bones[bone_name].rotation_euler = angles
+            for bone in bones:
+                bone.keyframe_insert(data_path="rotation_euler", frame=frame, group=bone.name)
+        action.frame_range = (frames[0][0], frames[-1][0])
+        return action
+
+    # Angles are intentionally restrained; final tuning should be done against the imported rig.
+    key_pose("SL_Idle", [
+        (1, {}),
+        (12, {"Chest": (0.025, 0.0, 0.0), "Head": (-0.015, 0.0, 0.0)}),
+        (24, {}),
+    ])
+    guard = {
+        "LeftUpperArm": (0.0, 0.0, -0.48), "RightUpperArm": (0.0, 0.0, 0.48),
+        "LeftLowerArm": (0.0, 0.0, -0.72), "RightLowerArm": (0.0, 0.0, 0.72),
+        "Chest": (0.0, 0.0, 0.035),
+    }
+    key_pose("SL_Guard", [(1, {}), (5, guard), (18, guard), (24, {})])
+    jab = {
+        "RightUpperArm": (0.0, 0.0, 1.05), "RightLowerArm": (0.0, 0.0, 0.18),
+        "LeftUpperArm": (0.0, 0.0, -0.42), "LeftLowerArm": (0.0, 0.0, -0.68),
+        "Chest": (0.0, 0.0, 0.12),
+    }
+    key_pose("SL_Jab", [(1, guard), (4, {"RightUpperArm": (0.0, 0.0, 0.25)}), (8, jab), (11, jab), (17, guard), (22, {})])
+    heavy = {
+        "RightUpperArm": (0.0, 0.0, 1.25), "RightLowerArm": (0.0, 0.0, 0.32),
+        "LeftUpperLeg": (0.75, 0.0, 0.0), "LeftLowerLeg": (-0.95, 0.0, 0.0),
+        "Chest": (0.0, 0.0, 0.2),
+    }
+    key_pose("SL_HeavyKick", [(1, guard), (5, {"LeftUpperLeg": (0.2, 0.0, 0.0)}), (10, heavy), (13, heavy), (20, guard), (26, {})])
+    hit = {
+        "Chest": (-0.18, 0.0, 0.0), "Head": (-0.12, 0.0, 0.0),
+        "LeftUpperArm": (0.0, 0.0, -0.8), "RightUpperArm": (0.0, 0.0, 0.8),
+    }
+    key_pose("SL_HitReact", [(1, {}), (4, hit), (8, hit), (15, guard), (21, {})])
+    down = {
+        "Chest": (-0.55, 0.0, 0.0), "Head": (-0.35, 0.0, 0.0),
+        "LeftUpperLeg": (0.45, 0.0, 0.0), "RightUpperLeg": (-0.45, 0.0, 0.0),
+        "LeftUpperArm": (0.0, 0.0, -0.85), "RightUpperArm": (0.0, 0.0, 0.85),
+    }
+    key_pose("SL_Knockout", [(1, {}), (10, hit), (20, down), (32, down)])
+
+
 def build_character(prefix, xoff, skin_color, shirt_color, pants_color, accent_color, broad=False):
     skin = material(prefix+"_Skin", skin_color, roughness=0.82)
     shirt = material(prefix+"_Streetwear", shirt_color, roughness=0.76)
@@ -159,6 +218,9 @@ def build_character(prefix, xoff, skin_color, shirt_color, pants_color, accent_c
         uv_part(prefix+"_Brow", (xoff+s*0.047, -0.111, 1.883), (0.031,0.018,0.012), skin, "Head", arm, parts, 16, 12)
     # Add a simple belt detail.
     uv_part(prefix+"_Belt", (xoff, -0.002, 1.075), (0.205,0.14,0.035), accent, "Hips", arm, parts)
+    # Add starter combat motion takes before exporting the humanoid rig.
+    add_combat_actions(arm, prefix)
+
     # Keep rig and all skinned pieces selected for export.
     bpy.ops.object.select_all(action="DESELECT")
     arm.select_set(True)
@@ -172,7 +234,12 @@ def build_character(prefix, xoff, skin_color, shirt_color, pants_color, accent_c
         apply_unit_scale=True,
         apply_scale_options="FBX_SCALE_ALL",
         add_leaf_bones=False,
-        bake_anim=False,
+        bake_anim=True,
+        bake_anim_use_all_actions=True,
+        bake_anim_use_nla_strips=False,
+        bake_anim_force_startend_keying=True,
+        bake_anim_step=1.0,
+        bake_anim_simplify_factor=0.0,
         path_mode="COPY",
         embed_textures=True
     )
