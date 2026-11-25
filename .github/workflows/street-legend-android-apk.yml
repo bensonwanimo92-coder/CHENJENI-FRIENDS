@@ -41,8 +41,6 @@ jobs:
           echo "$ANDROID_HOME/platform-tools" >> "$GITHUB_PATH"
 
       - name: Install Android build packages
-        env:
-          ANDROID_HOME: ${{ runner.temp }}/../android-sdk
         run: |
           set -euo pipefail
           sdkmanager --sdk_root="$HOME/android-sdk" --install "platform-tools" "platforms;android-34" "build-tools;34.0.0"
@@ -60,10 +58,21 @@ jobs:
           cp "$RUNNER_TEMP/godot/templates/templates/"* "$HOME/.local/share/godot/export_templates/4.3.stable/"
           godot --version
 
-      - name: Configure Android debug signing
+      - name: Configure Android SDK paths and debug signing
         run: |
-          mkdir -p "$HOME/.android"
+          set -euo pipefail
+          mkdir -p "$HOME/.android" "$HOME/.config/godot"
           keytool -genkeypair -v -keystore "$HOME/.android/debug.keystore" -storepass android -alias androiddebugkey -keypass android -keyalg RSA -keysize 2048 -validity 10000 -dname "CN=Android Debug,O=Android,C=US" -noprompt
+          cat > "$HOME/.config/godot/editor_settings-4.tres" <<EOF
+          [gd_resource type="EditorSettings" format=3]
+
+          [resource]
+          export/android/android_sdk_path = "$HOME/android-sdk"
+          export/android/java_sdk_path = "$JAVA_HOME"
+          export/android/debug_keystore = "$HOME/.android/debug.keystore"
+          export/android/debug_keystore_user = "androiddebugkey"
+          export/android/debug_keystore_pass = "android"
+          EOF
 
       - name: Import and validate Godot project
         env:
