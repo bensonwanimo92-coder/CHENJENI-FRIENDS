@@ -13,13 +13,14 @@ This is the first Unity project scaffold for the Street Legend hotel-combat prot
 - WASD / arrow keys: move.
 - J: light attack.
 - K: heavy attack.
+- Android: lower-left touch joystick to move; tap the lower-right attack area for a light strike; tap the far-right heavy button area for a heavy strike. The touch HUD shows both fighters’ health.
 
 The hotel environment is still greybox geometry. The scene generator now loads the generated Wanimoo and Hotel Enforcer prefabs when they exist; until those FBX files have been generated, imported and prepared, it safely falls back to capsule placeholders.
 
 ## Important limitations
 - This scaffold has not yet been opened or compiled in Unity in this environment.
 - Player and opponent attacks now have a short anticipation/wind-up before impact, then re-check range, facing arc and raycast line of sight at the actual impact moment. A target that moves away or is shielded by level geometry can avoid the hit. These are timed gameplay windows, not yet synchronized to authored punch/kick animation clips; Unity testing is still required.
-- Keyboard input is currently wired; Android touch controls, animation rigs, audio, proper animation-driven hitboxes, UI, full campaign scenes and production character/environment assets remain to be implemented.
+- Keyboard input is currently wired; Android touch movement and light/heavy attack input plus live player/opponent health bars are now generated at runtime in the hotel scene. The HUD is a first-pass touch layout; device safe-area, multi-resolution and real-device responsiveness still need testing. Animation rigs, audio, proper animation-driven hitboxes, full campaign scenes and production character/environment assets remain to be implemented.
 - A fall-recovery safety component is included in the generated hotel scene; it returns a fighter below the configured kill plane to its starting position. Checkpoints and recovery tuning still need level-specific setup and testing.
 - The follow camera now uses a sphere cast to reduce clipping through walls; camera behavior still needs testing in tight corridors and around corners.
 - Physics/geometry acceptance tests are documented in `PHYSICS_GEOMETRY_AND_COLLISION_CHECKLIST.md`.
