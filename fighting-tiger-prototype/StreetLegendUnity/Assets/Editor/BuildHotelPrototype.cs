@@ -79,7 +79,14 @@ public static class BuildHotelPrototype
     {
         var go=GameObject.CreatePrimitive(PrimitiveType.Capsule); go.name=name; go.transform.position=pos;
         go.GetComponent<Renderer>().sharedMaterial=Material(color);
-        go.AddComponent<CharacterController>();
+        // Primitive capsules carry a collider; remove it to avoid duplicate collision surfaces
+        // when the CharacterController is added and tuned for gameplay.
+        Object.DestroyImmediate(go.GetComponent<CapsuleCollider>());
+        var controller = go.AddComponent<CharacterController>();
+        controller.height = 1.85f;
+        controller.radius = 0.31f;
+        controller.center = new Vector3(0f, 0.93f, 0f);
+        controller.skinWidth = 0.035f;
         return go;
     }
     static Material Material(Color c) { var m=new Material(Shader.Find("Standard")); m.color=c; return m; }
