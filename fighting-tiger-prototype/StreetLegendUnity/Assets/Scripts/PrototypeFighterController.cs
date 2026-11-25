@@ -105,7 +105,7 @@ public class PrototypeFighterController : MonoBehaviour
     {
         // Gives animation controllers a real anticipation window before impact.
         yield return new WaitForSeconds(heavy ? 0.28f : 0.16f);
-        if (health <= 0f || !targetAtStart || !targetAtStart.gameObject.activeInHierarchy)
+        if (health <= 0f || Time.time < hitStunUntil || !targetAtStart || !targetAtStart.gameObject.activeInHierarchy)
             yield break;
 
         Collider targetCollider = targetAtStart.GetComponent<Collider>(); 
