@@ -63,7 +63,7 @@ checks = {
     ],
     "Assets/Scripts/PrototypeHumanoidAnimationDriver.cs": [
         "bool moving", "moving ? \"Walk\" : \"Guard\"", "FallbackKnockoutPose",
-        "StreetLegendGameplayEvents.Raised += HandleEvent"
+        "StreetLegendGameplayEvents.Raised += HandleEvent", "StreetLegendEventType.OpponentGuarded"
     ],
     "Assets/Editor/StreetLegendFighterAssetPipeline.cs": [
         "defaultClipAnimations", "clips[i].loopTime", "clips[i].loopPose",
