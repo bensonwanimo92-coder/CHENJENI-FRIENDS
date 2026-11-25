@@ -8,6 +8,9 @@ const ChaseScript = preload("res://scripts/chase_target.gd")
 const CameraScript = preload("res://scripts/third_person_camera.gd")
 const MissionScript = preload("res://scripts/mission_flow.gd")
 const CommentatorScript = preload("res://scripts/commentator.gd")
+const AnimationDriverScript = preload("res://scripts/animation_driver.gd")
+const FallRecoveryScript = preload("res://scripts/fall_recovery.gd")
+const MatchManagerScript = preload("res://scripts/match_manager.gd")
 
 var player: StreetLegendFighter
 var hotel_enemy: StreetLegendFighter
@@ -20,6 +23,7 @@ var controls: StreetLegendMobileControls
 var camera_rig: StreetLegendThirdPersonCamera
 var status_label: Label
 var commentator: StreetLegendCommentator
+var match_manager: Node
 
 func _ready() -> void:
 	_build_world()
@@ -54,6 +58,10 @@ func _ready() -> void:
 	player.knocked_out.connect(mission.notify_player_defeated)
 	mission.phase_changed.connect(_on_mission_phase_changed)
 	mission.mission_finished.connect(_on_mission_finished)
+	match_manager = MatchManagerScript.new()
+	match_manager.name = "MatchManager"
+	add_child(match_manager)
+	match_manager.call("configure", mission)
 	controls = MobileControlsScript.new()
 	controls.set("fighter", player)
 	controls.set("vehicle", vehicle)
@@ -137,6 +145,14 @@ func _spawn_fighter(label: String, spawn: Vector3, tint: Color, is_player: bool)
 	mesh.material_override = material
 	mesh.position.y = 0.9
 	body.add_child(mesh)
+	var animation_driver := Node.new()
+	animation_driver.name = "AnimationDriver"
+	animation_driver.set_script(AnimationDriverScript)
+	body.add_child(animation_driver)
+	var fall_recovery := Node.new()
+	fall_recovery.name = "FallRecovery"
+	fall_recovery.set_script(FallRecoveryScript)
+	body.add_child(fall_recovery)
 	var collision := CollisionShape3D.new()
 	var shape := CapsuleShape3D.new()
 	shape.radius = 0.42
