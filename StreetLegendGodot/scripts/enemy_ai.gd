@@ -5,6 +5,8 @@ class_name StreetLegendEnemy
 @export var preferred_distance: float = 1.45
 @export var decision_interval: float = 0.2
 @export var attack_interval: float = 1.35
+@export var attack_damage: float = 8.0
+@export var attack_windup: float = 0.2
 @export var circle_speed: float = 1.15
 @export_range(0.0, 1.0) var guard_chance: float = 0.18
 @export var guard_damage_multiplier: float = 0.35
@@ -61,6 +63,36 @@ func _physics_process(delta: float) -> void:
 	else:
 		velocity.y = 0.0
 	move_and_slide()
+
+
+func attack(heavy: bool = false) -> void:
+	if attack_timer > 0.0 or hit_stun_timer > 0.0 or not is_instance_valid(target):
+		return
+	attack_timer = attack_interval * (1.5 if heavy else 1.0)
+	attack_event.emit(&"opponent_started_attacking", 0.0, heavy)
+	_resolve_enemy_attack(heavy)
+
+func _resolve_enemy_attack(heavy: bool) -> void:
+	await get_tree().create_timer(attack_windup).timeout
+	if health <= 0.0 or hit_stun_timer > 0.0 or not is_instance_valid(target) or not target.is_inside_tree():
+		return
+	var origin := global_position + Vector3.UP
+	var target_point := target.global_position + Vector3.UP
+	var to_target := target_point - origin
+	var distance := to_target.length()
+	var flat := Vector3(to_target.x, 0.0, to_target.z)
+	var forward := -global_transform.basis.z
+	if distance > attack_range or distance < 0.01 or (flat.length_squared() > 0.001 and rad_to_deg(forward.angle_to(flat.normalized())) > attack_half_angle):
+		attack_event.emit(&"opponent_attack_missed", 0.0, heavy)
+		return
+	var query := PhysicsRayQueryParameters3D.create(origin, target_point)
+	query.exclude = [get_rid()]
+	var hit := get_world_3d().direct_space_state.intersect_ray(query)
+	if not hit.is_empty() and hit.collider != target and not target.is_ancestor_of(hit.collider):
+		attack_event.emit(&"opponent_attack_missed", 0.0, heavy)
+		return
+	if target.has_method("take_damage"):
+		target.take_damage(attack_damage if not heavy else attack_damage * 2.0, forward, heavy)
 
 func take_damage(amount: float, direction: Vector3 = Vector3.ZERO, heavy: bool = false) -> void:
 	if health <= 0.0:
