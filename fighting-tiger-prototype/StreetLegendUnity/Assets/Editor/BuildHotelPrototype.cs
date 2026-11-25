@@ -22,6 +22,8 @@ public static class BuildHotelPrototype
         enemy.AddComponent<PrototypeFallRecovery>();
         pc.SetOpponent(enemy.transform); ai.SetTarget(player.transform);
         player.AddComponent<PrototypeMobileHUD>();
+        var matchManager = new GameObject("Match Manager").AddComponent<PrototypeMatchManager>();
+        matchManager.SetFighters(pc, ai);
         if (!AssetDatabase.IsValidFolder("Assets/Scenes")) AssetDatabase.CreateFolder("Assets", "Scenes");
         var cameraObject = new GameObject("Prototype Camera");
         cameraObject.AddComponent<Camera>();
