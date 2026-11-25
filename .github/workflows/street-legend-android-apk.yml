@@ -43,10 +43,10 @@ jobs:
       - name: Install Android build packages
         run: |
           set -euo pipefail
-          sdkmanager --sdk_root="$HOME/android-sdk" --install "platform-tools" "platforms;android-34" "build-tools;34.0.0"
           set +o pipefail
           yes | sdkmanager --sdk_root="$HOME/android-sdk" --licenses
           set -o pipefail
+          sdkmanager --sdk_root="$HOME/android-sdk" --install "platform-tools" "platforms;android-34" "build-tools;34.0.0"
           echo "Installed SDK packages:"
           sdkmanager --sdk_root="$HOME/android-sdk" --list_installed
           echo "SDK directory tree:"
