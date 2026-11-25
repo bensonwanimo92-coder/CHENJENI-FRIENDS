@@ -18,8 +18,8 @@ The hotel environment is still greybox geometry. The scene generator now loads t
 
 ## Important limitations
 - This scaffold has not yet been opened or compiled in Unity in this environment.
-- Player and opponent attacks now check range, facing arc and raycast line of sight; enemy hits reduce player prototype health. These checks are preliminary and still require Unity testing.
-- Keyboard input is currently wired; Android touch controls, animation rigs, audio, proper hitboxes, UI, full campaign scenes and production character/environment assets remain to be implemented.
+- Player and opponent attacks now have a short anticipation/wind-up before impact, then re-check range, facing arc and raycast line of sight at the actual impact moment. A target that moves away or is shielded by level geometry can avoid the hit. These are timed gameplay windows, not yet synchronized to authored punch/kick animation clips; Unity testing is still required.
+- Keyboard input is currently wired; Android touch controls, animation rigs, audio, proper animation-driven hitboxes, UI, full campaign scenes and production character/environment assets remain to be implemented.
 - A fall-recovery safety component is included in the generated hotel scene; it returns a fighter below the configured kill plane to its starting position. Checkpoints and recovery tuning still need level-specific setup and testing.
 - The follow camera now uses a sphere cast to reduce clipping through walls; camera behavior still needs testing in tight corridors and around corners.
 - Physics/geometry acceptance tests are documented in `PHYSICS_GEOMETRY_AND_COLLISION_CHECKLIST.md`.
