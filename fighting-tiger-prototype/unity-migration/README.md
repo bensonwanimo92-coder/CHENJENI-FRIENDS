@@ -35,3 +35,12 @@ Migration decision and initial C# systems are committed. This is **not yet a Uni
 - Streetwear and practical fight clothing (hoodies, tees, jeans, tracksuits, sneakers, wraps, gloves as appropriate).
 - Combat animation should convey weight, balance, footwork and believable recovery; prioritize grounded movement over flashy fantasy moves.
 - Visual target: approachable, realistic street-fighting game characters, scalable for Android performance.
+
+
+## Mobile scene and gameplay layout
+- Camera: follow target with soft damping; frame both fighters, retain player-side screen orientation, and avoid extreme zoom or shaky camera motion.
+- Arena: compact urban training/street arena, collision boundaries, simple props and modular materials.
+- Player controls: UI buttons for move/joystick, punch, kick, guard, dodge and special. Provide safe touch margins and configurable layout.
+- Performance: scalable render quality, shadow distance/softness options, effect pooling, conservative post-processing, texture compression and target frame rate options.
+- Fight flow: menu -> character selection -> stage intro -> combat -> results -> next stage. Pause and restart supported.
+- Assets: only use assets with licenses suitable for distribution or assets created for this project. Keep asset credits/licenses documented.
