@@ -112,7 +112,6 @@ func take_damage(amount: float, direction: Vector3 = Vector3.ZERO, heavy: bool =
 	if health <= 0.0:
 		knocked_out.emit()
 		attack_event.emit(&"opponent_defeated", 0.0, heavy)
-		set_physics_process(false)
 
 func set_target(value: CharacterBody3D) -> void:
 	target = value
