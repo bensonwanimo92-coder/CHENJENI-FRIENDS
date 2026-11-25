@@ -50,7 +50,7 @@ checks = {
         "SetMobileMoveInput", "HasClearAttackLine", "Avoid stun-lock damage stacking"
     ],
     "Assets/Scripts/PrototypeOpponent.cs": [
-        "ChooseApproachDirection", "ResolveAttackAfterWindup", "tacticalSwitchInterval", "circleSide", "retreatDistance", "OpponentStartedMoving", "OpponentDefeated", "HasClearAttackLine", "guardChance", "guardDamageMultiplier", "nextGuardAt", "OpponentGuarded", "guardStunDuration"
+        "ChooseApproachDirection", "ResolveAttackAfterWindup", "tacticalSwitchInterval", "circleSide", "retreatDistance", "OpponentStartedMoving", "OpponentDefeated", "HasClearAttackLine", "guardChance", "guardDamageMultiplier", "nextGuardAt", "OpponentGuarded", "guardStunDuration", "RaiseAttackMiss", "OpponentAttackMissed"
     ],
     "Assets/Scripts/PrototypeMobileHUD.cs": [
         "ToggleVoice", "ToggleSubtitles", "SetMobileMoveInput", "fillAmount"
