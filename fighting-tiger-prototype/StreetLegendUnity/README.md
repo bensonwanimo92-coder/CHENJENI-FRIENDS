@@ -24,7 +24,7 @@ The hotel environment is still greybox geometry. The scene generator now loads t
 - A fall-recovery safety component is included in the generated hotel scene; it returns a fighter below the configured kill plane to its starting position. Checkpoints and recovery tuning still need level-specific setup and testing.
 - The follow camera now uses a sphere cast to reduce clipping through walls; camera behavior still needs testing in tight corridors and around corners.
 - Physics/geometry acceptance tests are documented in `PHYSICS_GEOMETRY_AND_COLLISION_CHECKLIST.md`.
-- Typed gameplay events now report player movement transitions, attack starts/misses, confirmed hits, player damage/knockout, opponent attacks and opponent defeat. These events are the foundation for commentary and other game systems.
+- Typed gameplay events now report player movement transitions, combat-range entry/exit, attack starts/misses, confirmed hits, player damage/knockout, opponent attacks/damage and opponent defeat. These events are the foundation for commentary and other game systems.
 - A voice-only `PrototypeCommentatorManager` is attached by the hotel scene generator. It supports clip variations, cooldowns and priority-based playback, but no voice recordings are included or assigned yet; subtitles and settings UI remain outstanding.
 - The commentator has no visible character or portrait. It is an audio-only scene component. Its playback coroutine is reset cleanly when the component is disabled and re-enabled.
 - Knocked-out players continue to receive gravity and settle onto the floor; movement input is disabled and a movement-stop event is emitted.
