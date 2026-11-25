@@ -30,9 +30,18 @@ public class PrototypeFighterController : MonoBehaviour
 
     void Update()
     {
-        if (health <= 0f) return;
         if (motor.isGrounded && verticalVelocity.y < 0f) verticalVelocity.y = groundedStickForce;
         verticalVelocity.y += gravity * Time.deltaTime;
+
+        // A knocked-out fighter must still obey gravity and remain grounded.
+        if (health <= 0f)
+        {
+            motor.Move(verticalVelocity * Time.deltaTime);
+            if (wasMoving)
+                StreetLegendGameplayEvents.Raise(StreetLegendEventType.PlayerStoppedMoving, gameObject);
+            wasMoving = false;
+            return;
+        }
 
         Vector3 move = new Vector3(Input.GetAxisRaw("Horizontal"), 0f, Input.GetAxisRaw("Vertical"));
         move = Vector3.ClampMagnitude(move, 1f);
