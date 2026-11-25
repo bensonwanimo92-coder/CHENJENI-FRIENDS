@@ -66,7 +66,7 @@ checks = {
         "StreetLegendGameplayEvents.Raised += HandleEvent"
     ],
     "Assets/Editor/StreetLegendFighterAssetPipeline.cs": [
-        "defaultClipAnimations", "clip.loopTime", "clip.loopPose",
+        "defaultClipAnimations", "clips[i].loopTime", "clips[i].loopPose",
         "Prepare Fighter Prefabs", "Avatar.isHuman"
     ],
 }
