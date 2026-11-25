@@ -50,7 +50,7 @@ checks = {
         "SetMobileMoveInput", "HasClearAttackLine"
     ],
     "Assets/Scripts/PrototypeOpponent.cs": [
-        "ChooseApproachDirection", "ResolveAttackAfterWindup", "tacticalSwitchInterval", "circleSide", "retreatDistance", "OpponentStartedMoving", "OpponentDefeated", "HasClearAttackLine"
+        "ChooseApproachDirection", "ResolveAttackAfterWindup", "tacticalSwitchInterval", "circleSide", "retreatDistance", "OpponentStartedMoving", "OpponentDefeated", "HasClearAttackLine", "guardChance", "guardDamageMultiplier", "nextGuardAt"
     ],
     "Assets/Scripts/PrototypeMobileHUD.cs": [
         "ToggleVoice", "ToggleSubtitles", "SetMobileMoveInput", "fillAmount"
