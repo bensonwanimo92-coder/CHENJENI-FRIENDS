@@ -174,7 +174,8 @@ public class PrototypeFighterController : MonoBehaviour
 
     public void ReceiveHit(float damage, Vector3 direction, bool heavy)
     {
-        if (health <= 0f) return;
+        // Avoid stun-lock damage stacking while the fighter is still recovering.
+        if (health <= 0f || Time.time < hitStunUntil) return;
         float applied = Mathf.Min(health, Mathf.Max(0f, damage));
         health = Mathf.Max(0f, health - applied);
         hitStunUntil = Time.time + (heavy ? 0.65f : 0.25f);
