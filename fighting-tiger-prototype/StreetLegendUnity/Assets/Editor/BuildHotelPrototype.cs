@@ -26,6 +26,9 @@ public static class BuildHotelPrototype
         cameraObject.AddComponent<Camera>();
         var camera = cameraObject.AddComponent<PrototypeCameraFollow>();
         camera.target = player.transform;
+        var commentatorObject = new GameObject("Voice-Only Commentator");
+        commentatorObject.AddComponent<AudioSource>();
+        commentatorObject.AddComponent<PrototypeCommentatorManager>();
         camera.transform.position = new Vector3(0,8,-10);
         camera.transform.rotation = Quaternion.Euler(35,0,0);
         var light = new GameObject("Hotel Key Light").AddComponent<Light>();
