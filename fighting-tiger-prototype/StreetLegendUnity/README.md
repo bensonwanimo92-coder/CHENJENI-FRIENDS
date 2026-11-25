@@ -47,5 +47,21 @@ A first procedural, rigged human-base generator is included at `Tools/Blender/ge
 
 The generator builds two distinct, proportioned, bone-deformable human base meshes with separate body/clothing materials, head details, and a humanoid bone hierarchy. It now also exports starter Idle, Walk, Guard, Jab, HeavyKick, HitReact and Knockout animation takes; the Unity editor pipeline builds an Animator Controller from imported takes when they are present. They are a useful rigged prototype starting point, **not finished photorealistic AAA characters**: detailed sculpting, high-resolution skin/clothing textures, facial rigging, hair, and motion-capture-quality animation polish are still required. The starter Blender poses have not yet been visually checked in Blender or Unity and need tuning against the imported skeleton. Check the imported Avatar mapping and CharacterController fit before using the prefabs in a gameplay scene. Do not claim the assets are integrated until the FBX files have been generated and imported in Unity.
 
-## Next milestone
-Open the project in Unity, resolve any editor-version/import issues, generate the hotel scene, then compile and test the camera, fall recovery and combat checks. Next assign original commentator recordings, add more traversal/interaction event coverage, then wire mobile controls and animation-timed martial-arts hitboxes before making an Android build.
+## Validate and build an Android APK
+
+1. Open the project in Unity 6.0.32f1 and wait for package import/compilation.
+2. Run **Street Legend > Build Hotel Prototype Scene**.
+3. Run **Street Legend > Characters > Prepare Fighter Prefabs** after the two FBX files have been generated and imported.
+4. Run **Street Legend > Validate Hotel Prototype**. The validator checks required scene objects and collision components.
+5. Install Android Build Support, SDK, NDK and OpenJDK through Unity Hub.
+6. Select Android as the active build target and run **Street Legend > Build Android APK**. The editor build helper writes `Builds/Android/StreetLegend.apk` if the build succeeds.
+
+A GitHub Actions structural-validation workflow checks required files, package configuration and feature wiring on pushes. It is not a Unity compiler or Android build. The Android build helper is committed, but no APK has been produced in this environment.
+
+## Remaining release gates
+
+- Generate the two FBX characters with Blender, inspect their silhouettes and test the Humanoid Avatar mapping in Unity.
+- Tune the starter animation poses and verify the animation takes actually import and play correctly.
+- Run the hotel scene in Play Mode and test wall/floor collision, missed-hit behavior, fall recovery, AI obstruction steering, match outcomes, pause/restart and Android touch controls.
+- Test on a physical Android device for touch layout, performance, TTS availability and audio behavior.
+- Replace the procedural character bases and greybox hotel with higher-detail original/licensed production assets before calling the game release-ready.
