@@ -27,3 +27,11 @@ This folder begins the migration from the Canvas proof-of-concept to a real mobi
 
 ## Status
 Migration decision and initial C# systems are committed. This is **not yet a Unity project or APK**; engine editor setup, licensed/created models and animations, scene wiring, playtesting and Android builds remain.
+
+
+## Character art direction (locked)
+- Grounded human proportions: average/athletic physiques, no oversized muscles or superhero silhouettes.
+- Natural facial anatomy and realistic skin/material shading; avoid caricature and exaggerated features.
+- Streetwear and practical fight clothing (hoodies, tees, jeans, tracksuits, sneakers, wraps, gloves as appropriate).
+- Combat animation should convey weight, balance, footwork and believable recovery; prioritize grounded movement over flashy fantasy moves.
+- Visual target: approachable, realistic street-fighting game characters, scalable for Android performance.
