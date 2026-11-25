@@ -31,7 +31,7 @@ func _ready() -> void:
 	vehicle = _spawn_vehicle()
 	chase_target = _spawn_chase_target()
 	roadblock_marker = Node3D.new()
-	roadblock_marker.position = Vector3(0.0, 0.0, -56.0)
+	roadblock_marker.position = Vector3(0.0, 0.0, -46.0)
 	add_child(roadblock_marker)
 	mission = MissionScript.new()
 	add_child(mission)
