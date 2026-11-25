@@ -72,13 +72,20 @@ public class PrototypeFighterController : MonoBehaviour
             if (face.sqrMagnitude > 0.01f)
                 transform.forward = Vector3.Slerp(transform.forward, face.normalized, 8f * Time.deltaTime);
 
-            bool inRange = opponent.gameObject.activeInHierarchy && face.magnitude <= attackRange + 0.2f;
-            if (inRange != wasInCombatRange)
+            if (!opponent.gameObject.activeInHierarchy)
             {
-                StreetLegendGameplayEvents.Raise(
-                    inRange ? StreetLegendEventType.PlayerEnteredCombatRange : StreetLegendEventType.PlayerLeftCombatRange,
-                    gameObject, opponent.gameObject);
-                wasInCombatRange = inRange;
+                wasInCombatRange = false;
+            }
+            else
+            {
+                bool inRange = face.magnitude <= attackRange + 0.2f;
+                if (inRange != wasInCombatRange)
+                {
+                    StreetLegendGameplayEvents.Raise(
+                        inRange ? StreetLegendEventType.PlayerEnteredCombatRange : StreetLegendEventType.PlayerLeftCombatRange,
+                        gameObject, opponent.gameObject);
+                    wasInCombatRange = inRange;
+                }
             }
         }
 
