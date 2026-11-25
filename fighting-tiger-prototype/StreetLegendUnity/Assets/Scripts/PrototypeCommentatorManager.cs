@@ -207,9 +207,14 @@ public class PrototypeCommentatorManager : MonoBehaviour
                 Speak(line.Text);
                 float timeout = Mathf.Clamp(line.Text.Length * 0.075f, 1.8f, 7f);
                 float deadline = Time.realtimeSinceStartup + timeout;
-                while (Time.realtimeSinceStartup < deadline && IsSpeaking())
+                bool observedSpeech = false;
+                while (Time.realtimeSinceStartup < deadline)
+                {
+                    bool speaking = IsSpeaking();
+                    if (speaking) observedSpeech = true;
+                    else if (observedSpeech) break;
                     yield return null;
-                if (!IsSpeaking()) yield return new WaitForSecondsRealtime(Mathf.Min(0.25f, timeout * 0.15f));
+                }
             }
         }
         playback = null;
