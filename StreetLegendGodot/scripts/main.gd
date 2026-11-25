@@ -7,6 +7,7 @@ const VehicleScript = preload("res://scripts/vehicle_controller.gd")
 const ChaseScript = preload("res://scripts/chase_target.gd")
 const CameraScript = preload("res://scripts/third_person_camera.gd")
 const MissionScript = preload("res://scripts/mission_flow.gd")
+const CommentatorScript = preload("res://scripts/commentator.gd")
 
 var player: StreetLegendFighter
 var hotel_enemy: StreetLegendFighter
@@ -18,6 +19,7 @@ var mission: StreetLegendMissionFlow
 var controls: StreetLegendMobileControls
 var camera_rig: StreetLegendThirdPersonCamera
 var status_label: Label
+var commentator: StreetLegendCommentator
 
 func _ready() -> void:
 	_build_world()
@@ -43,6 +45,11 @@ func _ready() -> void:
 	mission.set("roadblock_point", _make_marker(Vector3(2.0, 0.0, -60.0), "RoadblockFighterPoint"))
 	mission.set("chase_target", chase_target)
 	hotel_enemy.knocked_out.connect(mission.notify_hotel_enemy_defeated)
+	player.attack_event.connect(_on_combat_event)
+	hotel_enemy.attack_event.connect(_on_combat_event)
+	roadblock_enemy.attack_event.connect(_on_combat_event)
+	commentator = CommentatorScript.new()
+	add_child(commentator)
 	roadblock_enemy.knocked_out.connect(mission.notify_roadblock_enemy_defeated)
 	player.knocked_out.connect(mission.notify_player_defeated)
 	mission.phase_changed.connect(_on_mission_phase_changed)
@@ -228,9 +235,14 @@ func _on_mission_phase_changed(new_phase: StringName) -> void:
 		_update_status("ROADBLOCK  •  GET OUT AND FIGHT")
 	elif new_phase == &"dismounting":
 		_update_status("ROADBLOCK AHEAD  •  VEHICLE STOPPING")
+		commentator.announce(&"roadblock_reached")
 
 func _on_mission_finished(victory: bool) -> void:
 	_update_status("LEVEL 01 COMPLETE  •  ROADBLOCK CLEARED" if victory else "WANIMO DOWN  •  RETRY REQUIRED")
+	commentator.announce(&"mission_complete", "Level one complete. The roadblock is cleared." if victory else "Wanimo is down. The mission has failed.")
+
+func _on_combat_event(event_type: StringName, _amount: float, _heavy: bool) -> void:
+	commentator.announce(event_type)
 
 func _on_player_health_changed(value: float) -> void:
 	_update_status("WANIMO  •  HEALTH %d%%" % roundi(value))
