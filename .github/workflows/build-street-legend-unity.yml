@@ -18,18 +18,36 @@ jobs:
         with:
           lfs: true
 
-      - name: Verify Unity project structure
+      - name: Verify Unity project structure and license configuration
         shell: bash
+        env:
+          UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
         run: |
+          set -euo pipefail
           test -f fighting-tiger-prototype/StreetLegendUnity/ProjectSettings/ProjectVersion.txt
           test -f fighting-tiger-prototype/StreetLegendUnity/Packages/manifest.json
           test -d fighting-tiger-prototype/StreetLegendUnity/Assets/Scripts
+          test -f fighting-tiger-prototype/StreetLegendUnity/Assets/Editor/StreetLegendCIBuild.cs
           grep -q '6000.0.32f1' fighting-tiger-prototype/StreetLegendUnity/ProjectSettings/ProjectVersion.txt
+          if [ -z "$UNITY_LICENSE" ]; then
+            echo "::error::UNITY_LICENSE is missing. Add the Unity license file contents under Settings > Secrets and variables > Actions > New repository secret."
+            exit 1
+          fi
+
+      - name: Cache Unity Library
+        uses: actions/cache@v4
+        with:
+          path: fighting-tiger-prototype/StreetLegendUnity/Library
+          key: StreetLegend-Unity6000-Android-${{ hashFiles('fighting-tiger-prototype/StreetLegendUnity/Assets/**', 'fighting-tiger-prototype/StreetLegendUnity/Packages/**', 'fighting-tiger-prototype/StreetLegendUnity/ProjectSettings/**') }}
+          restore-keys: |
+            StreetLegend-Unity6000-Android-
 
       - name: Build Android APK with Unity
         uses: game-ci/unity-builder@v4
         env:
           UNITY_LICENSE: ${{ secrets.UNITY_LICENSE }}
+          UNITY_EMAIL: ${{ secrets.UNITY_EMAIL }}
+          UNITY_PASSWORD: ${{ secrets.UNITY_PASSWORD }}
         with:
           projectPath: fighting-tiger-prototype/StreetLegendUnity
           unityVersion: 6000.0.32f1
@@ -37,17 +55,19 @@ jobs:
           androidAppBundle: false
           buildName: StreetLegend
           buildsPath: build
+          buildMethod: StreetLegendCIBuild.PerformBuild
 
       - name: Verify APK exists
         shell: bash
         run: |
-          find build -type f -name '*.apk' -size +0c -print -quit | grep -q .
-          find build -type f -name '*.apk' -size +0c -ls
+          set -euo pipefail
+          test -s build/Android/StreetLegend.apk
+          ls -lh build/Android/StreetLegend.apk
 
       - name: Upload Street Legend APK
         uses: actions/upload-artifact@v4
         with:
           name: StreetLegend-Android-APK
-          path: build/**/*.apk
+          path: build/Android/StreetLegend.apk
           if-no-files-found: error
           retention-days: 30
