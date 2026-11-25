@@ -35,12 +35,35 @@ public class PrototypeOpponent : MonoBehaviour
                 transform.forward = Vector3.Slerp(transform.forward, delta.normalized, 8f * Time.deltaTime);
 
             if (delta.magnitude > attackRange)
-                motor.Move(delta.normalized * moveSpeed * Time.deltaTime);
+            {
+                Vector3 desiredDirection = ChooseApproachDirection(delta.normalized);
+                motor.Move(desiredDirection * moveSpeed * Time.deltaTime);
+            }
             else if (Time.time >= nextAttack)
                 TryAttack();
         }
 
         motor.Move(Vector3.up * verticalSpeed * Time.deltaTime);
+    }
+
+    Vector3 ChooseApproachDirection(Vector3 desired)
+    {
+        Vector3 origin = transform.position + Vector3.up * 0.9f;
+        float probeDistance = 0.85f;
+        if (!Physics.SphereCast(origin, 0.24f, desired, out RaycastHit hit,
+                probeDistance, obstructionMask, QueryTriggerInteraction.Ignore) ||
+            hit.collider.transform == target || hit.collider.transform.IsChildOf(target))
+            return desired;
+
+        Vector3 left = Quaternion.AngleAxis(-55f, Vector3.up) * desired;
+        Vector3 right = Quaternion.AngleAxis(55f, Vector3.up) * desired;
+        bool leftBlocked = Physics.SphereCast(origin, 0.24f, left, probeDistance, obstructionMask, QueryTriggerInteraction.Ignore);
+        bool rightBlocked = Physics.SphereCast(origin, 0.24f, right, probeDistance, obstructionMask, QueryTriggerInteraction.Ignore);
+        if (!leftBlocked && rightBlocked) return left;
+        if (!rightBlocked && leftBlocked) return right;
+        if (!leftBlocked && !rightBlocked)
+            return Vector3.Dot(transform.right, left) > Vector3.Dot(transform.right, right) ? left : right;
+        return Vector3.zero;
     }
 
     void TryAttack()
