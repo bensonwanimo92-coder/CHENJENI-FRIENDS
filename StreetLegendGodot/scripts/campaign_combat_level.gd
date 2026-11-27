@@ -13,7 +13,7 @@ var hud:Label
 var controls:Node
 var camera:Node3D
 var defeated:int=0
-var done:=false\nvar continue_button:Button
+var done:=false\nvar continue_button:Button\nvar rescue_button:Button\nvar captive:Node3D
 func _ready():
 	_build_world()
 	player=_fighter("WANIMO",Vector3(0,0,3),true,Color(0.1,0.4,0.85))
@@ -135,7 +135,7 @@ func _on_enemy_down():
 		if campaign:campaign.complete_level(level_id,{"result":"victory","defeated":defeated})
 		hud.text="MISSION COMPLETE\nAll hostiles defeated. Level %d cleared."%level_id
 	else:_update_hud()
-func _continue():\n\tget_tree().paused=false\n\tget_tree().change_scene_to_file("res://scenes/level_%d.tscn"%(level_id+1))\nfunc _failed():
+func _rescue():\n\tif is_instance_valid(captive):\n\t\tcaptive.queue_free()\n\trescue_button.visible=false\n\t_finish_mission()\nfunc _build_captive():\n\tcaptive=Node3D.new()\n\tcaptive.position=Vector3(0,0,-4)\n\tvar body=MeshInstance3D.new()\n\tvar mesh=BoxMesh.new()\n\tmesh.size=Vector3(.45,1.1,.3)\n\tbody.mesh=mesh\n\tvar mat=StandardMaterial3D.new()\n\tmat.albedo_color=Color(.2,.7,.65)\n\tbody.material_override=mat\n\tcaptive.add_child(body)\n\tadd_child(captive)\nfunc _continue():\n\tget_tree().paused=false\n\tget_tree().change_scene_to_file("res://scenes/level_%d.tscn"%(level_id+1))\nfunc _failed():
 	if done:return
 	done=true
 	hud.text="MISSION FAILED\nRestart to try again."
