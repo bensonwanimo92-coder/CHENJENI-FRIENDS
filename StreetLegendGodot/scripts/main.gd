@@ -22,6 +22,8 @@ var mission: StreetLegendMissionFlow
 var controls: StreetLegendMobileControls
 var camera_rig: StreetLegendThirdPersonCamera
 var status_label: Label
+var player_health_label: Label
+var enemy_health_label: Label
 var commentator: StreetLegendCommentator
 var match_manager: Node
 
@@ -32,6 +34,8 @@ func _ready() -> void:
 	hotel_enemy = _spawn_fighter("HOTEL ENFORCER", Vector3(2.0, 0.0, 0.0), Color(0.72, 0.12, 0.10), false)
 	hotel_enemy.set_target(player)
 	player.set("opponent", hotel_enemy)
+	player.health_changed.connect(_on_player_health_changed)
+	hotel_enemy.health_changed.connect(_on_hotel_enemy_health_changed)
 	roadblock_enemy = _spawn_fighter("ROADBLOCK ENFORCER", Vector3(2.0, 0.0, -60.0), Color(0.68, 0.16, 0.12), false)
 	roadblock_enemy.visible = false
 	vehicle = _spawn_vehicle()
@@ -265,6 +269,12 @@ func _build_hud() -> void:
 	status_label = Label.new()
 	status_label.text = "Preparing encounter..."
 	column.add_child(status_label)
+	player_health_label = Label.new()
+	player_health_label.text = "WANIMO 100%"
+	column.add_child(player_health_label)
+	enemy_health_label = Label.new()
+	enemy_health_label.text = "ENFORCER 100%"
+	column.add_child(enemy_health_label)
 	var help := Label.new()
 	help.text = "Touch joystick + strike buttons  •  Landscape mode"
 	column.add_child(help)
@@ -272,10 +282,14 @@ func _build_hud() -> void:
 
 func _on_mission_phase_changed(new_phase: StringName) -> void:
 	if new_phase == &"driving_pursuit":
+		if is_instance_valid(enemy_health_label):
+			enemy_health_label.text = "PURSUIT  •  ESCAPING SUV"
 		controls.call("set_driving_mode", true)
 		camera_rig.set("target", vehicle)
 		_update_status("PURSUIT  •  THE RANGE ROVER IS PULLING AWAY")
 	elif new_phase == &"roadblock_combat":
+		if is_instance_valid(enemy_health_label):
+			enemy_health_label.text = "ROADBLOCK ENFORCER  •  %d%%" % roundi(roadblock_enemy.health)
 		controls.call("set_driving_mode", false)
 		camera_rig.set("target", player)
 		_update_status("ROADBLOCK  •  GET OUT AND FIGHT")
@@ -291,7 +305,16 @@ func _on_combat_event(event_type: StringName, _amount: float, _heavy: bool) -> v
 	commentator.announce(event_type)
 
 func _on_player_health_changed(value: float) -> void:
-	_update_status("WANIMO  •  HEALTH %d%%" % roundi(value))
+	if is_instance_valid(player_health_label):
+		player_health_label.text = "WANIMO  •  %d%%" % roundi(value)
+
+func _on_hotel_enemy_health_changed(value: float) -> void:
+	if mission != null and mission.phase == MissionScript.Phase.HOTEL_COMBAT and is_instance_valid(enemy_health_label):
+		enemy_health_label.text = "HOTEL ENFORCER  •  %d%%" % roundi(value)
+
+func _on_roadblock_health_changed(value: float) -> void:
+	if mission != null and mission.phase >= MissionScript.Phase.ROADBLOCK and is_instance_valid(enemy_health_label):
+		enemy_health_label.text = "ROADBLOCK ENFORCER  •  %d%%" % roundi(value))
 
 func _update_status(message: String) -> void:
 	if is_instance_valid(status_label):
