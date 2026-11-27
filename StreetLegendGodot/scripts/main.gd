@@ -134,19 +134,7 @@ func _spawn_fighter(label: String, spawn: Vector3, tint: Color, is_player: bool)
 	body.set_script(FighterScript if is_player else EnemyScript)
 	body.set("is_player", is_player)
 	body.set("display_name", label)
-	var capsule := CapsuleMesh.new()
-	capsule.radius = 0.42
-	capsule.height = 1.8
-	var mesh := MeshInstance3D.new()
-	mesh.name = "PlaceholderBody"
-	mesh.mesh = capsule
-	var material := StandardMaterial3D.new()
-	material.albedo_color = tint
-	material.metallic = 0.05
-	material.roughness = 0.72
-	mesh.material_override = material
-	mesh.position.y = 0.9
-	body.add_child(mesh)
+	_build_fighter_visual(body, tint, is_player)
 	var animation_driver := Node.new()
 	animation_driver.name = "AnimationDriver"
 	animation_driver.set_script(AnimationDriverScript)
@@ -369,3 +357,83 @@ func _build_lobby_set() -> void:
 		beam.position = Vector3(x, 5.1, -2.0)
 		beam.material_override = trim_mat
 		add_child(beam)
+
+func _build_fighter_visual(root: Node3D, tint: Color, is_player: bool) -> void:
+	# Stylized articulated placeholder silhouette built from distinct body parts (not a capsule).
+	var skin := Color(0.48, 0.31, 0.22)
+	var outfit := tint.darkened(0.22)
+	var accent := tint.lightened(0.28)
+	var head := MeshInstance3D.new()
+	head.name = "Head"
+	var headmesh := SphereMesh.new()
+	headmesh.radius = 0.19
+	headmesh.height = 0.38
+	head.mesh = headmesh
+	head.position = Vector3(0, 1.67, 0)
+	var skinmat := StandardMaterial3D.new()
+	skinmat.albedo_color = skin
+	head.material_override = skinmat
+	root.add_child(head)
+	var torso := MeshInstance3D.new()
+	torso.name = "Torso"
+	var chest := BoxMesh.new()
+	chest.size = Vector3(0.66, 0.68, 0.34)
+	torso.mesh = chest
+	torso.position = Vector3(0, 1.18, 0)
+	var clothmat := StandardMaterial3D.new()
+	clothmat.albedo_color = tint
+	clothmat.roughness = 0.82
+	torso.material_override = clothmat
+	root.add_child(torso)
+	var hips := MeshInstance3D.new()
+	var hipmesh := BoxMesh.new()
+	hipmesh.size = Vector3(0.48, 0.28, 0.32)
+	hips.mesh = hipmesh
+	hips.position.y = 0.78
+	var pantsmat := StandardMaterial3D.new()
+	pantsmat.albedo_color = outfit
+	hips.material_override = pantsmat
+	root.add_child(hips)
+	for side in [-1.0, 1.0]:
+		var arm := MeshInstance3D.new()
+		var armmesh := CapsuleMesh.new()
+		armmesh.radius = 0.13
+		armmesh.height = 0.62
+		arm.mesh = armmesh
+		arm.position = Vector3(side * 0.46, 1.12, 0.02)
+		arm.rotation.z = side * -0.22
+		arm.material_override = clothmat
+		root.add_child(arm)
+		var hand := MeshInstance3D.new()
+		var handmesh := SphereMesh.new()
+		handmesh.radius = 0.13
+		handmesh.height = 0.24
+		hand.mesh = handmesh
+		hand.position = Vector3(side * 0.52, 0.79, -0.03)
+		hand.material_override = skinmat
+		root.add_child(hand)
+		var leg := MeshInstance3D.new()
+		var legmesh := CapsuleMesh.new()
+		legmesh.radius = 0.16
+		legmesh.height = 0.72
+		leg.mesh = legmesh
+		leg.position = Vector3(side * 0.18, 0.42, 0.0)
+		leg.material_override = pantsmat
+		root.add_child(leg)
+		var boot := MeshInstance3D.new()
+		var bootmesh := BoxMesh.new()
+		bootmesh.size = Vector3(0.28, 0.14, 0.38)
+		boot.mesh = bootmesh
+		boot.position = Vector3(side * 0.18, 0.08, -0.07)
+		var bootmat := StandardMaterial3D.new()
+		bootmat.albedo_color = Color(0.06, 0.055, 0.045)
+		boot.material_override = bootmat
+		root.add_child(boot)
+	# Shoulder accents make the player and enemies easier to read at distance.
+	var shoulder := MeshInstance3D.new()
+	var shoulder_mesh := BoxMesh.new()
+	shoulder_mesh.size = Vector3(0.82, 0.16, 0.38)
+	shoulder.mesh = shoulder_mesh
+	shoulder.position.y = 1.43
+	shoulder.material_override = clothmat
+	root.add_child(shoulder)
