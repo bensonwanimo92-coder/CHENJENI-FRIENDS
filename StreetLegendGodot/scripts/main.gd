@@ -169,26 +169,64 @@ func _spawn_vehicle() -> StreetLegendVehicleController:
 	car.name = "WanimoCar"
 	car.set_script(VehicleScript)
 	car.position = Vector3(0.0, 0.0, -1.0)
-	var mesh := MeshInstance3D.new()
-	var box := BoxMesh.new()
-	box.size = Vector3(1.9, 0.85, 3.7)
-	mesh.mesh = box
-	mesh.position.y = 0.65
-	var material := StandardMaterial3D.new()
-	material.albedo_color = Color(0.06, 0.12, 0.18)
-	material.metallic = 0.65
-	material.roughness = 0.3
-	mesh.material_override = material
-	car.add_child(mesh)
+	_add_vehicle_visuals(car, Color(0.06, 0.12, 0.18), false)
 	var collision := CollisionShape3D.new()
 	var shape := BoxShape3D.new()
-	shape.size = Vector3(1.9, 0.85, 3.7)
+	shape.size = Vector3(1.9, 1.05, 3.7)
 	collision.shape = shape
 	collision.position.y = 0.65
 	car.add_child(collision)
 	add_child(car)
 	car.visible = false
 	return car as StreetLegendVehicleController
+
+func _add_vehicle_visuals(root: Node3D, paint: Color, suv: bool) -> void:
+	var body_mat := StandardMaterial3D.new()
+	body_mat.albedo_color = paint
+	body_mat.metallic = 0.5
+	body_mat.roughness = 0.32
+	var glass_mat := StandardMaterial3D.new()
+	glass_mat.albedo_color = Color(0.12, 0.22, 0.29)
+	glass_mat.metallic = 0.25
+	glass_mat.roughness = 0.2
+	var tire_mat := StandardMaterial3D.new()
+	tire_mat.albedo_color = Color(0.025, 0.025, 0.03)
+	tire_mat.roughness = 0.9
+	var body := MeshInstance3D.new()
+	var body_mesh := BoxMesh.new()
+	body_mesh.size = Vector3(1.9, 0.65, 3.7 if not suv else 4.2)
+	body.mesh = body_mesh
+	body.position.y = 0.55
+	body.material_override = body_mat
+	root.add_child(body)
+	var cabin := MeshInstance3D.new()
+	var cabin_mesh := BoxMesh.new()
+	cabin_mesh.size = Vector3(1.55, 0.72 if not suv else 0.9, 1.9 if not suv else 2.15)
+	cabin.mesh = cabin_mesh
+	cabin.position = Vector3(0.0, 1.15 if not suv else 1.25, -0.15)
+	cabin.material_override = glass_mat
+	root.add_child(cabin)
+	for x in [-0.98, 0.98]:
+		for z in [-1.25, 1.25]:
+			var wheel := MeshInstance3D.new()
+			var wheel_mesh := CylinderMesh.new()
+			wheel_mesh.top_radius = 0.38 if not suv else 0.42
+			wheel_mesh.bottom_radius = wheel_mesh.top_radius
+			wheel_mesh.height = 0.24
+			wheel.mesh = wheel_mesh
+			wheel.rotation.z = PI / 2.0
+			wheel.position = Vector3(x, 0.38, z)
+			wheel.material_override = tire_mat
+			root.add_child(wheel)
+	for x in [-0.65, 0.65]:
+		var lamp := MeshInstance3D.new()
+		var lm := BoxMesh.new()
+		lm.size = Vector3(0.32, 0.16, 0.08)
+		lamp.mesh = lm
+		lamp.position = Vector3(x, 0.62, -1.9 if not suv else -2.1)
+		lamp.material_override = StandardMaterial3D.new()
+		lamp.material_override.albedo_color = Color(0.85, 0.8, 0.55)
+		root.add_child(lamp)
 
 func _spawn_chase_target() -> StreetLegendChaseTarget:
 	var rover := Node3D.new()
