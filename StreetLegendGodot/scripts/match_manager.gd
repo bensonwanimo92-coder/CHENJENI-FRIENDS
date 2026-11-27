@@ -24,6 +24,11 @@ func _unhandled_input(event: InputEvent) -> void:
 		_restart()
 		get_viewport().set_input_as_handled()
 
+func toggle_pause() -> void:
+	if _finished:
+		return
+	_toggle_pause()
+
 func _toggle_pause() -> void:
 	_paused = not _paused
 	get_tree().paused = _paused
