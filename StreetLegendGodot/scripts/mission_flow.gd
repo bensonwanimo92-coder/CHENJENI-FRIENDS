@@ -14,7 +14,7 @@ var safe_exit_point: Node3D
 var roadblock_point: Node3D
 var chase_target: Node3D
 var chase_distance_limit: float = 42.0
-var _handoff_running := false
+var _handoff_running := false\nvar hotel_required: int = 1\nvar roadblock_required: int = 1\nvar hotel_defeats: int = 0\nvar roadblock_defeats: int = 0
 
 func begin_pursuit() -> void:
 	if phase != Phase.HOTEL_COMBAT:
