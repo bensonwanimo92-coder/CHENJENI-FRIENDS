@@ -69,7 +69,7 @@ func _fighter(label:String,pos:Vector3,is_player:bool,tint:Color)->CharacterBody
 	b.set_script(FighterScript if is_player else EnemyScript)
 	b.set("is_player",is_player)
 	b.set("display_name",label)
-	if not is_player:b.set("attack_damage",10.0+level_id*2)
+	if not is_player:\n\t\tb.set("attack_damage",10.0+level_id*2)\n\t\tif level_id==4 and label=="CREW 01":\n\t\t\tb.set("max_health",220.0)\n\t\t\tb.set("attack_damage",24.0)\n\t\t\tb.set("move_speed",3.3)
 	var visual=Node3D.new()
 	visual.name="PlaceholderBody"
 	b.add_child(visual)
