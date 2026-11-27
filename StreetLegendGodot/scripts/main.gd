@@ -38,6 +38,7 @@ func _ready() -> void:
 	hotel_enemy.health_changed.connect(_on_hotel_enemy_health_changed)
 	roadblock_enemy = _spawn_fighter("ROADBLOCK ENFORCER", Vector3(2.0, 0.0, -60.0), Color(0.68, 0.16, 0.12), false)
 	roadblock_enemy.visible = false
+	roadblock_enemy.health_changed.connect(_on_roadblock_health_changed)
 	vehicle = _spawn_vehicle()
 	chase_target = _spawn_chase_target()
 	roadblock_marker = Node3D.new()
