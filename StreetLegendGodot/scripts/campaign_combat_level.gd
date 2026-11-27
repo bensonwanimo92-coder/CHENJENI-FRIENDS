@@ -1,40 +1,40 @@
 extends Node3D
-## Reusable standalone campaign combat mission for Levels 2-4.
-const FighterScript = preload("res://scripts/fighter.gd")
-const EnemyScript = preload("res://scripts/enemy_ai.gd")
-const MobileControlsScript = preload("res://scripts/mobile_controls.gd")
-const CameraScript = preload("res://scripts/third_person_camera.gd")
-const AnimationDriverScript = preload("res://scripts/animation_driver.gd")
-const FallRecoveryScript = preload("res://scripts/fall_recovery.gd")
+## Combat mission scene scaffold shared by campaign missions 2-4.
+const FighterScript=preload("res://scripts/fighter.gd")
+const EnemyScript=preload("res://scripts/enemy_ai.gd")
+const MobileControlsScript=preload("res://scripts/mobile_controls.gd")
+const CameraScript=preload("res://scripts/third_person_camera.gd")
+const AnimationDriverScript=preload("res://scripts/animation_driver.gd")
+const FallRecoveryScript=preload("res://scripts/fall_recovery.gd")
 @export var level_id:int=2
 var player:CharacterBody3D
 var enemies:Array[CharacterBody3D]=[]
 var hud:Label
-var controls:Node
-var camera:Node3D
 var defeated:int=0
-var done:=false\nvar continue_button:Button\nvar rescue_button:Button\nvar captive:Node3D
+var done:=false
+var continue_button:Button
+var rescue_button:Button
+var captive:Node3D
 func _ready():
 	_build_world()
-	player=_fighter("WANIMO",Vector3(0,0,3),true,Color(0.1,0.4,0.85))
-	camera=CameraScript.new()
+	player=_fighter("WANIMO",Vector3(0,0,3),true,Color(.1,.4,.85))
+	var camera=CameraScript.new()
 	camera.position=Vector3(0,7,10)
 	camera.current=true
 	add_child(camera)
 	camera.set("target",player)
-	controls=MobileControlsScript.new()
+	var controls=MobileControlsScript.new()
 	controls.set("fighter",player)
 	controls.pause_requested.connect(_pause)
 	add_child(controls)
 	controls.call("set_driving_mode",false)
-	var count=3 if level_id<4 else 4
+	var count=4 if level_id==4 else 3
 	for i in count:
 		var angle=TAU*float(i)/count
-		var e=_fighter("CREW %02d"%(i+1),Vector3(cos(angle)*5,0,sin(angle)*5),false,Color(0.65,0.15,0.12))
-		e.set_target(player)
-		enemies.append(e)
-		e.knocked_out.connect(_on_enemy_down)
-		e.attack_event.connect(_event)
+		var foe=_fighter("CREW %02d"%(i+1),Vector3(cos(angle)*5,0,sin(angle)*5),false,Color(.65,.15,.12))
+		foe.set_target(player)
+		enemies.append(foe)
+		foe.knocked_out.connect(_on_enemy_down)
 	player.set_opponent(enemies[0])
 	player.knocked_out.connect(_failed)
 	var layer=CanvasLayer.new()
@@ -46,10 +46,21 @@ func _ready():
 	panel.add_child(col)
 	hud=Label.new()
 	col.add_child(hud)
-	var btn=Button.new()
-	btn.text="RESTART MISSION"
-	btn.pressed.connect(_restart)
-	col.add_child(btn)
+	continue_button=Button.new()
+	continue_button.text="CONTINUE CAMPAIGN"
+	continue_button.visible=false
+	continue_button.pressed.connect(_continue)
+	col.add_child(continue_button)
+	rescue_button=Button.new()
+	rescue_button.text="RESCUE CAPTIVE"
+	rescue_button.visible=false
+	rescue_button.pressed.connect(_rescue)
+	col.add_child(rescue_button)
+	var retry=Button.new()
+	retry.text="RESTART MISSION"
+	retry.pressed.connect(_restart)
+	col.add_child(retry)
+	if level_id==3:_build_captive()
 	_update_hud()
 func _fighter(label:String,pos:Vector3,is_player:bool,tint:Color)->CharacterBody3D:
 	var b=CharacterBody3D.new()
@@ -58,7 +69,7 @@ func _fighter(label:String,pos:Vector3,is_player:bool,tint:Color)->CharacterBody
 	b.set_script(FighterScript if is_player else EnemyScript)
 	b.set("is_player",is_player)
 	b.set("display_name",label)
-	if not is_player: b.set("attack_damage",10.0+level_id*2)
+	if not is_player:b.set("attack_damage",10.0+level_id*2)
 	var visual=Node3D.new()
 	visual.name="PlaceholderBody"
 	b.add_child(visual)
@@ -75,76 +86,100 @@ func _fighter(label:String,pos:Vector3,is_player:bool,tint:Color)->CharacterBody
 	var anim=Node.new()
 	anim.set_script(AnimationDriverScript)
 	b.add_child(anim)
-	var recover=Node.new()
-	recover.set_script(FallRecoveryScript)
-	b.add_child(recover)
-	var c=CollisionShape3D.new()
-	var capsule=CapsuleShape3D.new()
-	capsule.height=1.8
-	capsule.radius=.42
-	c.shape=capsule
-	c.position.y=.9
-	b.add_child(c)
+	var recovery=Node.new()
+	recovery.set_script(FallRecoveryScript)
+	b.add_child(recovery)
+	var collision=CollisionShape3D.new()
+	var shape=CapsuleShape3D.new()
+	shape.height=1.8
+	shape.radius=.42
+	collision.shape=shape
+	collision.position.y=.9
+	b.add_child(collision)
 	add_child(b)
 	return b
 func _build_world():
-	var env=WorldEnvironment.new()
-	var e=Environment.new()
-	e.background_mode=Environment.BG_COLOR
-	e.background_color=Color(.04,.06,.09)
-	env.environment=e
-	add_child(env)
-	var ground=StaticBody3D.new()
-	var mesh=MeshInstance3D.new()
+	var environment=WorldEnvironment.new()
+	var env=Environment.new()
+	env.background_mode=Environment.BG_COLOR
+	env.background_color=Color(.04,.06,.09)
+	environment.environment=env
+	add_child(environment)
+	var floor=StaticBody3D.new()
+	var floor_mesh=MeshInstance3D.new()
 	var plane=PlaneMesh.new()
 	plane.size=Vector2(40,40)
-	mesh.mesh=plane
-	ground.add_child(mesh)
+	floor_mesh.mesh=plane
+	floor.add_child(floor_mesh)
 	var collision=CollisionShape3D.new()
-	var shape=BoxShape3D.new()
-	shape.size=Vector3(40,.2,40)
-	collision.shape=shape
+	var box_shape=BoxShape3D.new()
+	box_shape.size=Vector3(40,.2,40)
+	collision.shape=box_shape
 	collision.position.y=-.1
-	ground.add_child(collision)
-	add_child(ground)
-	var light=DirectionalLight3D.new()
-	light.rotation_degrees=Vector3(-50,-30,0)
-	add_child(light)
-	# Environment identity and cover props vary by campaign mission.
-	var colors=[Color(.2,.3,.35),Color(.28,.25,.18),Color(.12,.16,.19)]
+	floor.add_child(collision)
+	add_child(floor)
+	var sun=DirectionalLight3D.new()
+	sun.rotation_degrees=Vector3(-50,-30,0)
+	add_child(sun)
+	var palette=[Color(.2,.3,.35),Color(.28,.25,.18),Color(.12,.16,.19)]
 	var material=StandardMaterial3D.new()
-	material.albedo_color=colors[(level_id-2)%colors.size()]
+	material.albedo_color=palette[level_id-2]
 	for i in 12:
 		var prop=MeshInstance3D.new()
-		var box=BoxMesh.new()
-		box.size=Vector3(2+randf()*2,1+randf()*2,1.2)
-		prop.mesh=box
-		prop.position=Vector3(randf_range(-12,12),box.size.y/2,randf_range(-12,12))
+		var prop_mesh=BoxMesh.new()
+		prop_mesh.size=Vector3(2+randf()*2,1+randf()*2,1.2)
+		prop.mesh=prop_mesh
+		prop.position=Vector3(randf_range(-12,12),prop_mesh.size.y/2,randf_range(-12,12))
 		prop.material_override=material
 		add_child(prop)
 func _on_enemy_down():
 	if done:return
 	defeated+=1
-	for e in enemies:
-		if is_instance_valid(e) and e.get("health")>0:
-			player.set_opponent(e)
+	for foe in enemies:
+		if is_instance_valid(foe) and foe.health>0:
+			player.set_opponent(foe)
 			break
 	if defeated>=enemies.size():
-		done=true
-		var campaign=get_node_or_null("/root/Campaign")
-		if campaign:campaign.complete_level(level_id,{"result":"victory","defeated":defeated})
-		hud.text="MISSION COMPLETE\nAll hostiles defeated. Level %d cleared."%level_id
+		if level_id==3:
+			hud.text="COMPOUND CLEARED\nRescue the captive to finish."
+			rescue_button.visible=true
+		else:_finish_mission()
 	else:_update_hud()
-func _rescue():\n\tif is_instance_valid(captive):\n\t\tcaptive.queue_free()\n\trescue_button.visible=false\n\t_finish_mission()\nfunc _build_captive():\n\tcaptive=Node3D.new()\n\tcaptive.position=Vector3(0,0,-4)\n\tvar body=MeshInstance3D.new()\n\tvar mesh=BoxMesh.new()\n\tmesh.size=Vector3(.45,1.1,.3)\n\tbody.mesh=mesh\n\tvar mat=StandardMaterial3D.new()\n\tmat.albedo_color=Color(.2,.7,.65)\n\tbody.material_override=mat\n\tcaptive.add_child(body)\n\tadd_child(captive)\nfunc _continue():\n\tget_tree().paused=false\n\tget_tree().change_scene_to_file("res://scenes/level_%d.tscn"%(level_id+1))\nfunc _failed():
+func _build_captive():
+	captive=Node3D.new()
+	captive.position=Vector3(0,0,-4)
+	var body=MeshInstance3D.new()
+	var mesh=BoxMesh.new()
+	mesh.size=Vector3(.45,1.1,.3)
+	body.mesh=mesh
+	var material=StandardMaterial3D.new()
+	material.albedo_color=Color(.2,.7,.65)
+	body.material_override=material
+	captive.add_child(body)
+	add_child(captive)
+func _rescue():
+	if is_instance_valid(captive):captive.queue_free()
+	rescue_button.visible=false
+	_finish_mission()
+func _finish_mission():
+	if done:return
+	done=true
+	var campaign=get_node_or_null("/root/Campaign")
+	if campaign:campaign.complete_level(level_id,{"result":"victory","defeated":defeated})
+	hud.text="MISSION COMPLETE\nLevel %d cleared."%level_id
+	continue_button.visible=level_id<4
+	if level_id<4:continue_button.text="CONTINUE TO LEVEL %d"%(level_id+1)
+func _continue():
+	get_tree().paused=false
+	get_tree().change_scene_to_file("res://scenes/level_%d.tscn"%(level_id+1))
+func _failed():
 	if done:return
 	done=true
 	hud.text="MISSION FAILED\nRestart to try again."
 func _update_hud():
 	var title=["","","THE PURSUIT","THE HIDEOUT","THE RECKONING"][level_id]
-	hud.text="%s\nHostiles remaining: %d\nTouch controls enabled."%[title,enemies.size()-defeated]
-func _event(_event_type:StringName,_amount:float,_heavy:bool):pass
-func _pause():
-	get_tree().paused=not get_tree().paused
+	hud.text="%s\nHostiles remaining: %d"%[title,enemies.size()-defeated]
+func _pause():get_tree().paused=not get_tree().paused
 func _restart():
 	get_tree().paused=false
 	get_tree().reload_current_scene()
