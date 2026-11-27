@@ -7,6 +7,7 @@ var _message: Label
 var _resume_button: Button
 var _paused := false
 var _finished := false
+var _campaign_note := ""
 
 func _ready() -> void:
 	process_mode = Node.PROCESS_MODE_ALWAYS
@@ -48,6 +49,13 @@ func _resume() -> void:
 
 func _on_mission_finished(victory: bool) -> void:
 	_finished = true
+	_campaign_note = ""
+	if victory and Engine.has_singleton("Campaign"):
+		pass
+	if victory and get_node_or_null("/root/Campaign") != null:
+		var campaign = get_node("/root/Campaign")
+		campaign.complete_level(1, {"result": "victory"})
+		_campaign_note = "\\nCampaign progress saved. Level 2 unlocked.";
 	_paused = false
 	get_tree().paused = false
 	_overlay.visible = true
