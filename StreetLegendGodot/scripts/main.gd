@@ -104,6 +104,7 @@ func _build_world() -> void:
 	floor_body.position.z = -35.0
 	floor_body.add_child(floor_collision)
 	add_child(floor_body)
+	_build_lobby_set()
 	var sun := DirectionalLight3D.new()
 	sun.rotation_degrees = Vector3(-48.0, -28.0, 0.0)
 	sun.light_energy = 1.35
@@ -266,3 +267,76 @@ func _on_player_health_changed(value: float) -> void:
 func _update_status(message: String) -> void:
 	if is_instance_valid(status_label):
 		status_label.text = message
+
+func _build_lobby_set() -> void:
+	# Temporary procedural architectural set dressing; replace these meshes with licensed assets.
+	var wall_mat := StandardMaterial3D.new()
+	wall_mat.albedo_color = Color(0.28, 0.31, 0.35)
+	wall_mat.roughness = 0.85
+	var trim_mat := StandardMaterial3D.new()
+	trim_mat.albedo_color = Color(0.55, 0.48, 0.34)
+	trim_mat.metallic = 0.25
+	trim_mat.roughness = 0.55
+	var glass_mat := StandardMaterial3D.new()
+	glass_mat.albedo_color = Color(0.12, 0.24, 0.31, 0.65)
+	glass_mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	glass_mat.roughness = 0.25
+	# Side pillars frame a clear central fighting space.
+	for x in [-8.0, 8.0]:
+		for z in [-5.0, 3.0]:
+			var pillar := MeshInstance3D.new()
+			var pm := BoxMesh.new()
+			pm.size = Vector3(1.1, 5.0, 1.1)
+			pillar.mesh = pm
+			pillar.position = Vector3(x, 2.5, z)
+			pillar.material_override = trim_mat
+			add_child(pillar)
+	# Lobby rear wall and glazed panels.
+	var rear := MeshInstance3D.new()
+	var rm := BoxMesh.new()
+	rm.size = Vector3(18.0, 5.0, 0.45)
+	rear.mesh = rm
+	rear.position = Vector3(0.0, 2.5, -9.0)
+	rear.material_override = wall_mat
+	add_child(rear)
+	for x in [-5.0, -2.5, 2.5, 5.0]:
+		var pane := MeshInstance3D.new()
+		var gm := BoxMesh.new()
+		gm.size = Vector3(2.0, 3.2, 0.08)
+		pane.mesh = gm
+		pane.position = Vector3(x, 2.1, -8.72)
+		pane.material_override = glass_mat
+		add_child(pane)
+	# Reception counter set to the side, not across the combat route.
+	var counter := MeshInstance3D.new()
+	var cm := BoxMesh.new()
+	cm.size = Vector3(4.5, 1.2, 1.1)
+	counter.mesh = cm
+	counter.position = Vector3(-5.0, 0.6, -5.5)
+	counter.material_override = trim_mat
+	add_child(counter)
+	# Seating clusters at the lobby edges.
+	for x in [-6.5, 6.5]:
+		var seat := MeshInstance3D.new()
+		var sm := BoxMesh.new()
+		sm.size = Vector3(2.4, 0.55, 0.9)
+		seat.mesh = sm
+		seat.position = Vector3(x, 0.4, 0.0)
+		seat.material_override = wall_mat
+		add_child(seat)
+		var back := MeshInstance3D.new()
+		var bm := BoxMesh.new()
+		bm.size = Vector3(2.4, 0.9, 0.25)
+		back.mesh = bm
+		back.position = Vector3(x, 0.95, -0.35)
+		back.material_override = wall_mat
+		add_child(back)
+	# Decorative ceiling beams.
+	for x in [-6.0, -3.0, 0.0, 3.0, 6.0]:
+		var beam := MeshInstance3D.new()
+		var bmesh := BoxMesh.new()
+		bmesh.size = Vector3(0.35, 0.25, 12.0)
+		beam.mesh = bmesh
+		beam.position = Vector3(x, 5.1, -2.0)
+		beam.material_override = trim_mat
+		add_child(beam)
