@@ -13,7 +13,7 @@ var hud:Label
 var controls:Node
 var camera:Node3D
 var defeated:int=0
-var done:=false
+var done:=false\nvar continue_button:Button
 func _ready():
 	_build_world()
 	player=_fighter("WANIMO",Vector3(0,0,3),true,Color(0.1,0.4,0.85))
@@ -135,7 +135,7 @@ func _on_enemy_down():
 		if campaign:campaign.complete_level(level_id,{"result":"victory","defeated":defeated})
 		hud.text="MISSION COMPLETE\nAll hostiles defeated. Level %d cleared."%level_id
 	else:_update_hud()
-func _failed():
+func _continue():\n\tget_tree().paused=false\n\tget_tree().change_scene_to_file("res://scenes/level_%d.tscn"%(level_id+1))\nfunc _failed():
 	if done:return
 	done=true
 	hud.text="MISSION FAILED\nRestart to try again."
