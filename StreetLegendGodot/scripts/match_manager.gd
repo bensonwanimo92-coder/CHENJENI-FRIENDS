@@ -50,8 +50,6 @@ func _resume() -> void:
 func _on_mission_finished(victory: bool) -> void:
 	_finished = true
 	_campaign_note = ""
-	if victory and Engine.has_singleton("Campaign"):
-		pass
 	if victory and get_node_or_null("/root/Campaign") != null:
 		var campaign = get_node("/root/Campaign")
 		campaign.complete_level(1, {"result": "victory"})
