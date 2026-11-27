@@ -63,11 +63,11 @@ func _on_mission_finished(victory: bool) -> void:
 	_restart_button.visible = true
 	_restart_button.grab_focus()
 
-func _restart() -> void:
+func _continue_campaign() -> void:\n\tget_tree().paused = false\n\tget_tree().change_scene_to_file("res://scenes/level_2.tscn")\n\nfunc _restart() -> void:
 	get_tree().paused = false
 	get_tree().reload_current_scene()
 
-var _restart_button: Button
+var _restart_button: Button\nvar _continue_button: Button
 
 func _build_overlay() -> void:
 	var layer := CanvasLayer.new()
