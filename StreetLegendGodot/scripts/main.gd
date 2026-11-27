@@ -63,6 +63,7 @@ func _ready() -> void:
 	add_child(match_manager)
 	match_manager.call("configure", mission)
 	controls = MobileControlsScript.new()
+	controls.pause_requested.connect(match_manager.call.bind("toggle_pause"))
 	controls.set("fighter", player)
 	controls.set("vehicle", vehicle)
 	add_child(controls)
