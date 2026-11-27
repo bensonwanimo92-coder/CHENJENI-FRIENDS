@@ -216,6 +216,18 @@ func _add_vehicle_visuals(root: Node3D, paint: Color, suv: bool) -> void:
 		lamp.material_override = StandardMaterial3D.new()
 		lamp.material_override.albedo_color = Color(0.85, 0.8, 0.55)
 		root.add_child(lamp)
+	# Bodywork details: grille, bumpers, tail lamps, mirrors and trim stripes.
+	var chrome := _mat(Color(0.42, 0.46, 0.5), 0.25)
+	var red_lamp := _mat(Color(0.75, 0.06, 0.04), 0.25)
+	var bumper := _mat(Color(0.035, 0.04, 0.045), 0.45)
+	_add_box("Front grille", Vector3(0.72, 0.28, 0.12), Vector3(0, 0.52, -2.0 if suv else -1.78), chrome)
+	_add_box("Front bumper", Vector3(1.85, 0.22, 0.18), Vector3(0, 0.25, -2.12 if suv else -1.95), bumper)
+	_add_box("Rear bumper", Vector3(1.85, 0.22, 0.18), Vector3(0, 0.25, 2.0), bumper)
+	for x in [-0.82, 0.82]:
+		_add_box("Side mirror", Vector3(0.18, 0.16, 0.22), Vector3(x, 1.12, -1.05), body_mat)
+		_add_box("Rear tail lamp", Vector3(0.28, 0.28, 0.09), Vector3(x, 0.72, 2.12), red_lamp)
+		_add_box("Door side trim", Vector3(0.05, 0.28, 1.4), Vector3(x, 0.65, 0.0), chrome)
+	_add_box("Roof rack", Vector3(1.3, 0.08, 1.55), Vector3(0, 1.72 if suv else 1.52, 0.0), bumper)
 
 func _spawn_chase_target() -> StreetLegendChaseTarget:
 	var rover := Node3D.new()
