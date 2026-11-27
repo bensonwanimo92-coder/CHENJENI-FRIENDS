@@ -359,10 +359,12 @@ func _build_lobby_set() -> void:
 		add_child(beam)
 
 func _build_fighter_visual(root: Node3D, tint: Color, is_player: bool) -> void:
-	# Stylized articulated placeholder silhouette built from distinct body parts (not a capsule).
+	# Keep a stable visual pivot so the animation driver can pose the complete silhouette.
+	var visual := Node3D.new()
+	visual.name = "PlaceholderBody"
+	root.add_child(visual)
 	var skin := Color(0.48, 0.31, 0.22)
 	var outfit := tint.darkened(0.22)
-	var accent := tint.lightened(0.28)
 	var head := MeshInstance3D.new()
 	head.name = "Head"
 	var headmesh := SphereMesh.new()
@@ -373,7 +375,7 @@ func _build_fighter_visual(root: Node3D, tint: Color, is_player: bool) -> void:
 	var skinmat := StandardMaterial3D.new()
 	skinmat.albedo_color = skin
 	head.material_override = skinmat
-	root.add_child(head)
+	visual.add_child(head)
 	var torso := MeshInstance3D.new()
 	torso.name = "Torso"
 	var chest := BoxMesh.new()
@@ -384,7 +386,7 @@ func _build_fighter_visual(root: Node3D, tint: Color, is_player: bool) -> void:
 	clothmat.albedo_color = tint
 	clothmat.roughness = 0.82
 	torso.material_override = clothmat
-	root.add_child(torso)
+	visual.add_child(torso)
 	var hips := MeshInstance3D.new()
 	var hipmesh := BoxMesh.new()
 	hipmesh.size = Vector3(0.48, 0.28, 0.32)
@@ -393,7 +395,7 @@ func _build_fighter_visual(root: Node3D, tint: Color, is_player: bool) -> void:
 	var pantsmat := StandardMaterial3D.new()
 	pantsmat.albedo_color = outfit
 	hips.material_override = pantsmat
-	root.add_child(hips)
+	visual.add_child(hips)
 	for side in [-1.0, 1.0]:
 		var arm := MeshInstance3D.new()
 		var armmesh := CapsuleMesh.new()
@@ -403,7 +405,7 @@ func _build_fighter_visual(root: Node3D, tint: Color, is_player: bool) -> void:
 		arm.position = Vector3(side * 0.46, 1.12, 0.02)
 		arm.rotation.z = side * -0.22
 		arm.material_override = clothmat
-		root.add_child(arm)
+		visual.add_child(arm)
 		var hand := MeshInstance3D.new()
 		var handmesh := SphereMesh.new()
 		handmesh.radius = 0.13
@@ -411,7 +413,7 @@ func _build_fighter_visual(root: Node3D, tint: Color, is_player: bool) -> void:
 		hand.mesh = handmesh
 		hand.position = Vector3(side * 0.52, 0.79, -0.03)
 		hand.material_override = skinmat
-		root.add_child(hand)
+		visual.add_child(hand)
 		var leg := MeshInstance3D.new()
 		var legmesh := CapsuleMesh.new()
 		legmesh.radius = 0.16
@@ -419,7 +421,7 @@ func _build_fighter_visual(root: Node3D, tint: Color, is_player: bool) -> void:
 		leg.mesh = legmesh
 		leg.position = Vector3(side * 0.18, 0.42, 0.0)
 		leg.material_override = pantsmat
-		root.add_child(leg)
+		visual.add_child(leg)
 		var boot := MeshInstance3D.new()
 		var bootmesh := BoxMesh.new()
 		bootmesh.size = Vector3(0.28, 0.14, 0.38)
@@ -428,12 +430,11 @@ func _build_fighter_visual(root: Node3D, tint: Color, is_player: bool) -> void:
 		var bootmat := StandardMaterial3D.new()
 		bootmat.albedo_color = Color(0.06, 0.055, 0.045)
 		boot.material_override = bootmat
-		root.add_child(boot)
-	# Shoulder accents make the player and enemies easier to read at distance.
+		visual.add_child(boot)
 	var shoulder := MeshInstance3D.new()
 	var shoulder_mesh := BoxMesh.new()
 	shoulder_mesh.size = Vector3(0.82, 0.16, 0.38)
 	shoulder.mesh = shoulder_mesh
 	shoulder.position.y = 1.43
 	shoulder.material_override = clothmat
-	root.add_child(shoulder)
+	visual.add_child(shoulder)
