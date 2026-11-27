@@ -120,33 +120,153 @@ func _build_world():
 	env.background_color=Color(.04,.06,.09)
 	environment.environment=env
 	add_child(environment)
+	# Imported environment scenes are loaded first when present. Procedural fallback below
+	# keeps missions playable while real, licensed GLB assets are added to the folders.
+	_load_environment_asset("res://assets/environment/road.glb",Vector3(0,0,0))
+	_load_environment_asset("res://assets/environment/buildings.glb",Vector3(0,0,0))
+	_load_environment_asset("res://assets/environment/bridge.glb",Vector3(0,0,-12))
+	_load_environment_asset("res://assets/vehicles/vehicle.glb",Vector3(6,0,5))
 	var floor=StaticBody3D.new()
 	var floor_mesh=MeshInstance3D.new()
 	var plane=PlaneMesh.new()
-	plane.size=Vector2(40,40)
+	plane.size=Vector2(60,60)
 	floor_mesh.mesh=plane
+	floor_mesh.material_override=_surface_material(Color(.17,.19,.2))
 	floor.add_child(floor_mesh)
 	var collision=CollisionShape3D.new()
 	var box_shape=BoxShape3D.new()
-	box_shape.size=Vector3(40,.2,40)
+	box_shape.size=Vector3(60,.2,60)
 	collision.shape=box_shape
 	collision.position.y=-.1
 	floor.add_child(collision)
 	add_child(floor)
+	_build_road()
+	_build_buildings()
+	_build_bridge()
+	_build_vehicle()
 	var sun=DirectionalLight3D.new()
 	sun.rotation_degrees=Vector3(-50,-30,0)
+	sun.light_energy=1.25
 	add_child(sun)
 	var palette=[Color(.2,.3,.35),Color(.28,.25,.18),Color(.12,.16,.19)]
 	var material=StandardMaterial3D.new()
 	material.albedo_color=palette[level_id-2]
-	for i in 12:
+	for i in 16:
 		var prop=MeshInstance3D.new()
 		var prop_mesh=BoxMesh.new()
 		prop_mesh.size=Vector3(2+randf()*2,1+randf()*2,1.2)
 		prop.mesh=prop_mesh
-		prop.position=Vector3(randf_range(-12,12),prop_mesh.size.y/2,randf_range(-12,12))
+		prop.position=Vector3(randf_range(-15,15),prop_mesh.size.y/2,randf_range(-15,15))
 		prop.material_override=material
 		add_child(prop)
+
+func _load_environment_asset(path:String,offset:Vector3):
+	if ResourceLoader.exists(path):
+		var scene=load(path) as PackedScene
+		if scene:
+			var node=scene.instantiate()
+			node.position=offset
+			add_child(node)
+
+func _surface_material(color:Color)->StandardMaterial3D:
+	var mat=StandardMaterial3D.new()
+	mat.albedo_color=color
+	mat.roughness=.92
+	return mat
+
+func _build_road():
+	var road=MeshInstance3D.new()
+	var mesh=BoxMesh.new()
+	mesh.size=Vector3(9,.08,60)
+	road.mesh=mesh
+	road.position=Vector3(0,.03,0)
+	road.material_override=_surface_material(Color(.07,.075,.08))
+	add_child(road)
+	for lane in [-1,1]:
+		var stripe=MeshInstance3D.new()
+		var line=BoxMesh.new()
+		line.size=Vector3(.16,.035,60)
+		stripe.mesh=line
+		stripe.position=Vector3(lane*4.1,.09,0)
+		stripe.material_override=_surface_material(Color(.82,.76,.53))
+		add_child(stripe)
+	for z in range(-28,29,5):
+		var dash=MeshInstance3D.new()
+		var dash_mesh=BoxMesh.new()
+		dash_mesh.size=Vector3(.16,.04,2.5)
+		dash.mesh=dash_mesh
+		dash.position=Vector3(0,.1,z)
+		dash.material_override=_surface_material(Color(.9,.86,.72))
+		add_child(dash)
+
+func _build_buildings():
+	for i in 6:
+		var building=Node3D.new()
+		var width=randf_range(5,9)
+		var height=randf_range(5,13)
+		var depth=randf_range(5,9)
+		building.position=Vector3(-17 if i%2==0 else 17,0,-20+i*8)
+		var shell=MeshInstance3D.new()
+		var box=BoxMesh.new()
+		box.size=Vector3(width,height,depth)
+		shell.mesh=box
+		shell.position.y=height/2
+		shell.material_override=_surface_material(Color(.27,.29,.3))
+		building.add_child(shell)
+		# Window grids and ground-floor openings provide façade detail.
+		for row in range(1,int(height/2)):
+			for col in range(2):
+				var window=MeshInstance3D.new()
+				var wmesh=BoxMesh.new()
+				wmesh.size=Vector3(.8,.65,.08)
+				window.mesh=wmesh
+				window.position=Vector3((col-.5)*width*.5,row*1.65,depth/2+.05)
+				window.material_override=_surface_material(Color(.12,.35,.48))
+				building.add_child(window)
+		add_child(building)
+
+func _build_bridge():
+	var bridge=Node3D.new()
+	bridge.position=Vector3(0,0,-13)
+	var deck=MeshInstance3D.new()
+	var dm=BoxMesh.new()
+	dm.size=Vector3(12,.45,8)
+	deck.mesh=dm
+	deck.position.y=1.2
+	deck.material_override=_surface_material(Color(.35,.37,.38))
+	bridge.add_child(deck)
+	for x in [-5.5,5.5]:
+		var rail=MeshInstance3D.new()
+		var rm=BoxMesh.new()
+		rm.size=Vector3(.35,1.1,8)
+		rail.mesh=rm
+		rail.position=Vector3(x,1.9,0)
+		rail.material_override=_surface_material(Color(.18,.21,.22))
+		bridge.add_child(rail)
+	add_child(bridge)
+
+func _build_vehicle():
+	var vehicle=Node3D.new()
+	vehicle.position=Vector3(6,0,5)
+	var body=MeshInstance3D.new()
+	var bm=BoxMesh.new()
+	bm.size=Vector3(2,1,4)
+	body.mesh=bm
+	body.position.y=1
+	body.material_override=_surface_material(Color(.24,.28,.32))
+	vehicle.add_child(body)
+	for x in [-.9,.9]:
+		for z in [-1.3,1.3]:
+			var wheel=MeshInstance3D.new()
+			var wm=CylinderMesh.new()
+			wm.height=.4
+			wm.radius=.45
+			wheel.mesh=wm
+			wheel.rotation_degrees.z=90
+			wheel.position=Vector3(x,.45,z)
+			wheel.material_override=_surface_material(Color(.035,.04,.045))
+			vehicle.add_child(wheel)
+	add_child(vehicle)
 func _on_enemy_down():
 	if done:return
 	defeated+=1
