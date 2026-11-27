@@ -15,6 +15,7 @@ var done:=false
 var continue_button:Button
 var rescue_button:Button
 var captive:Node3D
+var field_props:Array[Node3D]=[]
 func _ready():
 	_build_world()
 	player=_fighter("WANIMO",Vector3(0,0,3),true,Color(.1,.4,.85))
@@ -28,14 +29,14 @@ func _ready():
 	controls.pause_requested.connect(_pause)
 	add_child(controls)
 	controls.call("set_driving_mode",false)
-	var count=4 if level_id==4 else 3
+	var count=6 if level_id==2 else (5 if level_id==3 else 4)
 	for i in count:
 		var angle=TAU*float(i)/count
-		var foe=_fighter("CREW %02d"%(i+1),Vector3(cos(angle)*5,0,sin(angle)*5),false,Color(.65,.15,.12))
+		var foe=_fighter("CREW %02d"%(i+1),Vector3(cos(angle)*8,0,sin(angle)*8),false,Color(.65,.15,.12))
 		foe.set_target(player)
 		enemies.append(foe)
 		foe.knocked_out.connect(_on_enemy_down)
-	player.set_opponent(enemies[0])
+	player.set_opponent(_nearest_living_enemy())
 	player.knocked_out.connect(_failed)
 	var layer=CanvasLayer.new()
 	add_child(layer)
