@@ -468,3 +468,42 @@ func _build_fighter_visual(root: Node3D, tint: Color, is_player: bool) -> void:
 	shoulder.position.y = 1.43
 	shoulder.material_override = clothmat
 	visual.add_child(shoulder)
+	# Add visible facial and equipment detail to the temporary articulated fighters.
+	var face_detail := _mat(Color(0.09, 0.065, 0.05), 0.55)
+	var eye_mat := _mat(Color(0.92, 0.86, 0.72), 0.3)
+	var accent_mat := _mat(Color(0.82, 0.62, 0.18) if is_player else Color(0.68, 0.12, 0.08), 0.4)
+	# Eyes, brows and ears are attached to the visual pivot for pose continuity.
+	for side in [-1.0, 1.0]:
+		_add_visual_sphere(visual, "Eye", Vector3(side * 0.075, 1.69, -0.165), Vector3(0.045, 0.035, 0.025), eye_mat)
+		_add_visual_box(visual, "Brow", Vector3(0.10, 0.035, 0.03), Vector3(side * 0.075, 1.75, -0.17), face_detail)
+		_add_visual_sphere(visual, "Ear", Vector3(side * 0.19, 1.65, 0.0), Vector3(0.055, 0.08, 0.06), skinmat)
+	# Waist belt and contrasting insignia stripe help distinguish the fighter silhouettes.
+	_add_visual_box(visual, "Belt", Vector3(0.5, 0.09, 0.35), Vector3(0, 0.82, 0), dark)
+	_add_visual_box(visual, "Chest insignia", Vector3(0.16, 0.24, 0.035), Vector3(0.0, 1.22, -0.19), accent_mat)
+	# Wrist wraps, forearm guards and knee panels.
+	for side in [-1.0, 1.0]:
+		_add_visual_box(visual, "Wrist wrap", Vector3(0.22, 0.12, 0.18), Vector3(side * 0.49, 0.91, -0.02), accent_mat)
+		_add_visual_box(visual, "Knee panel", Vector3(0.26, 0.16, 0.10), Vector3(side * 0.18, 0.42, -0.13), accent_mat)
+		_add_visual_box(visual, "Arm guard", Vector3(0.18, 0.22, 0.18), Vector3(side * 0.45, 1.02, -0.03), outfit)
+
+func _add_visual_box(parent: Node3D, label: String, size: Vector3, pos: Vector3, material: Material) -> void:
+	var instance := MeshInstance3D.new()
+	instance.name = label
+	var mesh := BoxMesh.new()
+	mesh.size = size
+	instance.mesh = mesh
+	instance.position = pos
+	instance.material_override = material
+	parent.add_child(instance)
+
+func _add_visual_sphere(parent: Node3D, label: String, pos: Vector3, size: Vector3, material: Material) -> void:
+	var instance := MeshInstance3D.new()
+	instance.name = label
+	var mesh := SphereMesh.new()
+	mesh.radius = 0.5
+	mesh.height = 1.0
+	instance.mesh = mesh
+	instance.scale = size
+	instance.position = pos
+	instance.material_override = material
+	parent.add_child(instance)
