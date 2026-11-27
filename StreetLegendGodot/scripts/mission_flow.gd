@@ -55,6 +55,7 @@ func reach_roadblock() -> void:
 		if is_instance_valid(roadblock_point):
 			roadblock_enemy.global_transform = roadblock_point.global_transform
 		roadblock_enemy.visible = true
+		roadblock_enemy.set_physics_process(true)
 		if roadblock_enemy.has_method("set_target"):
 			roadblock_enemy.set_target(player)
 		elif roadblock_enemy.has_method("set"):
