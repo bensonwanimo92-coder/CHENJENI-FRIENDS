@@ -233,17 +233,7 @@ func _spawn_chase_target() -> StreetLegendChaseTarget:
 	rover.name = "EscapingRangeRover"
 	rover.set_script(ChaseScript)
 	rover.position = Vector3(0.0, 0.0, -23.0)
-	var mesh := MeshInstance3D.new()
-	var box := BoxMesh.new()
-	box.size = Vector3(2.0, 1.0, 4.2)
-	mesh.mesh = box
-	mesh.position.y = 0.7
-	var material := StandardMaterial3D.new()
-	material.albedo_color = Color(0.12, 0.13, 0.15)
-	material.metallic = 0.55
-	material.roughness = 0.28
-	mesh.material_override = material
-	rover.add_child(mesh)
+	_add_vehicle_visuals(rover, Color(0.12, 0.13, 0.15), true)
 	var waypoint := Node3D.new()
 	waypoint.position = Vector3(0.0, 0.0, -110.0)
 	add_child(waypoint)
