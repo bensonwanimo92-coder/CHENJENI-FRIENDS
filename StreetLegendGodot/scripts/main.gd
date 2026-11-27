@@ -58,12 +58,14 @@ func _ready() -> void:
 	mission.set("roadblock_point", _make_marker(Vector3(2.0, 0.0, -60.0), "RoadblockFighterPoint"))
 	mission.set("chase_target", chase_target)
 	hotel_enemy.knocked_out.connect(mission.notify_hotel_enemy_defeated)
+	hotel_enemy.knocked_out.connect(_refresh_combat_target.bind(true))
 	player.attack_event.connect(_on_combat_event)
 	hotel_enemy.attack_event.connect(_on_combat_event)
 	roadblock_enemy.attack_event.connect(_on_combat_event)
 	commentator = CommentatorScript.new()
 	add_child(commentator)
 	roadblock_enemy.knocked_out.connect(mission.notify_roadblock_enemy_defeated)
+	roadblock_enemy.knocked_out.connect(_refresh_combat_target.bind(false))
 	_spawn_combat_wave("HOTEL BACKUP", [Vector3(-5.0, 0.0, -2.0), Vector3(5.0, 0.0, -3.0)], Color(0.55, 0.12, 0.16), hotel_wave, mission.notify_hotel_enemy_defeated)
 	_spawn_combat_wave("ROADBLOCK GUARD", [Vector3(-4.0, 0.0, -61.0), Vector3(5.0, 0.0, -63.0)], Color(0.62, 0.18, 0.12), roadblock_wave, mission.notify_roadblock_enemy_defeated)
 	mission.set("hotel_required", hotel_wave.size())
@@ -141,6 +143,16 @@ func _build_world() -> void:
 	add_child(barrier)
 
 
+
+func _refresh_combat_target(is_hotel: bool) -> void:
+	if not is_instance_valid(player):
+		return
+	var wave: Array[StreetLegendFighter] = hotel_wave if is_hotel else roadblock_wave
+	for fighter in wave:
+		if is_instance_valid(fighter) and fighter.health > 0.0 and fighter.visible:
+			player.set_opponent(fighter)
+			return
+
 func _spawn_combat_wave(label: String, positions: Array[Vector3], tint: Color, wave: Array[StreetLegendFighter], defeated_callback: Callable) -> void:
 	for i in positions.size():
 		var enemy := _spawn_fighter("%s %d" % [label, i + 1], positions[i], tint, false)
@@ -148,6 +160,7 @@ func _spawn_combat_wave(label: String, positions: Array[Vector3], tint: Color, w
 		enemy.visible = false if wave == roadblock_wave else true
 		enemy.health_changed.connect(_on_hotel_enemy_health_changed if wave == hotel_wave else _on_roadblock_health_changed)
 		enemy.knocked_out.connect(defeated_callback)
+		enemy.knocked_out.connect(_refresh_combat_target.bind(wave == hotel_wave))
 		enemy.attack_event.connect(_on_combat_event)
 		wave.append(enemy)
 
