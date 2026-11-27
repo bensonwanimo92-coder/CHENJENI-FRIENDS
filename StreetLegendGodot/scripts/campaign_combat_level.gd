@@ -102,7 +102,7 @@ func _fighter(label:String,pos:Vector3,is_player:bool,tint:Color)->StreetLegendF
 	collision.position.y=.9
 	b.add_child(collision)
 	add_child(b)
-	return b
+	return b as StreetLegendFighter
 func _build_world():
 	var environment=WorldEnvironment.new()
 	var env=Environment.new()
