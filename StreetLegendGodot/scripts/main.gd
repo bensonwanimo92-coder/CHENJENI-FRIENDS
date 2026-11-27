@@ -26,6 +26,8 @@ var player_health_label: Label
 var enemy_health_label: Label
 var commentator: StreetLegendCommentator
 var match_manager: Node
+var hotel_wave: Array[StreetLegendFighter] = []
+var roadblock_wave: Array[StreetLegendFighter] = []
 
 func _ready() -> void:
 	_build_world()
@@ -33,11 +35,13 @@ func _ready() -> void:
 	player = _spawn_fighter("WANIMO", Vector3(-2.0, 0.0, 0.0), Color(0.08, 0.42, 0.82), true)
 	hotel_enemy = _spawn_fighter("HOTEL ENFORCER", Vector3(2.0, 0.0, 0.0), Color(0.72, 0.12, 0.10), false)
 	hotel_enemy.set_target(player)
+	hotel_wave.append(hotel_enemy)
 	player.set("opponent", hotel_enemy)
 	player.health_changed.connect(_on_player_health_changed)
 	hotel_enemy.health_changed.connect(_on_hotel_enemy_health_changed)
 	roadblock_enemy = _spawn_fighter("ROADBLOCK ENFORCER", Vector3(2.0, 0.0, -60.0), Color(0.68, 0.16, 0.12), false)
 	roadblock_enemy.visible = false
+	roadblock_wave.append(roadblock_enemy)
 	roadblock_enemy.health_changed.connect(_on_roadblock_health_changed)
 	vehicle = _spawn_vehicle()
 	chase_target = _spawn_chase_target()
@@ -60,6 +64,10 @@ func _ready() -> void:
 	commentator = CommentatorScript.new()
 	add_child(commentator)
 	roadblock_enemy.knocked_out.connect(mission.notify_roadblock_enemy_defeated)
+	_spawn_combat_wave("HOTEL BACKUP", [Vector3(-5.0, 0.0, -2.0), Vector3(5.0, 0.0, -3.0)], Color(0.55, 0.12, 0.16), hotel_wave, mission.notify_hotel_enemy_defeated)
+	_spawn_combat_wave("ROADBLOCK GUARD", [Vector3(-4.0, 0.0, -61.0), Vector3(5.0, 0.0, -63.0)], Color(0.62, 0.18, 0.12), roadblock_wave, mission.notify_roadblock_enemy_defeated)
+	mission.set("hotel_required", hotel_wave.size())
+	mission.set("roadblock_required", roadblock_wave.size())
 	player.knocked_out.connect(mission.notify_player_defeated)
 	mission.phase_changed.connect(_on_mission_phase_changed)
 	mission.mission_finished.connect(_on_mission_finished)
@@ -131,6 +139,17 @@ func _build_world() -> void:
 	barrier_mat.albedo_color = Color(0.82, 0.48, 0.08)
 	barrier.material_override = barrier_mat
 	add_child(barrier)
+
+
+func _spawn_combat_wave(label: String, positions: Array[Vector3], tint: Color, wave: Array[StreetLegendFighter], defeated_callback: Callable) -> void:
+	for i in positions.size():
+		var enemy := _spawn_fighter("%s %d" % [label, i + 1], positions[i], tint, false)
+		enemy.set_target(player)
+		enemy.visible = false if wave == roadblock_wave else true
+		enemy.health_changed.connect(_on_hotel_enemy_health_changed if wave == hotel_wave else _on_roadblock_health_changed)
+		enemy.knocked_out.connect(defeated_callback)
+		enemy.attack_event.connect(_on_combat_event)
+		wave.append(enemy)
 
 func _spawn_fighter(label: String, spawn: Vector3, tint: Color, is_player: bool) -> StreetLegendFighter:
 	var body := CharacterBody3D.new()
@@ -293,6 +312,10 @@ func _on_mission_phase_changed(new_phase: StringName) -> void:
 			enemy_health_label.text = "ROADBLOCK ENFORCER  •  %d%%" % roundi(roadblock_enemy.health)
 		controls.call("set_driving_mode", false)
 		camera_rig.set("target", player)
+		for enemy in roadblock_wave:
+			enemy.visible = true
+			if enemy.has_method("set_target"):
+				enemy.set_target(player)
 		_update_status("ROADBLOCK  •  GET OUT AND FIGHT")
 	elif new_phase == &"dismounting":
 		_update_status("ROADBLOCK AHEAD  •  VEHICLE STOPPING")
