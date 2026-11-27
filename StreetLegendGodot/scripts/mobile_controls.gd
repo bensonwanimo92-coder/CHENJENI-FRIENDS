@@ -1,6 +1,8 @@
 extends Control
 class_name StreetLegendMobileControls
 
+signal pause_requested
+
 @export var fighter: StreetLegendFighter
 @export var vehicle: StreetLegendVehicleController
 var driving_mode := false
@@ -38,7 +40,9 @@ func _input(event: InputEvent) -> void:
 	var screen := get_viewport().get_visible_rect().size
 	if event is InputEventScreenTouch:
 		if event.pressed:
-			if event.position.x < screen.x * 0.48 and joystick_finger == -1:
+			if event.position.x > screen.x * 0.90 and event.position.y < screen.y * 0.18:
+				pause_requested.emit()
+			elif event.position.x < screen.x * 0.48 and joystick_finger == -1:
 				joystick_finger = event.index
 				joystick_origin = event.position
 				_update_joystick(event.position)
@@ -78,6 +82,8 @@ func _handle_right_touch(position: Vector2, screen: Vector2, pressed: bool) -> v
 
 func _draw() -> void:
 	var screen := get_viewport().get_visible_rect().size
+	draw_circle(Vector2(screen.x * 0.95, screen.y * 0.10), 34.0, Color(0.12, 0.18, 0.25, 0.75))
+	draw_string(ThemeDB.fallback_font, Vector2(screen.x * 0.93, screen.y * 0.115), "II", HORIZONTAL_ALIGNMENT_CENTER, -1, 24, Color.WHITE)
 	if driving_mode:
 		draw_circle(Vector2(screen.x * 0.84, screen.y * 0.80), 66.0, Color(0.10, 0.52, 0.76, 0.34))
 		draw_string(ThemeDB.fallback_font, Vector2(screen.x * 0.80, screen.y * 0.81), "GAS", HORIZONTAL_ALIGNMENT_CENTER, -1, 24, Color.WHITE)
