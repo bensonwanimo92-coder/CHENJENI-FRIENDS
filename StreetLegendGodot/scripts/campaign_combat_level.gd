@@ -7,8 +7,8 @@ const CameraScript=preload("res://scripts/third_person_camera.gd")
 const AnimationDriverScript=preload("res://scripts/animation_driver.gd")
 const FallRecoveryScript=preload("res://scripts/fall_recovery.gd")
 @export var level_id:int=2
-var player:CharacterBody3D
-var enemies:Array[CharacterBody3D]=[]
+var player:StreetLegendFighter
+var enemies:Array[StreetLegendFighter]=[]
 var hud:Label
 var defeated:int=0
 var done:=false
@@ -62,7 +62,7 @@ func _ready():
 	col.add_child(retry)
 	if level_id==3:_build_captive()
 	_update_hud()
-func _fighter(label:String,pos:Vector3,is_player:bool,tint:Color)->CharacterBody3D:
+func _fighter(label:String,pos:Vector3,is_player:bool,tint:Color)->StreetLegendFighter:
 	var b=CharacterBody3D.new()
 	b.name=label
 	b.position=pos
