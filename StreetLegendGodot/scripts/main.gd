@@ -41,6 +41,7 @@ func _ready() -> void:
 	hotel_enemy.health_changed.connect(_on_hotel_enemy_health_changed)
 	roadblock_enemy = _spawn_fighter("ROADBLOCK ENFORCER", Vector3(2.0, 0.0, -60.0), Color(0.68, 0.16, 0.12), false)
 	roadblock_enemy.visible = false
+	roadblock_enemy.set_physics_process(false)
 	roadblock_wave.append(roadblock_enemy)
 	roadblock_enemy.health_changed.connect(_on_roadblock_health_changed)
 	vehicle = _spawn_vehicle()
@@ -158,6 +159,7 @@ func _spawn_combat_wave(label: String, positions: Array[Vector3], tint: Color, w
 		var enemy := _spawn_fighter("%s %d" % [label, i + 1], positions[i], tint, false)
 		enemy.set_target(player)
 		enemy.visible = false if wave == roadblock_wave else true
+		enemy.set_physics_process(wave != roadblock_wave)
 		enemy.health_changed.connect(_on_hotel_enemy_health_changed if wave == hotel_wave else _on_roadblock_health_changed)
 		enemy.knocked_out.connect(defeated_callback)
 		enemy.knocked_out.connect(_refresh_combat_target.bind(wave == hotel_wave))
@@ -327,6 +329,7 @@ func _on_mission_phase_changed(new_phase: StringName) -> void:
 		camera_rig.set("target", player)
 		for enemy in roadblock_wave:
 			enemy.visible = true
+			enemy.set_physics_process(true)
 			if enemy.has_method("set_target"):
 				enemy.set_target(player)
 		_update_status("ROADBLOCK  •  GET OUT AND FIGHT")
