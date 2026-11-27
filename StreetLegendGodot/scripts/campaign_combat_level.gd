@@ -77,18 +77,27 @@ func _fighter(label:String,pos:Vector3,is_player:bool,tint:Color)->StreetLegendF
 			b.set("attack_damage",24.0)
 			b.set("move_speed",3.3)
 	var visual=Node3D.new()
-	visual.name="PlaceholderBody"
+	visual.name="FighterVisual"
 	b.add_child(visual)
-	var mat=StandardMaterial3D.new()
-	mat.albedo_color=tint
-	for spec in [[Vector3(0,1.2,0),Vector3(.65,.7,.35)],[Vector3(0,1.7,0),Vector3(.38,.38,.38)],[Vector3(-.2,.4,0),Vector3(.22,.7,.25)],[Vector3(.2,.4,0),Vector3(.22,.7,.25)],[Vector3(-.4,1.1,0),Vector3(.2,.65,.2)],[Vector3(.4,1.1,0),Vector3(.2,.65,.2)]]:
-		var m=MeshInstance3D.new()
-		var mesh=BoxMesh.new()
-		mesh.size=spec[1]
-		m.mesh=mesh
-		m.position=spec[0]
-		m.material_override=mat
-		visual.add_child(m)
+	# Replace these paths with licensed rigged GLB assets as they become available.
+	var model_path="res://assets/fighters/player.glb" if is_player else ("res://assets/fighters/boss.glb" if level_id==4 and label=="CREW 01" else "res://assets/fighters/enemy.glb")
+	var imported:PackedScene=load(model_path) if ResourceLoader.exists(model_path) else null
+	if imported:
+		var model=imported.instantiate()
+		model.name="Imported3DCharacter"
+		visual.add_child(model)
+	else:
+		# Keep procedural fallback until imported models exist.
+		var mat=StandardMaterial3D.new()
+		mat.albedo_color=tint
+		for spec in [[Vector3(0,1.2,0),Vector3(.65,.7,.35)],[Vector3(0,1.7,0),Vector3(.38,.38,.38)],[Vector3(-.2,.4,0),Vector3(.22,.7,.25)],[Vector3(.2,.4,0),Vector3(.22,.7,.25)],[Vector3(-.4,1.1,0),Vector3(.2,.65,.2)],[Vector3(.4,1.1,0),Vector3(.2,.65,.2)]]:
+			var m=MeshInstance3D.new()
+			var mesh=BoxMesh.new()
+			mesh.size=spec[1]
+			m.mesh=mesh
+			m.position=spec[0]
+			m.material_override=mat
+			visual.add_child(m)
 	var anim=Node.new()
 	anim.set_script(AnimationDriverScript)
 	b.add_child(anim)
