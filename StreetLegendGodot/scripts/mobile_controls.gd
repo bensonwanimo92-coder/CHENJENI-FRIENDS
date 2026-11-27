@@ -90,6 +90,11 @@ func _draw() -> void:
 		draw_string(ThemeDB.fallback_font, Vector2(screen.x * 0.80, screen.y * 0.81), "GAS", HORIZONTAL_ALIGNMENT_CENTER, -1, 24, Color.WHITE)
 		draw_circle(Vector2(screen.x * 0.84, screen.y * 0.47), 52.0, Color(0.75, 0.24, 0.14, 0.32))
 		draw_string(ThemeDB.fallback_font, Vector2(screen.x * 0.80, screen.y * 0.48), "BRAKE", HORIZONTAL_ALIGNMENT_CENTER, -1, 20, Color.WHITE)
+		draw_circle(Vector2(screen.x * 0.22, screen.y * 0.80), 74.0, Color(0.12, 0.22, 0.30, 0.30))
+		draw_string(ThemeDB.fallback_font, Vector2(screen.x * 0.16, screen.y * 0.81), "STEER", HORIZONTAL_ALIGNMENT_CENTER, -1, 20, Color.WHITE)
+		if is_instance_valid(vehicle):
+			var speed_kmh := int(round(vehicle.velocity.length() * 3.6))
+			draw_string(ThemeDB.fallback_font, Vector2(screen.x * 0.46, screen.y * 0.18), "SPEED  %d km/h" % speed_kmh, HORIZONTAL_ALIGNMENT_CENTER, -1, 28, Color.WHITE)
 	else:
 		draw_circle(Vector2(joystick_origin.x if joystick_finger >= 0 else screen.x * 0.15, joystick_origin.y if joystick_finger >= 0 else screen.y * 0.80), 72.0, Color(0.75, 0.86, 0.96, 0.16))
 		draw_circle(Vector2(screen.x * 0.83, screen.y * 0.80), 58.0, Color(0.10, 0.55, 0.82, 0.36))
