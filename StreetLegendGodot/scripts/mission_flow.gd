@@ -14,7 +14,11 @@ var safe_exit_point: Node3D
 var roadblock_point: Node3D
 var chase_target: Node3D
 var chase_distance_limit: float = 42.0
-var _handoff_running := false\nvar hotel_required: int = 1\nvar roadblock_required: int = 1\nvar hotel_defeats: int = 0\nvar roadblock_defeats: int = 0
+var _handoff_running := false
+var hotel_required: int = 1
+var roadblock_required: int = 1
+var hotel_defeats: int = 0
+var roadblock_defeats: int = 0
 
 func begin_pursuit() -> void:
 	if phase != Phase.HOTEL_COMBAT:
@@ -64,12 +68,16 @@ func reach_roadblock() -> void:
 
 func notify_hotel_enemy_defeated() -> void:
 	if phase == Phase.HOTEL_COMBAT:
-		begin_pursuit()
+		hotel_defeats += 1
+		if hotel_defeats >= hotel_required:
+			begin_pursuit()
 
 func notify_roadblock_enemy_defeated() -> void:
 	if phase == Phase.ROADBLOCK_COMBAT:
-		_set_phase(Phase.COMPLETE)
-		mission_finished.emit(true)
+		roadblock_defeats += 1
+		if roadblock_defeats >= roadblock_required:
+			_set_phase(Phase.COMPLETE)
+			mission_finished.emit(true)
 
 func notify_player_defeated() -> void:
 	if phase == Phase.ROADBLOCK_COMBAT:
