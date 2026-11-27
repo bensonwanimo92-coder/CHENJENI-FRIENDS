@@ -286,77 +286,55 @@ func _update_status(message: String) -> void:
 		status_label.text = message
 
 func _build_lobby_set() -> void:
-	# Temporary procedural architectural set dressing; replace these meshes with licensed assets.
-	var wall_mat := StandardMaterial3D.new()
-	wall_mat.albedo_color = Color(0.28, 0.31, 0.35)
-	wall_mat.roughness = 0.85
-	var trim_mat := StandardMaterial3D.new()
-	trim_mat.albedo_color = Color(0.55, 0.48, 0.34)
-	trim_mat.metallic = 0.25
-	trim_mat.roughness = 0.55
-	var glass_mat := StandardMaterial3D.new()
-	glass_mat.albedo_color = Color(0.12, 0.24, 0.31, 0.65)
-	glass_mat.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
-	glass_mat.roughness = 0.25
-	# Side pillars frame a clear central fighting space.
-	for x in [-8.0, 8.0]:
-		for z in [-5.0, 3.0]:
-			var pillar := MeshInstance3D.new()
-			var pm := BoxMesh.new()
-			pm.size = Vector3(1.1, 5.0, 1.1)
-			pillar.mesh = pm
-			pillar.position = Vector3(x, 2.5, z)
-			pillar.material_override = trim_mat
-			add_child(pillar)
-	# Lobby rear wall and glazed panels.
-	var rear := MeshInstance3D.new()
-	var rm := BoxMesh.new()
-	rm.size = Vector3(18.0, 5.0, 0.45)
-	rear.mesh = rm
-	rear.position = Vector3(0.0, 2.5, -9.0)
-	rear.material_override = wall_mat
-	add_child(rear)
-	for x in [-5.0, -2.5, 2.5, 5.0]:
-		var pane := MeshInstance3D.new()
-		var gm := BoxMesh.new()
-		gm.size = Vector3(2.0, 3.2, 0.08)
-		pane.mesh = gm
-		pane.position = Vector3(x, 2.1, -8.72)
-		pane.material_override = glass_mat
-		add_child(pane)
-	# Reception counter set to the side, not across the combat route.
-	var counter := MeshInstance3D.new()
-	var cm := BoxMesh.new()
-	cm.size = Vector3(4.5, 1.2, 1.1)
-	counter.mesh = cm
-	counter.position = Vector3(-5.0, 0.6, -5.5)
-	counter.material_override = trim_mat
-	add_child(counter)
-	# Seating clusters at the lobby edges.
-	for x in [-6.5, 6.5]:
-		var seat := MeshInstance3D.new()
-		var sm := BoxMesh.new()
-		sm.size = Vector3(2.4, 0.55, 0.9)
-		seat.mesh = sm
-		seat.position = Vector3(x, 0.4, 0.0)
-		seat.material_override = wall_mat
-		add_child(seat)
-		var back := MeshInstance3D.new()
-		var bm := BoxMesh.new()
-		bm.size = Vector3(2.4, 0.9, 0.25)
-		back.mesh = bm
-		back.position = Vector3(x, 0.95, -0.35)
-		back.material_override = wall_mat
-		add_child(back)
-	# Decorative ceiling beams.
-	for x in [-6.0, -3.0, 0.0, 3.0, 6.0]:
-		var beam := MeshInstance3D.new()
-		var bmesh := BoxMesh.new()
-		bmesh.size = Vector3(0.35, 0.25, 12.0)
-		beam.mesh = bmesh
-		beam.position = Vector3(x, 5.1, -2.0)
-		beam.material_override = trim_mat
-		add_child(beam)
+	# Expanded three-dimensional hotel lobby architecture.
+	var stone := _mat(Color(0.20, 0.23, 0.27), 0.9)
+	var polished := _mat(Color(0.36, 0.39, 0.43), 0.3)
+	var gold := _mat(Color(0.65, 0.48, 0.22), 0.4)
+	var glass := _mat(Color(0.10, 0.22, 0.30), 0.2)
+	glass.transparency = BaseMaterial3D.TRANSPARENCY_ALPHA
+	var tile := _mat(Color(0.31, 0.34, 0.38), 0.2)
+	_add_box("Lobby back wall", Vector3(22, 6, 0.6), Vector3(0, 3, -10), stone)
+	_add_box("Lobby left wall", Vector3(0.6, 6, 24), Vector3(-11, 3, 1), stone)
+	_add_box("Lobby right wall", Vector3(0.6, 6, 24), Vector3(11, 3, 1), stone)
+	_add_box("Ceiling", Vector3(22, 0.4, 24), Vector3(0, 6, 1), stone)
+	for x in range(-9, 10, 3):
+		_add_box("Floor tile strip", Vector3(2.8, 0.04, 24), Vector3(x, 0.015, 1), tile)
+	for x in [-9,-6,-3,3,6,9]:
+		_add_box("Lobby pillar", Vector3(0.7, 5.6, 0.7), Vector3(x, 2.8, 0), gold)
+	for x in [-7.5,-4.5,-1.5,1.5,4.5,7.5]:
+		_add_box("Window panel", Vector3(2.6, 3.7, 0.12), Vector3(x, 2.5, -9.62), glass)
+		_add_box("Window mullion", Vector3(0.12, 4.1, 0.18), Vector3(x, 2.5, -9.5), gold)
+	_add_box("Reception desk", Vector3(4.6, 1.3, 1.2), Vector3(-6, 0.65, -5), polished)
+	_add_box("Reception fascia", Vector3(4.4, 0.18, 1.25), Vector3(-6, 1.25, -5), gold)
+	for x in [-7.5,7.5]:
+		_add_box("Lounge sofa seat", Vector3(3,0.6,1), Vector3(x,0.35,2), polished)
+		_add_box("Lounge sofa back", Vector3(3,1.0,0.3), Vector3(x,0.95,1.55), stone)
+		_add_box("Coffee table", Vector3(1.8,0.45,1.1), Vector3(x,0.25,4), gold)
+	# Broad overhead light panels, luminous material.
+	var lightmat := _mat(Color(0.85,0.78,0.63), 0.2)
+	for x in [-6,-2,2,6]:
+		_add_box("Ceiling light panel", Vector3(2.4,0.08,4), Vector3(x,5.78,1), lightmat)
+	# corridor framing toward the exit/chase sequence
+	for z in [-14,-20,-26,-32,-38]:
+		for x in [-6,6]:
+			_add_box("Corridor support", Vector3(0.6,4,0.6), Vector3(x,2.0,z), stone)
+		_add_box("Corridor crossbeam", Vector3(12,0.35,0.5), Vector3(0,4,z), gold)
+
+func _mat(color: Color, roughness: float) -> StandardMaterial3D:
+	var material := StandardMaterial3D.new()
+	material.albedo_color = color
+	material.roughness = roughness
+	return material
+
+func _add_box(label: String, size: Vector3, location: Vector3, material: Material) -> void:
+	var mesh_instance := MeshInstance3D.new()
+	mesh_instance.name = label
+	var mesh := BoxMesh.new()
+	mesh.size = size
+	mesh_instance.mesh = mesh
+	mesh_instance.position = location
+	mesh_instance.material_override = material
+	add_child(mesh_instance)
 
 func _build_fighter_visual(root: Node3D, tint: Color, is_player: bool) -> void:
 	# Keep a stable visual pivot so the animation driver can pose the complete silhouette.
