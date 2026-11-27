@@ -354,7 +354,7 @@ func _on_hotel_enemy_health_changed(value: float) -> void:
 
 func _on_roadblock_health_changed(value: float) -> void:
 	if mission != null and mission.phase >= MissionScript.Phase.ROADBLOCK and is_instance_valid(enemy_health_label):
-		enemy_health_label.text = "ROADBLOCK ENFORCER  •  %d%%" % roundi(value))
+		enemy_health_label.text = "ROADBLOCK ENFORCER  •  %d%%" % roundi(value)
 
 func _update_status(message: String) -> void:
 	if is_instance_valid(status_label):
