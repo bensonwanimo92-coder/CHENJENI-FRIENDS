@@ -1,0 +1,19 @@
+name: Godot project validation
+
+on:
+  push:
+    branches: [godot-migration]
+  pull_request:
+    branches: [godot-migration]
+
+jobs:
+  import-and-parse:
+    runs-on: ubuntu-latest
+    container:
+      image: barichello/godot-ci:4.3
+    steps:
+      - uses: actions/checkout@v4
+      - name: Import project and parse scripts
+        run: godot --headless --editor --path StreetLegendGodot --quit
+      - name: Run project startup smoke check
+        run: godot --headless --path StreetLegendGodot --quit-after 5
