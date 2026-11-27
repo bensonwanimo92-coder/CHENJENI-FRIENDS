@@ -320,6 +320,58 @@ func _build_lobby_set() -> void:
 			_add_box("Corridor support", Vector3(0.6,4,0.6), Vector3(x,2.0,z), stone)
 		_add_box("Corridor crossbeam", Vector3(12,0.35,0.5), Vector3(0,4,z), gold)
 
+	# Environment dressing: hotel trim, lighting, foliage, entrance and roadway details.
+	var trim := _mat(Color(0.48, 0.43, 0.34), 0.38)
+	var dark := _mat(Color(0.055, 0.075, 0.09), 0.3)
+	var foliage := _mat(Color(0.12, 0.28, 0.16), 0.85)
+	var leaf_light := _mat(Color(0.22, 0.39, 0.21), 0.8)
+	var signage := _mat(Color(0.04, 0.14, 0.23), 0.25)
+	_add_box("Lobby cornice", Vector3(22, 0.35, 0.8), Vector3(0, 5.55, -10.2), trim)
+	_add_box("Lobby baseboard", Vector3(21.8, 0.22, 0.25), Vector3(0, 0.18, -9.55), dark)
+	_add_box("Entrance frame left", Vector3(0.45, 4.2, 0.65), Vector3(-3.8, 2.1, -10.4), trim)
+	_add_box("Entrance frame right", Vector3(0.45, 4.2, 0.65), Vector3(3.8, 2.1, -10.4), trim)
+	_add_box("Entrance header", Vector3(8.0, 0.45, 0.65), Vector3(0, 4.25, -10.4), trim)
+	_add_box("Lobby sign backing", Vector3(5.8, 0.85, 0.18), Vector3(0, 4.85, -9.25), signage)
+	_add_box("Lobby sign accent", Vector3(5.4, 0.06, 0.2), Vector3(0, 4.42, -9.18), gold)
+	for x in [-4.0, 4.0]:
+		_add_box("Floor brass inlay", Vector3(0.12, 0.025, 18), Vector3(x, 0.04, -3.0), trim)
+	var glow := StandardMaterial3D.new()
+	glow.albedo_color = Color(0.96, 0.83, 0.62)
+	glow.emission_enabled = true
+	glow.emission = Color(0.9, 0.65, 0.35)
+	glow.emission_energy_multiplier = 1.3
+	for x in [-8, -4, 0, 4, 8]:
+		for z in [-5, 1, 5]:
+			_add_box("Downlight", Vector3(0.9, 0.06, 0.9), Vector3(x, 5.72, z), glow)
+	for x in [-9.0, 9.0, -4.5, 4.5]:
+		_add_box("Lobby planter", Vector3(1.1, 0.65, 1.1), Vector3(x, 0.33, 5.5), dark)
+		for offset in [-0.35, 0.0, 0.35]:
+			_add_sphere("Plant leaf cluster", Vector3(x + offset, 1.1 + abs(offset), 5.5 + offset), 0.34, foliage)
+			_add_sphere("Plant highlight", Vector3(x - offset, 1.35, 5.5 - offset), 0.26, leaf_light)
+	_add_box("Reception countertop", Vector3(4.8, 0.12, 1.35), Vector3(-6, 1.38, -5), trim)
+	_add_box("Reception monitor", Vector3(0.8, 0.5, 0.12), Vector3(-6, 1.75, -4.7), dark)
+	for x in [-8.3, -6.8, 6.8, 8.3]:
+		_add_box("Seat cushion accent", Vector3(0.55, 0.45, 0.85), Vector3(x, 0.68, 2), gold)
+	for z in [-16, -22, -28, -34, -40]:
+		_add_box("Corridor window", Vector3(2.8, 2.6, 0.08), Vector3(-8.0, 2.0, z), glass)
+		_add_box("Corridor window frame", Vector3(0.12, 2.9, 0.15), Vector3(-8.0, 2.0, z), trim)
+	_add_box("Road curb left", Vector3(0.5, 0.3, 64), Vector3(-13.5, 0.15, -54), dark)
+	_add_box("Road curb right", Vector3(0.5, 0.3, 64), Vector3(13.5, 0.15, -54), dark)
+	var lane_mat := _mat(Color(0.75, 0.72, 0.62), 0.8)
+	for z in range(-44, -112, -8):
+		_add_box("Road lane marker", Vector3(0.22, 0.025, 3.0), Vector3(0, 0.03, z), lane_mat)
+
+func _add_sphere(label: String, location: Vector3, radius: float, material: Material) -> void:
+	var instance := MeshInstance3D.new()
+	instance.name = label
+	var mesh := SphereMesh.new()
+	mesh.radius = radius
+	mesh.height = radius * 2.0
+	instance.mesh = mesh
+	instance.position = location
+	instance.material_override = material
+	add_child(instance)
+
 func _mat(color: Color, roughness: float) -> StandardMaterial3D:
 	var material := StandardMaterial3D.new()
 	material.albedo_color = color
